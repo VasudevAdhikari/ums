@@ -14,14 +14,12 @@
         <div class="assessment-header">
             <div class="assessment-title">
                 <h1>{{ assessment.assessment.title }}</h1>
+                <script>
+                    date = '{{assessment.due_date|date:"c"}}';
+                    window.date = new Date(date);
+                    console.log(window.date);
+                </script>
                 <span class="assessment-type">{{ assessment.get_assessment_type_display }}</span>
-            </div>
-            <div class="timer-section">
-                <div class="timer-display">
-                    <i class="fas fa-clock"></i>
-                    <span id="timer">--:--:--</span>
-                </div>
-                <div class="timer-status" id="timer-status">Time Remaining</div>
             </div>
         </div>
 
@@ -58,10 +56,10 @@
                     <div class="file-list">
                         {% for file in assessment.assessment.files %}
                         <div class="file-item">
-                            <i class="fas fa-file-alt"></i>
+                            <i class="fas fa-file-alt icon-1"></i>
                             <span class="file-name">{{ file|slice:"0:-4" }}</span>
                             <a href="/media/assignment_files/{{ file }}" download class="download-btn">
-                                <i class="fas fa-download"></i>
+                                <i class="fas fa-download icon-2"></i>
                             </a>
                         </div>
                         {% endfor %}
@@ -150,6 +148,6 @@
             title: '{{ assessment.assessment.title|escapejs }}'
         };
     </script>
-    <script src="{% static 'students/academic/javascripts/assessment.js' %}"></script>
+    <script type="module" src="{% static 'students/academic/javascripts/assessment.js' %}"></script>
 </body>
 </html>

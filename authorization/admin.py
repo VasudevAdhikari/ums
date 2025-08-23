@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import User, Student, Instructor, Admin, Faculty, Department, Course, Degree, UniversityDetails, MailboxPost, Comment
+from .models import User, Student, Instructor, Admin, Faculty, Department, Course, Degree, UniversityDetails, MailboxPost, Comment, Enrollment, EnrollmentCourse, Batch, Semester, BatchInstructor, Term, AssessmentScheme, Assessment, AssessmentResult, EmergencyContact, OTP, LoginAttempt, SISForm, Document, BatchInstructorDocument
+
 # Register your models here.
 admin.site.register(User)
 admin.site.register(Student)
@@ -12,3 +13,18 @@ admin.site.register(Degree)
 admin.site.register(UniversityDetails)
 admin.site.register(MailboxPost)
 admin.site.register(Comment)
+admin.site.register(Enrollment)
+admin.site.register(EnrollmentCourse)
+admin.site.register(Term)
+admin.site.register(Semester)
+admin.site.register(Batch)
+admin.site.register(BatchInstructor)
+admin.site.register(SISForm)
+admin.site.register(AssessmentScheme)
+admin.site.register(Assessment)
+admin.site.register(AssessmentResult)
+admin.site.register(EmergencyContact)
+admin.site.register(LoginAttempt)
+admin.site.register(OTP)
+admin.site.register(Document)
+admin.site.register(BatchInstructorDocument)

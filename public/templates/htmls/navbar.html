@@ -1,0 +1,75 @@
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container-fluid">
+        <img src="https://www.ucsy.edu.mm/img/ucsylogo-icpc2017.png" class="uni-logo ms-4" alt="University Logo">
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+            <ul class="navbar-nav ms-auto align-items-center custom-nav-spacing">
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="/public/" role="button" aria-expanded="false">
+                        Home
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Register
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" id="registerAsStudent">
+                                <i class="fas fa-university"></i> As Student
+                            </a></li>
+                        <li><a class="dropdown-item" href="#" id="registerAsInstructor"><i class="fas fa-building"></i>
+                                As Instructor</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown" style="margin-right: 20px !important;">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Login
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" id="loginAsStudent">
+                                <i class="fas fa-university"></i> As Student
+                            </a></li>
+                        <li><a class="dropdown-item" href="#" id="loginAsInstructor"><i class="fas fa-building"></i> As
+                                Instructor</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item" style="margin-right: 20px !important;">
+                    <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<script>
+    document.getElementById('loginAsStudent').addEventListener('click', () => {
+        localStorage.setItem('role', 'student');
+        window.location.href = '/auth/login/';
+    });
+
+    document.getElementById('loginAsInstructor').addEventListener('click', () => {
+        localStorage.setItem('role', 'instructor');
+        window.location.href = '/auth/login/';
+    });
+
+    document.getElementById('registerAsStudent').addEventListener('click', () => {
+        localStorage.setItem('role', 'student');
+        window.location.href = '/auth/register/';
+    });
+
+    document.getElementById('registerAsInstructor').addEventListener('click', () => {
+        localStorage.setItem('role', 'instructor');
+        window.location.href = '/auth/register/';
+    });
+</script>

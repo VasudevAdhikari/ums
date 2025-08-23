@@ -1,5 +1,5 @@
 from django.urls import path, re_path
-from .views import faculty_dashboard
+from .views import faculty_dashboard, show_profile
 from .components import course_management
 from faculty.components import document_manager, quiz_manager, assignment_manager
 
@@ -33,4 +33,8 @@ urlpatterns = [
     path('assessment_submissions/<int:assessment_id>/', assignment_manager.show_assessment_submissions, name='show_assessment_submissions'),
 
     path('assessment_mark/update/<int:assessment_id>/<int:mark>/', assignment_manager.update_assessment_mark, name='update_assessment_mark'),
+
+    path('all_results/<int:batch_instructor_id>/', course_management.show_all_results, name='all_results'),
+
+    path('profile/', show_profile, name='profile'),
 ]

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Student Details</title>
+
+    <!-- Poppins font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'executives/css/student_data.css' %}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="title"><i class="fas fa-user-graduate"></i> Student Statistics</div>
+
+        <!-- Profile -->
+        <div class="card profile-section">
+            <img class="profile-pic" src="{{sis_form.student.user.profile_picture.url}}" alt="Profile Picture"
+                loading="lazy" />
+            <div class="profile-info">
+                <h3>{{sis_form.student.user.full_name}}</h3>
+                <p><i class="fas fa-id-card"></i> Roll No: <strong>{{sis_form.student.roll_no}}</strong></p>
+                <p><i class="fas fa-user-check"></i> Status: <strong>{{sis_form.student.get_status_display}}</strong></p>
+            </div>
+        </div>
+
+        <!-- Basic Info -->
+        <div class="card">
+            <h2><i class="fas fa-info-circle"></i> Basic Information</h2>
+            <div class="details-grid">
+                <div class="detail"><i class="fas fa-envelope"></i> <strong>Email:</strong> <div class="email">{{sis_form.student.user.email}}</div></div>
+                <div class="detail"><i class="fas fa-phone"></i> <strong>Phone:</strong> {{sis_form.student.user.phone}}</div>
+                <div class="detail"><i class="fas fa-city"></i> <strong>City:</strong> {{sis_form.student.user.city}}</div>
+                <div class="detail"><i class="fas fa-cake-candles"></i> <strong>Date of Birth:</strong> {{sis_form.student.user.date_of_birth}}</div>
+                <div class="detail"><i class="fab fa-telegram"></i> <strong>Telegram:</strong> {{sis_form.student.user.telegram_username}}</div>
+                <div class="detail"><i class="fas fa-envelope-open-text"></i> <strong>Outlook Email:</strong>
+                    {{sis_form.student.user.outlook_email}}</div>
+                <div class="detail"><i class="fas fa-venus-mars"></i> <strong>Gender:</strong> {{sis_form.student.user.get_gender_display}}</div>
+            </div>
+        </div>
+
+        <!-- Emergency Contact -->
+        <div class="card">
+            <h2><i class="fas fa-phone-square-alt"></i> Emergency Contact</h2>
+            <div class="details-grid">
+                <div class="detail"><i class="fas fa-user"></i> <strong>Name:</strong> {{sis_form.student.user.emergency_contact.contact_name}}</div>
+                <div class="detail"><i class="fas fa-envelope"></i> <strong>Email:</strong> {{sis_form.student.user.emergency_contact.email}}</div>
+                <div class="detail"><i class="fas fa-phone"></i> <strong>Phone:</strong> {{sis_form.student.user.emergency_contact.phone}}</div>
+            </div>
+        </div>
+
+        <!-- SIS Form -->
+        <div class="card">
+            <h2><i class="fas fa-file-alt"></i> SIS Information</h2>
+            <div class="details-grid">
+                <div class="detail"><i class="fas fa-tint"></i> <strong>Blood Group:</strong> {{sis_form.get_blood_group_display}}</div>
+                <div class="detail"><i class="fas fa-flag"></i> <strong>Ethnicity:</strong> {{sis_form.ethnicity}}</div>
+                <div class="detail"><i class="fas fa-pray"></i> <strong>Religion:</strong> {{sis_form.religion}}</div>
+                <div class="detail"><i class="fas fa-id-card"></i> <strong>NRC:</strong> {{sis_form.NRC}}</div>
+                <div class="detail"><i class="fas fa-map-marker-alt"></i> <strong>Birthplace:</strong> {{sis_form.birthplace}}</div>
+            </div>
+        </div>
+
+        <!-- Father Info -->
+        <div class="card">
+            <h2><i class="fas fa-male"></i> Father's Information</h2>
+            <div class="details-grid">
+                <div class="detail"><i class="fas fa-user"></i> <strong>Name:</strong> {{sis_form.father_name}}</div>
+                <div class="detail"><i class="fas fa-id-card"></i> <strong>NRC:</strong> {{sis_form.father_NRC}}</div>
+                <div class="detail"><i class="fas fa-map-marker-alt"></i> <strong>Birthplace:</strong> {{sis_form.father_birthplace}}</div>
+                <div class="detail"><i class="fas fa-city"></i> <strong>City:</strong> {{sis_form.father_city}}</div>
+                <div class="detail"><i class="fas fa-phone"></i> <strong>Phone:</strong> {{sis_form.father_phone}}</div>
+                <div class="detail"><i class="fas fa-briefcase"></i> <strong>Profession:</strong> {{sis_form.father_profession}}</div>
+                <div class="detail"><i class="fas fa-envelope"></i> <strong>Email:</strong> {{sis_form.father_gmail}}</div>
+                <div class="detail"><i class="fas fa-flag"></i> <strong>Ethnicity:</strong> {{sis_form.father_ethnicity}}</div>
+                <div class="detail"><i class="fas fa-pray"></i> <strong>Religion:</strong> {{sis_form.father_religion}}</div>
+            </div>
+        </div>
+
+        <!-- Mother Info -->
+        <div class="card">
+            <h2><i class="fas fa-female"></i> Mother's Information</h2>
+            <div class="details-grid">
+                <div class="detail"><i class="fas fa-user"></i> <strong>Name:</strong> {{sis_form.mother_name}}</div>
+                <div class="detail"><i class="fas fa-id-card"></i> <strong>NRC:</strong> {{sis_form.mother_NRC}}</div>
+                <div class="detail"><i class="fas fa-map-marker-alt"></i> <strong>Birthplace:</strong> {{sis_form.mother_birthplace}}</div>
+                <div class="detail"><i class="fas fa-city"></i> <strong>City:</strong> {{sis_form.mother_city}}</div>
+                <div class="detail"><i class="fas fa-phone"></i> <strong>Phone:</strong> {{sis_form.mother_phone}}</div>
+                <div class="detail"><i class="fas fa-briefcase"></i> <strong>Profession:</strong> {{sis_form.mother_profession}}</div>
+                <div class="detail"><i class="fas fa-envelope"></i> <strong>Email:</strong> {{sis_form.mother_gmail}}</div>
+                <div class="detail"><i class="fas fa-flag"></i> <strong>Ethnicity:</strong> {{sis_form.mother_ethnicity}}</div>
+                <div class="detail"><i class="fas fa-pray"></i> <strong>Religion:</strong> {{sis_form.mother_religion}}</div>
+            </div>
+        </div>
+
+        <!-- Matriculation -->
+        <div class="card">
+            <h2><i class="fas fa-graduation-cap"></i> Matriculation</h2>
+            <div class="details-grid">
+                <div class="detail"><i class="fas fa-id-badge"></i> <strong>Roll No:</strong> {{sis_form.matric_roll_no}}</div>
+                <div class="detail"><i class="fas fa-building"></i> <strong>Exam Dept:</strong> {{sis_form.exam_dept}}</div>
+                <div class="detail"><i class="fas fa-calendar-check"></i> <strong>Passed Year:</strong> {{sis_form.passed_year}}</div>
+                <div class="detail"><i class="fas fa-star"></i> <strong>Total Marks:</strong> {{sis_form.total_marks}}</div>
+            </div>
+        </div>
+
+        <!-- Spouse -->
+        <div class="card">
+            <h2><i class="fas fa-ring"></i> Spouse</h2>
+            <div class="details-grid">
+                <div class="detail"><i class="fas fa-check-circle"></i> <strong>Has Spouse:</strong> {%if sis_form.has_spouse%}Yes{%else%}No{%endif%}</div>
+                <div class="detail"><i class="fas fa-user"></i> <strong>Name:</strong> {{sis_form.spouse_name|default:"-"}}</div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="btn-group">
+            <button class="btn-danger" onclick="dropOut('{{sis_form.student.user.id}}')"><i class="fas fa-user-slash"></i> Drop Student</button>
+            <button class="btn-success" onclick="graduate('{{sis_form.student.user.id}}')"><i class="fas fa-user-check"></i> Graduate Student</button>
+            <button class="btn-warning" onclick="suspend('{{sis_form.student.user.id}}')"><i class="fas fa-user-lock"></i> Suspend Student</button>
+        </div>
+        <div class="btn-group" style="margin-top: 1.2rem;">
+            <button class="btn-primary" onclick="viewResults('{{sis_form.student.user.id}}')"><i class="fas fa-chart-line"></i> View Results</button>
+        </div>
+
+        <h2><i class="fas fa-graduation-cap me-2"></i>Enrolled Terms</h2>
+        
+        <!-- Debug Info (remove this in production) -->
+        {% if approved_enrollments %}
+            <p class="text-muted">Found {{ approved_enrollments|length }} approved enrollment(s)</p>
+        {% else %}
+            <p class="text-muted">No approved enrollments found</p>
+        {% endif %}
+        
+        <div class="accordion" id="enrolledTermsAccordion">
+            {% for term in approved_enrollments %}
+            <div class="accordion-item mb-2">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#term{{forloop.counter}}">
+                        {{term.name}}
+                    </button>
+                </h2>
+                <div id="term{{forloop.counter}}" class="accordion-collapse collapse" data-bs-parent="#enrolledTermsAccordion">
+                    <div class="accordion-body">
+                        <p><strong>Enrollment Date:</strong> {{term.enrolled_date}}</p>
+                        <div class="row g-3 mt-2">
+                            {% for details in term.details %}
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="course-card">
+                                    <i class="fas fa-graduation-cap me-2 text-primary"></i>
+                                    <strong>{{details.batch_instructor.course.course_code}} -
+                                        {{details.batch_instructor.course.course_name}}</strong>
+                                        <br>
+                                    <span class="subject-type Core">{{details.type}}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function dropOut(user_id) {
+            if (!confirm('Are you sure to drop this student out')) return;
+            window.location.href = `/executives/student/drop/${user_id}`;
+        }
+        function graduate(user_id) {
+            if (!confirm('Are you sure to drop this student out')) return;
+            window.location.href = `/executives/student/graduate/${user_id}`;
+        }
+        function suspend(user_id) {
+            if (!confirm('Are you sure to drop this student out')) return;
+            window.location.href = `/executives/student/suspend/${user_id}`;
+        }
+        function viewResults(user_id) {
+            window.location.href = `/students/academics/results/${user_id}`; // replace with actual URL
+        }
+
+    {% for message in messages %}
+    await alert('{{message}}');
+    {% endfor %}
+    </script>
+
+</body>
+
+</html>

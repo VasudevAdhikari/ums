@@ -98,7 +98,7 @@ def notify_new_post_reaction(user, post_id, reactor_name, reaction_type):
                     if reaction_type not in notification.get('reactions'):
                         print('reaction not in notification')
                         notification['reactions'].append(reaction_type)
-                    notification['text'] = f"{reactor_name} + {count - 1} others reacted to your post with {", ".join(notification.get('reactions'))}"
+                    notification['text'] = f"{reactor_name} + {count - 1} others reacted to your post with {', '.join(notification.get('reactions'))}"
 
                 notification['reactor_count'] = count
                 notification['reactors'] = reactors

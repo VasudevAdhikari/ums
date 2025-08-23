@@ -11,155 +11,65 @@
     list-style: none;
 }
 
-:root {
-    --sidebar-color: #546bd4;
-
-
+/* Force Poppins on all common text-bearing elements */
+html, body,
+h1, h2, h3, h4, h5, h6,
+p, span, a, li, label,
+input, textarea, select, button,
+.table, .card, .modal, .navbar, .dropdown-menu, .form-control,
+.nav-link, .dropdown-item {
+    font-family: 'Poppins', sans-serif !important;
 }
+
+:root {
+            /* Primary Colors (University Branding) */
+            --primary: #003366; /* Deep Blue - main brand color */
+            --primary-light: #1a4d80; /* Lighter shade for hover states */
+            --primary-dark: #00264d; /* Darker shade for active states */
+            --sidebar-color: var(--primary-dark);
+            
+            /* Secondary Colors */
+            --secondary: #FFD700; /* Gold - for accents and highlights */
+            --secondary-light: #ffe44d;
+  
+            /* Background Colors */
+            --bg-light: #FFFFFF;
+            --bg-gray: #F5F5F5;
+            
+            /* Text Colors */
+            --text-dark: #333333;
+            --text-black: #000000;
+            --text-light: #FFFFFF;
+            
+            /* Status Colors */
+            --success: #4CAF50;
+            --error: #F44336;
+            --warning: #FFC107;
+            --info: #17A2B8;
+        }
 
 body {
     height: 100vh;
     width: 100%;
+    background-color: var(--bg-gray);
 }
 
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 70px;
-    background-color: #e6e65e;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    z-index: 1000;
-
-
-}
-
-.menu-icon {
-    background-color: #d3ddcf;
-    border-radius: 7px;
-    padding: 4px 7px;
-    margin-right: 5px;
-    font-size: 22px;
-    cursor: pointer;
-
-}
-
-.nav-left {
-    display: flex;
-    align-items: center;
-}
-
-.uni-logo {
-    width: 54px;
-    height: 50px;
-    border-radius: 7px;
-    padding: 4px;
-    margin-right: 10px;
-}
-
-.uni-name {
-
-    font-size: 18px;
-    color: rgb(16, 15, 15);
-    font-weight: 600;
-}
-
-.noti {
-    font-size: 22px;
-    cursor: pointer;
-}
-
-/* header section */
-
-/* sidebar Menu */
-.sidebar {
-    position: fixed;
-    top: 70px;
-    left: 0;
-    width: 350px;
-    height: 100vh;
-    background-color: var(--sidebar-color);
-    overflow-y: auto;
-    transform: translateX(0);
-    transition: transform 0.3s ease-in-out;
-
-}
-
-.menu-list {
-    background-color: #fff;
-    margin: 0 18px;
-    margin-top: 20px;
-    width: 300px;
-    border-radius: 3px;
-}
-
-.menu ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 5px;
-    padding-top: 5px;
-
-}
-
-.menu li .icon {
-    min-width: 60px;
-    font-size: 17px;
-
-}
-
-.menu ul li .sidebar-text {
-    color: black;
-
-}
-
-.menu ul li {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #ddd;
-}
-
-.menu ul li a {
-    padding: 17px 15px;
-    text-decoration: none;
-    margin: 2px;
-    width: 100%;
-    border-radius: 6px;
-}
-
-.menu ul li a i {
-    margin-right: -8px;
-}
-
-.log-out ul {
-    margin-top: 25px;
-}
-
-.menu ul li a:hover,
-.menu ul li a:active {
-    background-color: #9aa9d6;
-}
-
-
-/* sidebar Menu */
 
 /* university Information  */
 .container {
-    border: 1px solid rgb(191, 155, 155);
-    box-shadow: 0 2px 4px rgb(228, 188, 195), 0 4px 8px rgb(80, 80, 126);
+    border: 1px solid rgba(191, 155, 155, 0.6);
+    box-shadow: 0 2px 4px rgba(228, 188, 195, 0.8), 0 4px 8px rgba(80, 80, 126, 0.4);
+    border-radius: 21px !important;
     margin-top: 90px;
-    padding-left: 20px;
-    margin-left: 390px;
-    width: 1000px;
-    max-width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
     background: #fff;
-    /* Add horizontal padding for small screens */
-    padding-right: 20px;
     box-sizing: border-box;
+    border-top: 5px solid var(--secondary) !important;
 }
 
 .info-title {
@@ -169,13 +79,15 @@ header {
 }
 
 .university-information {
-    padding: 9px 250px;
+    padding: 9px 0;
 }
 
 .uni-logo1 {
     border: 1px solid rgb(193, 201, 238);
-    height: 80px;
-    width: 100px;
+    max-height: 80px;
+    max-width: 120px;
+    height: auto;
+    width: auto;
 }
 
 .info-description {
@@ -188,8 +100,8 @@ header {
     text-overflow: ellipsis;
 }
 
-.info-description a {
-    color: #007bff;
+ .info-description a {
+    color: var(--info);
     text-decoration: underline;
     cursor: pointer;
     font-size: 15px;
@@ -204,8 +116,7 @@ header {
 
 /* university photos */
 .university-photos {
-    padding: 9px 250px;
-    margin-left: 5rem;
+    padding: 9px 0;
 }
 
 .card-img-top {
@@ -222,11 +133,11 @@ header {
 }
 
 .certificate-preview {
-    height: 200px;
+    height: clamp(160px, 25vw, 240px);
     width: 100%;
-    object-fit: cover;
-
+    object-fit: contain;
     border: 1px solid #ddd;
+    border-radius: 6px;
 }
 
 .iframe {
@@ -258,8 +169,7 @@ header {
 }
 
 .certificate-card {
-    min-height: 280px;
-
+    /* min-height: 280px; */
 }
 
 .certificate-buttons {
@@ -281,7 +191,7 @@ header {
 }
 
 .lab-card .card-img-top {
-    height: 220px;
+    height: clamp(180px, 28vw, 260px);
     object-fit: cover;
     border-radius: 6px 6px 0 0;
 }
@@ -299,21 +209,17 @@ header {
 /* Responsive Styles */
 @media (max-width: 1200px) {
     .container {
-        width: 90vw;
-        margin-left: 20px;
-        margin-right: 20px;
-        padding-left: 10px;
-        padding-right: 10px;
+        max-width: 1000px;
+        padding-left: 12px;
+        padding-right: 12px;
     }
 }
 
 @media (max-width: 992px) {
     .container {
-        width: 98vw;
-        margin-left: 0;
-        margin-right: 0;
-        padding-left: 5px;
-        padding-right: 5px;
+        max-width: 92vw;
+        padding-left: 10px;
+        padding-right: 10px;
     }
     .sidebar {
         width: 250px;
@@ -326,7 +232,8 @@ header {
 
 @media (max-width: 768px) {
     .container {
-        width: 100vw !important;
+        width: 100% !important;
+        max-width: 100vw !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
         padding: 10px !important;
@@ -355,7 +262,7 @@ header {
 
     .university-information,
     .university-photos {
-        padding: 10px !important;
+        padding: 10px 0 !important;
         font-size: 18px;
         text-align: center;
     }
@@ -382,19 +289,8 @@ header {
     }
 
     .row {
-        flex-direction: column;
         margin-left: 0 !important;
         margin-right: 0 !important;
-    }
-
-    .col-sm-6,
-    .col-md-4,
-    .col-8 {
-        width: 100% !important;
-        max-width: 100% !important;
-        flex: 0 0 100% !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
     }
 
     .card-img-top {
@@ -425,6 +321,7 @@ header {
 @media (max-width: 480px) {
     .container {
         padding: 5px !important;
+        max-width: 100vw !important;
     }
     .sidebar {
         width: 95vw;
@@ -467,12 +364,12 @@ header {
 }
 
 .file-upload-label:hover {
-    background-color: #146c43 !important;
+    background-color: var(--primary-light) !important;
 }
 
 .file-upload-name {
     font-size: 14px;
-    color: #555;
+    color: var(--text-dark);
 }
 
 .visually-hidden {
@@ -481,6 +378,124 @@ header {
 
 
 /*Sidebar hidden on small screens */
+
+/* ======================== */
+/* Modal (Popup) Box Styles */
+/* ======================== */
+.modal-backdrop.show {
+    background-color: rgba(0, 51, 102, 0.35);
+}
+
+.modal.fade .modal-dialog {
+    transform: translateY(10px) scale(0.98);
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.modal.show .modal-dialog {
+    transform: translateY(0) scale(1);
+}
+
+.modal-dialog {
+    margin: 1.25rem auto;
+}
+
+.modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    background: var(--bg-light);
+}
+
+.modal-header {
+    /* background: var(--primary); */
+    color: var(--primary);
+    border-bottom: none;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-top: 6px solid var(--secondary);
+
+}
+
+.modal-title {
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+    opacity: 0.9;
+}
+
+.modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 1.25rem 1.25rem 0.75rem 1.25rem;
+}
+
+.modal-footer {
+    background: var(--bg-gray);
+    border-top: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    padding: 0.75rem 1.25rem 1rem 1.25rem;
+}
+
+/* Form controls inside modals */
+.modal .form-label {
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.modal .form-control,
+.modal .form-select,
+.modal textarea {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.modal .form-control:focus,
+.modal .form-select:focus,
+.modal textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 51, 102, 0.15);
+}
+
+/* File upload alignment inside modals */
+.modal .file-upload-wrapper {
+    gap: 12px;
+}
+
+/* Media inside modals */
+.modal .img-fluid {
+    border-radius: 8px;
+}
+
+.modal iframe {
+    width: 100%;
+    height: 300px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fff;
+}
+
+/* Responsive modal widths */
+.modal-lg {
+    max-width: min(900px, 95vw);
+}
+
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 0.75rem auto;
+    }
+    .modal-body {
+        padding: 1rem;
+    }
+    .modal iframe {
+        height: 220px;
+    }
+}
 
 /* Sidebar styles */
 .sidebar {
@@ -553,10 +568,295 @@ header {
 
 .uni-info-logo-filename {
     font-size: 14px;
-    color: #444;
+    color: var(--text-dark);
     word-break: break-all;
-    background: #f3f3f3;
+    background: var(--bg-gray);
     padding: 2px 8px;
     border-radius: 4px;
     border: 1px solid #e0e0e0;
 }
+.btn-success{
+  background-color: var(--primary);
+  color: var(--text-light);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 8px 0 rgba(0, 51, 102, 0.15);
+
+}
+.btn-success:hover{
+  background-color: var(--primary-dark) !important;
+  color: var(--text-light) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px 0 rgba(0, 51, 102, 0.25);
+
+}
+.btn-dark {
+  background-color: var(--primary);
+  color: var(--text-light);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-dark:hover{
+    background-color: var(--primary-dark) !important;
+    color: var(--text-light) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px 0 rgba(0, 51, 102, 0.25);
+  
+  }
+ /* Hide the edit and delete buttons by default */
+.card .edit-btn,
+.card .delete-btn {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+}
+
+/* On hover over the card, make the buttons visible */
+.card:hover .edit-btn,
+.card:hover .delete-btn {
+    opacity: 1;
+    visibility: visible;
+}
+
+.card .edit-btn:hover{
+  /* background-color: var(--primary-light) !important; */
+  color: var(--text-dark) !important;
+  transform: translateY(-1px);
+}
+.card .delete-btn:hover{
+  background-color: var(--error) !important;
+  color: var(--text-light) !important;
+  transform: translateY(-1px);
+}
+
+.btn-outline-secondary{
+  background-color: var(--primary-light);
+  color: var(--text-light) !important;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.50rem 1.0rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.btn-outline-secondary:hover{
+  background-color: var(--primary-light) !important;
+  color: var(--text-light) !important;
+  transform: translateY(-1px);
+  /* box-shadow: 0 4px 12px 0 rgba(0, 51, 102, 0.25); */
+}
+
+.btn-primary{
+  background-color: var(--primary);
+  color: var(--text-light);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.50rem 1.0rem;
+}
+.btn-primary:hover{
+  background-color: var(--primary) !important;
+  color: var(--text-light) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px 0 rgba(0, 51, 102, 0.25);
+}
+
+.delete-lab-btn:hover{
+  background-color: var(--error) !important;
+  color: var(--text-light) !important;
+  transform: translateY(-1px);
+  /* box-shadow: 0 4px 12px 0 rgba(0, 51, 102, 0.25); */
+}
+
+/* Responsive button styles */
+@media (max-width: 992px) {
+  .btn,
+  .btn-success,
+  .btn-dark,
+  .btn-primary,
+  .btn-outline-secondary,
+  .btn-danger,
+  .btn-warning {
+    font-size: 1rem !important;
+    padding: 0.7rem 1.2rem !important;
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 10px;
+    display: block;
+    text-align: center;
+    box-sizing: border-box;
+  }
+  .btn-sm {
+    font-size: 0.95rem !important;
+    padding: 0.5rem 1rem !important;
+  }
+  .certificate-buttons,
+  .card .position-absolute.top-0.end-0.m-2.d-flex.gap-1,
+  .d-flex.justify-content-center {
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+  }
+  .upload-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-top: 10px !important;
+    position: static !important;
+    display: block !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .btn,
+  .btn-success,
+  .btn-dark,
+  .btn-primary,
+  .btn-outline-secondary,
+  .btn-danger,
+  .btn-warning {
+    font-size: 0.95rem !important;
+    padding: 0.5rem 0.8rem !important;
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 8px;
+    display: block;
+    text-align: center;
+  }
+  .btn-sm {
+    font-size: 0.9rem !important;
+    padding: 0.4rem 0.7rem !important;
+  }
+  .certificate-buttons,
+  .card .position-absolute.top-0.end-0.m-2.d-flex.gap-1,
+  .d-flex.justify-content-center {
+    flex-direction: column !important;
+    gap: 6px !important;
+    align-items: stretch !important;
+  }
+  .upload-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-top: 8px !important;
+    position: static !important;
+    display: block !important;
+  }
+}
+
+/* Ensure button icons and text are aligned on all screens */
+.btn i,
+.btn span {
+  vertical-align: middle;
+}
+.info-social a {
+    margin-right: 10px;
+    color: #003366;
+    font-size: 1.5rem;
+}
+.info-social a:hover {
+    color: #FFD700;
+}
+
+/* Modern info-card */
+.info-card {
+    background: #fff;
+    border-radius: 1.5rem;
+    box-shadow: 0 2px 24px 0 rgba(0,0,0,0.07);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.uni-logo-modern {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 1rem;
+    border: 2px solid #f0f0f0;
+    background: #f9f9f9;
+}
+
+.info-card h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.info-card .info-social a {
+    color: #444;
+    transition: color 0.2s;
+}
+.info-card .info-social a:hover {
+    color: #0d6efd;
+}
+
+.info-card .expandable-text {
+    display: inline;
+    overflow: hidden;
+    white-space: pre-line;
+    word-break: break-word;
+    max-width: 100%;
+}
+
+.read-more-link {
+    color: #0d6efd;
+    cursor: pointer;
+    margin-left: 0.5em;
+    font-size: 0.95em;
+    text-decoration: none;
+}
+.read-more-link:hover {
+    text-decoration: underline;
+}
+
+/* Modern modal */
+.modal-content {
+    border-radius: 1.5rem;
+    box-shadow: 0 2px 24px 0 rgba(0,0,0,0.10);
+    border: none;
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+.form-control, .form-label {
+    border-radius: 0.75rem !important;
+}
+
+@media (max-width: 768px) {
+    .info-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+    .uni-logo-modern {
+        margin-bottom: 1rem;
+    }
+}
+
+
+
+

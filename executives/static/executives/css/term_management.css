@@ -1,27 +1,154 @@
+/* Reduce motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High-contrast focus states */
+:focus-visible {
+  outline: 3px solid var(--secondary) !important;
+  outline-offset: 2px !important;
+}
+
+.page-title {
+  font-size: clamp(1.25rem, 2.5vw + 1rem, 2rem);
+}
 /* Import Poppins font */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
+/* CSS Variables for University Branding */
+:root {
+    /* Primary Colors (University Branding) */
+    --primary: #003366; /* Deep Blue - main brand color */
+    --primary-light: #1a4d80; /* Lighter shade for hover states */
+    --primary-dark: #00264d; /* Darker shade for active states */
+    
+    /* Secondary Colors */
+    --secondary: #FFD700; /* Gold - for accents and highlights */
+    --secondary-light: #ffe44d;
+
+    /* Background Colors */
+    --bg-light: #FFFFFF;
+    --bg-gray: #F5F5F5;
+    
+    /* Text Colors */
+    --text-dark: #333333;
+    --text-black: #000000;
+    --text-light: #FFFFFF;
+    
+    /* Status Colors */
+    --success: #4CAF50;
+    --error: #F44336;
+    --warning: #FFC107;
+    --info: #17A2B8;
+}
+
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
   background-color: #f6f8fb; /* 60% - soft neutral blue-gray */
   color: #1e293b;
-  transition: background 0.4s;
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: var(--primary);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1050;
+    position: relative;
+}
+
+.navbar-brand, .nav-link {
+    color: var(--text-light) !important;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: var(--secondary) !important;
+    border-bottom: 2px solid var(--secondary);
+}
+
+.dropdown-menu {
+    background-color: var(--primary-light);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 1060;
+    position: absolute;
+}
+
+.dropdown-item {
+    color: var(--text-light);
+    padding: 10px 20px;
+}
+
+.dropdown-item:hover {
+    background-color: var(--secondary) !important;
+    color: var(--text-dark) !important;
+    border-radius: 8px;
+}
+
+/* Remove Bootstrap's default active background */
+.dropdown-item.active {
+    background: transparent !important;
+}
+
+/* Ensure hover works in all states */
+.dropdown-item:hover {
+    background-color: var(--secondary) !important;
+    color: var(--text-dark) !important;
+    border-radius: 8px;
+}
+
+.uni-logo {
+    height: 50px;
+    width: 50px;
+    border-radius: 8px;
+    margin-right: 15px;
+}
+
+.custom-nav-spacing .nav-item {
+    margin-right: 2rem;
+}
+
+@media (max-width: 991.98px) {
+    .custom-nav-spacing .nav-item {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+}
+
+.logout-button {
+  border-radius: 10px;
+  width: 70px;
+  height: 50px;
+  background-color: var(--error);
+}
+
+.logout-icon {
+  font-size: 1.7rem;
+  width: 20px;
+}
+
+.logout-icon:hover {
+  color: var(--secondary) !important;
 }
 
 /* Term button styling */
 .term-button {
-  background-color: #e3edfa !important;
-  color: #1f2937 !important;
-  border: none;
-  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.07);
+  background-color: var(--bg-light) !important;
+  color: var(--text-dark) !important;
+  box-shadow: 0 2px 8px 0 rgba(0, 51, 102, 0.07);
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   letter-spacing: 0.01em;
-  transition: 
-    background 0.3s, 
-    color 0.3s, 
-    box-shadow 0.3s, 
-    transform 0.15s;
+  transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -35,40 +162,27 @@ body {
 }
 
 .term-button:hover {
-  background-color: #c7e0fa !important; /* slightly deeper blue */
-  color: #1741a6 !important;
-  box-shadow: 0 6px 18px 0 rgba(37,99,235,0.13);
-  transform: translateY(-2px) scale(1.03);
+  background-color: var(--text-light) !important;
+  color: var(--primary-light) !important;
+  box-shadow: 0 6px 18px 0 rgba(0, 51, 102, 0.13);
+  transform: translateY(-1px);
 }
 
-.term-button:active {
-  background-color: #b1d0f7 !important;
-  color: #1741a6 !important;
-  transform: scale(0.98);
-}
 
-/* Active term button */
-.term-button.active {
-  background-color: #3b82f6;         /* bg-blue-500 */
-  border: 1px solid #60a5fa;         /* border-blue-400 */
-  color: #fff;                       /* text-white */
-}
 
-.term-button.active:hover {
-  background-color: #93c5fd;         /* hover:bg-blue-300 */
-}
+
 
 /* Ensure term button label is always visible and popping */
 .term-button span {
-  color: #4273e4 !important;
+  color: var(--primary) !important;
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.01em;
-  text-shadow: 0 1px 2px rgba(30,64,175,0.06);
-  transition: color 0.3s;
-  margin-left: 0.75rem; /* Add space between icon and text */
+  font-size: 1.05rem;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
+
+
 
 /* Term icon style for each term box */
 .term-icon svg,
@@ -90,29 +204,43 @@ body {
   display: inline-block;
   width: 100%;
   text-align: center;
-  color: #2563eb;
+  color: var(--primary);
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   letter-spacing: 0.01em;
   transition: color 0.3s;
 }
 
-/* Popup box styling for blue theme */
-#date-popup .bg-white {
-  border: 2px solid #89b0f0;
-  box-shadow: 0 12px 48px 0 rgba(30, 41, 59, 0.35);
+/* Modal overlay and card base */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 24, 39, 0.3);
+  z-index: 1050;
+  padding: 1rem;
+  overflow: auto;
+}
+
+/* Popup box styling for university theme */
+#date-popup .modal-card {
+  border: 2px solid var(--primary-light);
+  box-shadow: 0 12px 48px 0 rgba(0, 51, 102, 0.35);
   border-radius: 1.25rem;
-  background: #eef1f5; /* Use the term box color */
+  background: var(--bg-light);
   position: relative;
-  max-width: 370px;
-  min-width: 270px;
+  max-width: min(420px, 92vw);
+  min-width: min(300px, 92vw);
   padding: 1.5rem 1.5rem;
   margin: 0 0.5rem;
   animation: popIn 0.4s cubic-bezier(.68,-0.55,.27,1.55);
+  z-index: 1040;
 }
 
 #date-popup h2 {
-  color: #516a92;
+  color: var(--primary);
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   letter-spacing: 0.02em;
@@ -121,7 +249,7 @@ body {
 }
 
 #date-popup label {
-  color: #516a92 !important;
+  color: var(--primary) !important;
   font-weight: 600;
   font-size: 1rem;
   margin-bottom: 0.5rem;
@@ -130,21 +258,34 @@ body {
   transition: color 0.3s;
 }
 
-#date-popup input[type="date"] {
-  background: #b1d0f7;
-  color: #516a92;
-  border: 2px solid #516a92 !important;
+#date-popup input[type="date"],
+#date-popup input[type="text"],
+#date-popup input[type="number"] {
+  background: var(--bg-gray);
+  color: var(--text-dark);
+  border: 2px solid var(--primary-light) !important;
   font-size: 1rem;
   margin-bottom: 1rem;
   min-height: 2rem;
   padding: 0.25rem 0.75rem;
   border-radius: 0.375rem;
   transition: border 0.3s, box-shadow 0.3s;
+  font-family: 'Poppins', sans-serif;
 }
 
-#date-popup input[type="date"]:not([readonly]) {
-  border-color: #516a92;
-  box-shadow: 0 0 0 2px #60a5fa55;
+#date-popup input[type="date"]:not([readonly]),
+#date-popup input[type="text"]:not([readonly]),
+#date-popup input[type="number"]:not([readonly]) {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.25);
+}
+
+#date-popup input[type="date"]:focus,
+#date-popup input[type="text"]:focus,
+#date-popup input[type="number"]:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.25);
 }
 
 #date-popup .flex.justify-end.gap-2 {
@@ -155,119 +296,895 @@ body {
 #date-popup button#popupEditBtn,
 #date-popup button#popupSaveBtn,
 #date-popup button#popupCancelBtn {
-  background-color: #b1d0f7;
-  color: #516a92;
-  border: 2px solid #516a92;
+  background-color: var(--primary-light);
+  color: var(--text-light);
+  border:1px solid var(--primary);
   font-size: 1rem;
   padding: 0.5rem 1.25rem;
   border-radius: 0.5rem;
   font-weight: 700;
   min-width: 80px;
   transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.10);
+  box-shadow: 0 2px 8px 0 rgba(0, 51, 102, 0.10);
 }
 
 #date-popup button#popupEditBtn:hover,
 #date-popup button#popupSaveBtn:hover,
 #date-popup button#popupCancelBtn:hover {
-  background-color: #516a92;
-  color: #fff;
-  border-color: #516a92;
+  background-color: var(--primary-light);
+  color: var(--text-light);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+
+}
+
+/* Delete popup styling for university theme */
+#delete-popup .modal-card {
+  border: 2px solid var(--primary-light);
+  box-shadow: 0 12px 48px 0 rgba(0, 51, 102, 0.35);
+  border-radius: 1.25rem;
+  background: var(--bg-light);
+  position: relative;
+  max-width: min(420px, 92vw);
+  min-width: min(300px, 92vw);
+  padding: 1.5rem 1.5rem;
+  margin: 0 0.5rem;
+  animation: popIn 0.4s cubic-bezier(.68,-0.55,.27,1.55);
+  z-index: 1040;
+}
+
+#delete-popup h2 {
+  color: var(--error);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.02em;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+}
+
+#delete-popup p {
+  color: var(--text-dark);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+#delete-popup .flex.justify-end.gap-2 {
+  margin-top: 1.5rem;
+  gap: 0.75rem;
+}
+
+#delete-popup button#deleteCancelBtn {
+  background-color: var(--bg-gray);
+  color: var(--text-dark);
+  border: 2px solid var(--primary-light);
+  font-size: 1rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  min-width: 80px;
+  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px 0 rgba(0, 51, 102, 0.10);
+}
+
+#delete-popup button#deleteCancelBtn:hover {
+  background-color: var(--primary-light);
+  color: var(--text-light);
+  border-color: var(--primary);
+}
+
+#delete-popup button#deleteConfirmBtn {
+  background-color: var(--error);
+  color: var(--text-light);
+  border: 2px solid var(--error);
+  font-size: 1rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  min-width: 80px;
+  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px 0 rgba(244, 67, 54, 0.25);
+}
+
+#delete-popup button#deleteConfirmBtn:hover {
+  background-color: #d32f2f;
+  color: var(--text-light);
+  border-color: #d32f2f;
+  box-shadow: 0 4px 12px 0 rgba(244, 67, 54, 0.35);
+}
+
+/* Send Result popup styling for university theme */
+#send-result-popup .modal-card {
+  border: 2px solid var(--primary-light);
+  box-shadow: 0 12px 48px 0 rgba(0, 51, 102, 0.35);
+  border-radius: 1.25rem;
+  background: var(--bg-light);
+  position: relative;
+  max-width: min(420px, 92vw);
+  min-width: min(300px, 92vw);
+  padding: 1.5rem 1.5rem;
+  margin: 0 0.5rem;
+  animation: popIn 0.4s cubic-bezier(.68,-0.55,.27,1.55);
+  z-index: 1040;
+}
+
+#send-result-popup h2 {
+  color: var(--success);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.02em;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+}
+
+#send-result-popup p {
+  color: var(--text-dark);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+#send-result-popup .flex.justify-end.gap-2 {
+  margin-top: 1.5rem;
+  gap: 0.75rem;
+}
+
+#send-result-popup button#sendResultCancelBtn {
+  background-color: var(--bg-gray);
+  color: var(--text-dark);
+  border: 2px solid var(--primary-light);
+  font-size: 1rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  min-width: 80px;
+  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px 0 rgba(0, 51, 102, 0.10);
+}
+
+#send-result-popup button#sendResultCancelBtn:hover {
+  background-color: var(--primary-light);
+  color: var(--text-light);
+  border-color: var(--primary);
+}
+
+#send-result-popup button#sendResultConfirmBtn {
+  background-color: var(--success);
+  color: var(--text-light);
+  border: 2px solid var(--success);
+  font-size: 1rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  min-width: 80px;
+  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px 0 rgba(76, 175, 80, 0.25);
+}
+
+#send-result-popup button#sendResultConfirmBtn:hover {
+  background-color: #45a049;
+  color: var(--text-light);
+  border-color: #45a049;
+  box-shadow: 0 4px 12px 0 rgba(76, 175, 80, 0.35);
 }
 
 /* New term button styling */
 #addNewTermBtn {
-  background-color: #3b82f6;
-  color: #fff;
+  background-color: var(--primary);
+  color: var(--text-light);
   border: none;
-  border-radius: 0.375rem;
-  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
+  font-size: 0.95rem;
   letter-spacing: 0.01em;
-  transition: background 0.2s, color 0.2s;
+  transition: all 0.3s ease;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.10);
+  gap: 0.5rem;
+  box-shadow: 0 2px 8px 0 rgba(0, 51, 102, 0.15);
 }
 
 #addNewTermBtn:hover {
-  background-color: #2563eb !important; /* Soothing blue */
-  color: #fff !important;
+  background-color: var(--primary-dark) !important;
+  color: var(--text-light) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px 0 rgba(0, 51, 102, 0.25);
 }
 
 #addNewTermBtn:active {
   transform: scale(0.98);
 }
+
+#addNewTermBtn i {
+  font-size: 0.9rem;
+}
+
+/* View Details button styling */
+.view-details-btn {
+  background-color: var(--primary);
+  color: var(--text-light);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 8px 0 rgba(0, 51, 102, 0.15);
+}
+
+.view-details-btn:hover {
+  background-color: var(--primary-dark);
+  color: var(--text-light);
+  /* border-color: var(--primary-dark); */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px 0 rgba(0, 51, 102, 0.25);
+}
+
+.view-details-btn:active {
+  transform: scale(0.98);
+}
+
+/* Send Result button styling */
+.send-result-btn {
+  background-color: var(--secondary);
+  color: var(--primary);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 8px 0 rgba(0, 51, 102, 0.15);
+}
+
+.send-result-btn:hover {
+  background-color: var(--secondary);
+  color: var(--primary);
+  /* border-color: var(--primary-dark); */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px 0 rgba(0, 51, 102, 0.25);
+}
+
+.send-result-btn:active {
+  transform: scale(0.98);
+}
  
-/* Responsive layout for main container and term buttons */
-@media (max-width: 1024px) {
-  aside {
-    width: 4rem !important;
-    min-width: 4rem !important;
-    padding: 1rem 0 !important;
-  }
-  aside nav a {
-    font-size: 0.95rem;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    text-align: center;
-  }
-  header, main, footer {
-    margin-left: 4rem !important;
-  }
+/* Comprehensive Responsive Design */
+
+/* Base responsive grid system */
+#termButtonsContainer,
+.tm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
 }
 
-@media (max-width: 768px) {
-  aside {
-    display: none !important;
-  }
-  header, main, footer {
-    margin-left: 0 !important;
-  }
-  .bg-white,
-  .term-button,
-  #date-popup .bg-white {
-    border-radius: 0.75rem !important;
-    padding: 1rem !important;
-  }
+/* Large Desktop (1400px and up) */
+@media (min-width: 1400px) {
   #termButtonsContainer {
-    grid-template-columns: 1fr !important;
-    gap: 1rem !important;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
   }
-}
-
-@media (max-width: 640px) {
+  
   .term-button {
-    font-size: 0.95rem !important;
-    padding: 0.5rem 0.5rem !important;
-    min-width: 0 !important;
-  }
-  #date-popup .bg-white {
-    min-width: 90vw !important;
-    max-width: 98vw !important;
-    padding: 0.75rem !important;
-  }
-  #date-popup h2 {
+    padding: 1.5rem !important;
     font-size: 1.1rem !important;
   }
-  #date-popup label {
-    font-size: 0.95rem !important;
+  
+  .term-icon svg,
+  .term-icon img {
+    width: 3.2rem !important;
+    height: 3.2rem !important;
   }
 }
 
-/* Make the term buttons grid always have 2 columns on desktop */
-#termButtonsContainer {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
+/* Desktop (1024px - 1399px) */
+@media (min-width: 1024px) and (max-width: 1399px) {
+  #termButtonsContainer {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.75rem;
+  }
+  
+  .term-button {
+    padding: 1.25rem !important;
+  }
 }
 
-/* Responsive: stack to 1 column on small screens */
-@media (max-width: 1024px) {
+/* Tablet Landscape (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
   #termButtonsContainer {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+  
+  .term-button {
+    padding: 1rem !important;
+    font-size: 1rem !important;
+  }
+  
+  .term-icon svg,
+  .term-icon img {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+  
+  /* Adjust main container padding */
+  main {
+    padding: 1rem !important;
+    overflow-x: hidden;
+  }
+  
+  .bg-white {
+    padding: 1.5rem !important;
+  }
+}
+
+/* Tablet Portrait (600px - 767px) */
+@media (min-width: 600px) and (max-width: 767px) {
+  #termButtonsContainer {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .term-button {
+    padding: 0.875rem !important;
+    font-size: 0.95rem !important;
+  }
+  
+  .term-icon svg,
+  .term-icon img {
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+  }
+  
+  /* Adjust header section */
+  .d-flex.justify-content-between.align-items-center.mb-3 {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  #addNewTermBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Mobile Large (480px - 599px) */
+@media (min-width: 480px) and (max-width: 599px) {
+  #termButtonsContainer {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .term-button {
+    padding: 1rem !important;
+    font-size: 1rem !important;
+  }
+  
+  .term-icon svg,
+  .term-icon img {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+  
+  /* Adjust main */
+  main {
+    padding: 0.75rem !important;
+    overflow-x: hidden;
+    margin-top: 56px !important;
+  }
+  
+  .bg-white {
+    padding: 1rem !important;
+    border-radius: 0.75rem !important;
+  }
+  
+  /* Header adjustments */
+  .d-flex.justify-content-between.align-items-center.mb-3 {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  #addNewTermBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.875rem 1rem !important;
+  }
+  
+  h2.text-xl.font-semibold {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* Mobile Medium (375px - 479px) */
+@media (min-width: 375px) and (max-width: 479px) {
+  #termButtonsContainer {
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+  }
+  
+  .term-button {
+    padding: 0.875rem !important;
+    font-size: 0.95rem !important;
+    min-height: 80px;
+  }
+  
+  .term-icon svg,
+  .term-icon img {
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+  }
+  
+  /* Main container adjustments */
+  main {
+    padding: 0.5rem !important;
+    overflow-x: hidden;
+    margin-top: 56px !important;
+  }
+  
+  .bg-white {
+    padding: 0.875rem !important;
+    border-radius: 0.5rem !important;
+  }
+  
+  /* Header section */
+  .d-flex.justify-content-between.align-items-center.mb-3 {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  
+  #addNewTermBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  h2.text-xl.font-semibold {
+    font-size: 1.125rem !important;
+  }
+  
+  /* View Details button */
+  .view-details-btn {
+    font-size: 0.8rem !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+  
+  /* Send Result button */
+  .send-result-btn {
+    font-size: 0.8rem !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+}
+
+/* Mobile Small (320px - 374px) */
+@media (min-width: 320px) and (max-width: 374px) {
+  #termButtonsContainer {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .term-button {
+    padding: 0.75rem !important;
+    font-size: 0.9rem !important;
+    min-height: 70px;
+  }
+  
+  .term-icon svg,
+  .term-icon img {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+  
+  /* Main container */
+  main {
+    padding: 0.5rem !important;
+    overflow-x: hidden;
+    margin-top: 56px !important;
+  }
+  
+  .bg-white {
+    padding: 0.75rem !important;
+    border-radius: 0.5rem !important;
+  }
+  
+  /* Header */
+  .d-flex.justify-content-between.align-items-center.mb-3 {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  
+  #addNewTermBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.625rem 0.875rem !important;
+    font-size: 0.85rem !important;
+  }
+  
+  h2.text-xl.font-semibold {
+    font-size: 1rem !important;
+  }
+  
+  /* View Details button */
+  .view-details-btn {
+    font-size: 0.75rem !important;
+    padding: 0.375rem 0.625rem !important;
+  }
+  
+  /* Send Result button */
+  .send-result-btn {
+    font-size: 0.75rem !important;
+    padding: 0.375rem 0.625rem !important;
+  }
+}
+
+/* Extra Small Mobile (below 320px) */
+@media (max-width: 319px) {
+  #termButtonsContainer {
+    grid-template-columns: 1fr;
+    gap: 0.625rem;
+  }
+  
+  .term-button {
+    padding: 0.625rem !important;
+    font-size: 0.85rem !important;
+    min-height: 60px;
+  }
+  
+  .term-icon svg,
+  .term-icon img {
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+  }
+  
+  /* Main container */
+  main {
+    padding: 0.375rem !important;
+    margin-top: 56px !important;
+  }
+  
+  .bg-white {
+    padding: 0.625rem !important;
+    border-radius: 0.375rem !important;
+  }
+  
+  /* Header */
+  .flex.justify-between.items-center.mb-4 {
+    flex-direction: column;
+    gap: 0.625rem;
+    align-items: flex-start;
+  }
+  
+  #addNewTermBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.8rem !important;
+  }
+  
+  h2.text-xl.font-semibold {
+    font-size: 0.95rem !important;
+  }
+  
+  /* View Details button */
+  .view-details-btn {
+    font-size: 0.7rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+  
+  /* Send Result button */
+  .send-result-btn {
+    font-size: 0.7rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+}
+
+/* Navbar Responsive Improvements */
+@media (max-width: 991.98px) {
+  .navbar {
+    padding: 0.5rem 1rem !important;
+  }
+  .navbar .nav-link {
+    padding: .5rem .5rem !important;
+  }
+  
+  .uni-logo {
+    height: 40px !important;
+    width: 40px !important;
+  }
+  
+  .navbar-toggler {
+    padding: 0.25rem 0.5rem !important;
+  }
+  
+  .dropdown-menu {
+    margin-top: 0.5rem !important;
+    border-radius: 0.5rem !important;
+  }
+  
+  .dropdown-item {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .navbar {
+    padding: 0.375rem 0.75rem !important;
+  }
+  
+  .uni-logo {
+    height: 35px !important;
+    width: 35px !important;
+  }
+  
+  .navbar-brand {
+    font-size: 1rem !important;
+  }
+  
+  .nav-link {
+    font-size: 0.95rem !important;
+    padding: 0.5rem 0.5rem !important;
+  }
+}
+
+/* Popup Responsive Improvements */
+@media (max-width: 768px) {
+  #date-popup .modal-card,
+  #delete-popup .modal-card,
+  #send-result-popup .modal-card {
+    min-width: 90vw !important;
+    max-width: 95vw !important;
+    padding: 1.25rem !important;
+    margin: 0 0.5rem !important;
+  }
+  
+  #date-popup h2,
+  #delete-popup h2,
+  #send-result-popup h2 {
+    font-size: 1.25rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  #date-popup label {
+    font-size: 0.9rem !important;
+    margin-bottom: 0.375rem !important;
+  }
+  
+  #date-popup input[type="date"],
+  #date-popup input[type="text"],
+  #date-popup input[type="number"] {
+    font-size: 0.9rem !important;
+    padding: 0.5rem 0.625rem !important;
+    min-height: 2.5rem !important;
+  }
+  
+  #date-popup button#popupEditBtn,
+  #date-popup button#popupSaveBtn,
+  #date-popup button#popupCancelBtn,
+  #delete-popup button#deleteCancelBtn,
+  #delete-popup button#deleteConfirmBtn,
+  #send-result-popup button#sendResultCancelBtn,
+  #send-result-popup button#sendResultConfirmBtn {
+    font-size: 0.9rem !important;
+    padding: 0.5rem 1rem !important;
+    min-width: 70px !important;
+   
+  }
+  
+  .flex.justify-end.gap-2 {
+    gap: 0.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #date-popup .modal-card,
+  #delete-popup .modal-card,
+  #send-result-popup .modal-card {
+    min-width: 95vw !important;
+    max-width: 98vw !important;
+    padding: 1rem !important;
+    margin: 0 0.25rem !important;
+  }
+  
+  #date-popup h2,
+  #delete-popup h2,
+  #send-result-popup h2 {
+    font-size: 1.125rem !important;
+    margin-bottom: 0.875rem !important;
+  }
+  
+  #date-popup label {
+    font-size: 0.85rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  #date-popup input[type="date"],
+  #date-popup input[type="text"],
+  #date-popup input[type="number"] {
+    font-size: 0.85rem !important;
+    padding: 0.375rem 0.5rem !important;
+    min-height: 2.25rem !important;
+  }
+  
+  #date-popup button#popupEditBtn,
+  #date-popup button#popupSaveBtn,
+  #date-popup button#popupCancelBtn,
+  #delete-popup button#deleteCancelBtn,
+  #delete-popup button#deleteConfirmBtn,
+  #send-result-popup button#sendResultCancelBtn,
+  #send-result-popup button#sendResultConfirmBtn {
+    font-size: 0.85rem !important;
+    padding: 0.375rem 0.875rem !important;
+    min-width: 60px !important;
+    
+  }
+  
+  .flex.justify-end.gap-2 {
+    gap: 0.375rem !important;
+  }
+}
+
+/* Loading Spinner Responsive */
+@media (max-width: 768px) {
+  .loading-container {
+    padding: 2rem 0.75rem !important;
+    min-height: 150px !important;
+  }
+  
+  .loading-spinner {
+    width: 40px !important;
+    height: 40px !important;
+    border-width: 3px !important;
+  }
+  
+  .loading-text {
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-container {
+    padding: 1.5rem 0.5rem !important;
+    min-height: 120px !important;
+  }
+  
+  .loading-spinner {
+    width: 35px !important;
+    height: 35px !important;
+    border-width: 2.5px !important;
+  }
+  
+  .loading-text {
+    font-size: 0.9rem !important;
+  }
+}
+
+/* New Term Input Responsive */
+@media (max-width: 768px) {
+  .new-term-row {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .new-term-input {
+    font-size: 0.95rem !important;
+    padding: 0.75rem 0.875rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .new-term-row {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .new-term-input {
+    font-size: 0.9rem !important;
+    padding: 0.625rem 0.75rem !important;
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .term-button {
+    min-height: 60px !important;
+    padding: 1rem !important;
+  }
+  
+  .view-details-btn {
+    min-height: 44px !important;
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .send-result-btn {
+    min-height: 44px !important;
+    padding: 0.75rem 1rem !important;
+  }
+  
+  #addNewTermBtn {
+    min-height: 48px !important;
+    padding: 0.875rem 1.25rem !important;
+  }
+  
+  /* Increase touch targets */
+  .deleteIcon {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* .deleteIcon:hover {
+    background-color: var(--error) !important;
+    color: var(--text-light) !important;
+  } */
+}
+
+.deleteIcon:hover {
+  /* background-color: var(--error) !important; */
+  color: var(--error) !important;
+} 
+
+/* High DPI Display Optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .term-button {
+    border-width: 1px !important;
+  }
+  
+  .loading-spinner {
+    border-width: 2px !important;
+  }
+  
+  #date-popup .modal-card,
+  #delete-popup .modal-card {
+    border-width: 1px !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .navbar,
+  #addNewTermBtn,
+  .view-details-btn,
+  .send-result-btn,
+  .deleteIcon {
+    display: none !important;
+  }
+  
+  main {
+    margin-top: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .bg-white {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+  
+  .term-button {
+    border: 1px solid #333 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
   }
 }
 
@@ -286,4 +1203,44 @@ body {
   min-width: 0;
   font-size: 1rem;
   box-sizing: border-box;
+}
+
+/* Loading Spinner Styling */
+.loading-container {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  min-height: 200px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--bg-gray);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.loading-text {
+  color: var(--primary);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Hide loading spinner when terms are loaded */
+.loading-container.hidden {
+  display: none;
 }

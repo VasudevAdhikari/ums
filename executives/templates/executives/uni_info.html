@@ -16,95 +16,180 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Univesity Information</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'executives/css/uni_info.css' %}"></link>
+    <link rel="stylesheet" href="{% static 'executives/css/uni_info.css' %}">
+    </link>
     <script src="{% static 'executives/javascripts/uni_info_backend.js' %}"></script>
+    <style>
+        :root {
+            /* Primary Colors (University Branding) */
+            --primary: #003366; /* Deep Blue - main brand color */
+            --primary-light: #1a4d80; /* Lighter shade for hover states */
+            --primary-dark: #00264d; /* Darker shade for active states */
+            
+            /* Secondary Colors */
+            --secondary: #FFD700; /* Gold - for accents and highlights */
+            --secondary-light: #ffe44d;
+  
+            /* Background Colors */
+            --bg-light: #FFFFFF;
+            --bg-gray: #F5F5F5;
+            
+            /* Text Colors */
+            --text-dark: #333333;
+            --text-black: #000000;
+            --text-light: #FFFFFF;
+            
+            /* Status Colors */
+            --success: #4CAF50;
+            --error: #F44336;
+            --warning: #FFC107;
+            --info: #17A2B8;
+        }
+        /*=======navbar styles================*/
+        .navbar {
+            background-color: var(--primary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand,
+        .nav-link {
+            color: var(--text-light) !important;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary) !important;
+            border-bottom: 2px solid var(--secondary);
+        }
+
+        .dropdown-menu {
+            background-color: var(--primary-light);
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .dropdown-item {
+            color: var(--text-light);
+            padding: 10px 20px;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--secondary) !important;
+            color: var(--text-dark) !important;
+            border-radius: 8px;
+        }
+
+        /* Remove Bootstrap's default active background */
+        .dropdown-item.active {
+            background: transparent !important;
+        }
+
+        /* Ensure hover works in all states */
+        .dropdown-item:hover {
+            background-color: var(--secondary) !important;
+            color: var(--text-dark) !important;
+            border-radius: 8px;
+        }
+
+
+        .uni-logo {
+            height: 50px;
+            width: 50px;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .custom-nav-spacing .nav-item {
+            margin-right: 2rem;
+        }
+
+        @media (max-width: 991.98px) {
+            .custom-nav-spacing .nav-item {
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        .logout-button {
+            border-radius: 10px;
+            width: 70px;
+            height: 50px;
+            background-color: var(--error);
+        }
+
+        .logout-icon {
+            font-size: 1.7rem;
+            width: 20px;
+        }
+
+        .logout-icon:hover {
+            color: var(--secondary) !important;
+        }
+    </style>
+    <script>
+        window.csrf = '{{csrf_token}}';
+    </script>
 </head>
 
 <body>
-
-    <header>
-        <div class="nav-left">
-            <div class="menu-icon"><i class="fa-solid fa-bars"></i></div>
-            <img class="uni-logo logoPreview"
-                src="/media/{{ university_info.profile }}" alt="{% static 'profile_pictures/' %}{{ university_info.profile }}" loading="lazy">
-            <div class="uni-name">{{ university_info.name }}</div>
-        </div>
-
-        <div class="noti "><i class="fa-solid fa-bell"></i></div>
-    </header>
-    <!-- Side bar menu -->
-    <div class="sidebar" id="sidebarMenu">
-        <div class="menu-list">
-            <div class="menu">
-                <ul>
-                    <li><a href="#"><i class="fa-solid fa-building-columns icon"></i><span
-                                class="sidebar-text">University Information</span></a></li>
-                    <li><a href="#"><i class="fa-solid fa-book-open icon"></i><span class="sidebar-text">Courses &
-                                Syallbi</span></a></li>
-                    <li><a href="#"><i class="fa-solid fa-user-tie icon"></i><span class="sidebar-text">Instructor
-                                Management</span></a></li>
-                    <li><a href="#"><i class="fa-solid fa-user-group icon"></i><span class="sidebar-text">Student
-                                Management</span></a></li>
-                    <li><a href="#"><i class="fa-solid fa-address-book icon"></i><span class="sidebar-text">Instructors
-                                Management</span></a></li>
-                    <li><a href="#"><i class="fa-solid fa-gears icon"></i><span class="sidebar-text">Setting</span></a>
-                    </li>
-                </ul>
-            </div>
-            <div class="menu log-out">
-                <ul>
-                    <li><a href="#"><i class="fa-solid fa-right-from-bracket icon"></i><span class="sidebar-text">Log
-                                Out</span></a></li>
-
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="overlay" id="sidebarOverlay"></div>
-
+    {% include "executives/navbar.html" %}
     <!-- University Information Details Section-->
     <section class="container">
-        <div class="info-card ">
-            <div class="info-title">
-                <h3 class="university-information">Uni Information</h3>
-                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
-                    data-bs-target="#editModal"><i class="fa-solid fa-pen "></i>Edit</button>
-            </div>
-
-            <div class="d-flex mb-3">
-                <img class="logoPreview uni-logo1 pb-1 rounded" id="logoPreview"
-                    src="/media/{{ university_info.profile }}" alt="" loading="lazy">
-            </div>
-
-            <div class="row">
-                <!-- Left column -->
-                <div class="col-sm-6 ">
-
-                    <ul class="info-list">
-                        <li><i class="fa-solid fa-landmark p-2 " style="color: #7c8a35c6;"></i><span id="uniName">
-                                {{ university_info.name }}</span></li>
-                        <li><i class="fas fa-map-marker-alt p-2" style="color: rgb(128, 196, 218);"></i><span
-                                id="uniAddress"> {{ university_info.address }}</span></li>
-                        <li><i class="fa-solid fa-envelope p-2 " style="color: #535ab0;"></i><span id="uniEmail">
-                                {{ university_info.contact_email }}</span></li>
-                        <li><i class="fa-solid fa-globe p-2 " style="color: hsla(27, 51%, 60%, 0.761);"></i><span
-                                id="uniWebsite"> {{ university_info.official_website }}</span></li>
-                        <li><i class="fa-brands fa-square-facebook p-2 " style="color: #334ec9;"></i><span
-                                id="uniSocialLink"> {{ university_info.facebook }}</span></li>
-                    </ul>
+        <div class="info-card rounded-4 p-4 mb-4 bg-white d-flex flex-column flex-md-row align-items-center gap-4 position-relative" style="box-shadow: none !important;">
+            <!-- Edit Icon Button -->
+            <button type="button"
+                    class="btn btn-light btn-sm position-absolute top-0 end-0 m-3 shadow-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editModal"
+                    title="Edit University Info">
+                <i class="fas fa-pen fa-lg text-primary"></i>
+            </button>
+            {% if university_info.profile %}
+                <img src="{% get_media_prefix %}{{ university_info.profile }}" alt="University Logo" class="uni-logo-modern rounded-3 shadow-sm mb-3 mb-md-0" style="width:120px; height:120px; object-fit:cover;">
+            {% endif %}
+            <div class="flex-grow-1 w-100">
+                <h2 class="fw-bold mb-2">{{ university_info.name }}</h2>
+                <hr><br>
+                <div class="mb-2 text-muted"><i class="fas fa-map-marker-alt me-2"></i>{{ university_info.address }}</div>
+                <div class="mb-2"><i class="fas fa-envelope me-2"></i>{{ university_info.contact_email }}</div>
+                <div class="mb-2"><i class="fas fa-globe me-2"></i>
+                    <a href="{{ university_info.official_website }}" target="_blank" class="link-primary text-decoration-none">{{ university_info.official_website }}</a>
                 </div>
-                <!-- Right column -->
-                <div class="col-sm-6">
-                    <ul class="info-list">
-                        <li><i class="fa-regular fa-clock p-2" style="color: #38c808;"></i><span id="uniHours"> {{ university_info.opening_time }}</span></li>
-                        <li>
-                            <div class="info-line"><i class="fa-solid fa-envelopes-bulk p-2"
-                                    style="color: #a7a859;"></i>
-                                <span class="info-description" id="uniDescription"> {{ university_info.description }}
-                                </span>
-                            </div>
-                        </li>
-                    </ul>
+                <div class="mb-2">
+                    <i class="fas fa-clock me-2"></i>{{ university_info.opening_time }}
+                </div>
+                <div class="mb-2 info-social">
+                    {% if university_info.linkedin %}
+                        <a href="{{ university_info.linkedin }}" target="_blank" class="me-2"><i class="fab fa-linkedin fa-lg"></i></a>
+                    {% endif %}
+                    {% if university_info.facebook %}
+                        <a href="{{ university_info.facebook }}" target="_blank" class="me-2"><i class="fab fa-facebook fa-lg"></i></a>
+                    {% endif %}
+                    {% if university_info.twitter %}
+                        <a href="{{ university_info.twitter }}" target="_blank" class="me-2"><i class="fab fa-twitter fa-lg"></i></a>
+                    {% endif %}
+                    {% if university_info.instagram %}
+                        <a href="{{ university_info.instagram }}" target="_blank" class="me-2"><i class="fab fa-instagram fa-lg"></i></a>
+                    {% endif %}
+                </div>
+                <hr><br>
+                <div class="mb-2">
+                    <strong>Description:</strong>
+                    <span class="expandable-text" id="desc-text">{{ university_info.description }}</span>
+                    <a href="#" class="read-more-link" data-target="desc-text">Read more</a>
+                </div>
+                <hr><br>
+                <div class="mb-2">
+                    <strong>Mission:</strong>
+                    <span class="expandable-text" id="mission-text">{{ university_info.mission }}</span>
+                    <a href="#" class="read-more-link" data-target="mission-text">Read more</a>
+                </div>
+                <hr><br>
+                <div>
+                    <strong>Vision:</strong>
+                    <span class="expandable-text" id="vision-text">{{ university_info.vision }}</span>
+                    <a href="#" class="read-more-link" data-target="vision-text">Read more</a>
                 </div>
             </div>
         </div>
@@ -112,83 +197,74 @@
 
     <!-- Edit uniInformation -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <form id='uni-info-edit' method="post" enctype="multipart/form-data" action="{% url 'executives:uni_info_edit' %}">
-                    {% csrf_token %}
-                    <div class="modal-header ">
-                        <h5 class="modal-title">Edit University Information</h5>
-                        <button type="button" class="btn-close" style="background-color: #198754 ;"
-                            data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body row">
-                        <div class="col-sm-6">
-                            <div class="mb-3">
-                                <label class="form-label " for="">University Name</label>
-                                <input type="text" class="form-control" id="inputName" name="name"
-                                    placeholder="University of Computer Studies">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="">Address</label>
-                                <input class="form-control" id="inputAddress" name="address" type="text"
-                                    placeholder=" 123 Yati Street, City">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="">Email</label>
-                                <input class="form-control" id="inputEmail" name="contact_email" type="email"
-                                    placeholder="contactz@university.edu.mm">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Website</label>
-                                <input type="url" id="inputWebsite" name="official_website" class="form-control"
-                                    placeholder="university.edu.mm">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Social Links</label>
-                                <input type="text" class="form-control" id="inputSocialLink" name="facebook" placeholder="Social Links">
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="mb-3">
-                                <label class="form-label">Office Hours</label>
-                                <input type="text" class="form-control" id="inputHours" name="opening_time"
-                                    placeholder="Mon-Fri, 9:00 AM - 5:00 PM">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Description</label>
-                                <textarea class="form-control" id="inputDescription" name="description" rows="5"
-                                    placeholder="Description about the university..."></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Logo Upload</label>
-                                <div class="file-upload-wrapper">
-                                    <label for="inputLogo" class="file-upload-label btn btn-primary btn-sm">
-                                        <i class="fa-solid fa-upload me-1"></i> Choose Logo
-                                    </label>
-                                    <input type="file" id="inputLogo" name="profile" class="visually-hidden" accept="image/*">
-                                    <span class="file-upload-name" id="fileNameLogo">No file selected</span>
-                                </div>
-                                {% if university_info.profile %}
-                                <div class="uni-info-logo-preview-wrapper">
-                                    <img src="/media/{{ university_info.profile }}" alt="Current Logo" class="uni-info-logo-preview-img">
-                                    <span class="uni-info-logo-filename">{{ university_info.profile|default_if_none:"" }}</span>
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="saveChanges">Save Changes</button>
-                    </div>
-                </form>
-                <div id="uni-info-success" class="alert alert-success d-none mt-2" role="alert">
-                    University information updated successfully!
-                </div>
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold" id="editModalLabel">Edit University Information</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="uni-info-edit" enctype="multipart/form-data" class="p-3">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Name</label>
+                <input type="text" class="form-control rounded-3" name="name" value="{{ university_info.name }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Address</label>
+                <input type="text" class="form-control rounded-3" name="address" value="{{ university_info.address }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control rounded-3" name="contact_email" value="{{ university_info.contact_email }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Website</label>
+                <input type="url" class="form-control rounded-3" name="official_website" value="{{ university_info.official_website }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Facebook</label>
+                <input type="url" class="form-control rounded-3" name="facebook" value="{{ university_info.facebook }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">LinkedIn</label>
+                <input type="url" class="form-control rounded-3" name="linkedin" value="{{ university_info.linkedin }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Twitter</label>
+                <input type="url" class="form-control rounded-3" name="twitter" value="{{ university_info.twitter }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Instagram</label>
+                <input type="url" class="form-control rounded-3" name="instagram" value="{{ university_info.instagram }}">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Office Hours</label>
+                <input type="text" class="form-control rounded-3" name="opening_time" value="{{ university_info.opening_time }}">
+              </div>
+              <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea class="form-control rounded-3" name="description" rows="2">{{ university_info.description }}</textarea>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Mission</label>
+                <textarea class="form-control rounded-3" name="mission" rows="2">{{ university_info.mission }}</textarea>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Vision</label>
+                <textarea class="form-control rounded-3" name="vision" rows="2">{{ university_info.vision }}</textarea>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Logo</label>
+                <input type="file" class="form-control rounded-3" name="profile" accept="image/*">
+              </div>
             </div>
+            <div class="modal-footer border-0 mt-4">
+              <button type="button" class="btn btn-outline-secondary rounded-3" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary rounded-3 px-4">Save Changes</button>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
 
     <!-- Edit uniInformation -->
@@ -206,17 +282,20 @@
         </div>
         <div class=" row" id="photoGrid">
 
+            <script>
+                console.log('photo is {{photos|safe|escapejs}}');
+            </script>
             {% for photo in photos %}
-            <div class="col-8 col-sm-6 col-md-4 mb-4">
+
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
                 <div class="card position-relative shadow-sm" id="photoCard{{photo.0}}" data-photo-id="{{photo.0}}">
-                    <img src="/media/{{photo.1.image}}"
-                        class="card-img-top img-fluid" alt="Photo" loading="lazy">
+                    <img src="/media/{{photo.1.image}}" class="card-img-top img-fluid" alt="Photo" loading="lazy">
                     <div class="card-body">
                         <p class="card-text uni-caption text-center" id="caption{{photo.0}}">{{photo.1.caption}}</p>
                     </div>
                     <div class="position-absolute top-0 end-0 m-2 d-flex gap-1">
-                        <button class="btn btn-sm btn-light edit-btn" style="border: 1px solid rgb(219, 193, 193);"><i
-                                class="fas fa-pen"></i></button>
+                        <!-- Button to hold -->
+                        <button class="btn btn-sm btn-light edit-btn" "><i class="fas fa-pen"></i></button>
                         <button class="btn btn-sm btn-danger delete-btn"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
@@ -319,17 +398,16 @@
         <div id="partnershipList" class="row gy-4">
 
             {% for partnership in partnerships %}
-            <div class="col-md-4">
+            <div class="col-12 col-sm-6 col-lg-4">
                 <div class="card partnership-card shadow-sm ">
-                    <img src="/media/{{partnership.1.image}}"
-                        class="card-img-top" alt="Image" loading="lazy">
+                    <img src="/media/{{partnership.1.image}}" class="card-img-top" alt="Image" loading="lazy">
                     <div class="card-body">
                         <h5 class="card-title">{{partnership.0}}</h5>
                         <p class="card-text"><strong>Description:</strong> {{ partnership.1.description }}
                         </p>
                         <p class="card-text"><strong>Type:</strong> {{ partnership.1.type }}</p>
-                        <button class="btn btn-sm btn-warning me-2" onclick="editPartnership(this)">Edit</button>
-                        <button class="btn btn-sm btn-danger" onclick="deletePartnership(this)">Delete</button>
+                        <button class="btn btn-sm btn-warning me-2 edit-btn" onclick="editPartnership(this)">Edit</button>
+                        <button class="btn btn-sm btn-danger delete-btn" onclick="deletePartnership(this)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -395,13 +473,9 @@
 
                 {% for certificate in certificates %}
                 <!-- {{certificate}} -->
-                <div class="col-md-4 mb-4 certificate-card">
-                    <div class="card h-100">
+                <div class="col-12 col-sm-6 col-lg-4 mb-4 certificate-card">
+                    <div class="card h-50">
                         <div class="card-body certificate-card">
-                            <div class="text-center mb-2">
-                                <!-- {{certificate.1.file}} -->
-                                <iframe src="/media/{{certificate.1.file}}"   class="certificate-preview"></iframe>
-                            </div>
                             <h5 class="certificate-title">{{certificate.1.title}}</h5>
                             <p class="certificate-desc">{{certificate.1.description}}</p>
                             <div class="certificate-buttons">
@@ -467,7 +541,8 @@
     <div class="container mt-5">
         <div class="section-border position-relative">
             <h3 class="mb-4 lab-section-title">University Labs</h3>
-            <button class="btn btn-success upload-btn position-absolute top-0 end-0 m-2" id="uploadLabBtn" data-bs-toggle="modal" data-bs-target="#uploadLabModal">
+            <button class="btn btn-success upload-btn position-absolute top-0 end-0 m-2" id="uploadLabBtn"
+                data-bs-toggle="modal" data-bs-target="#uploadLabModal">
                 + Upload
             </button>
 
@@ -475,10 +550,9 @@
                 <!-- Example Lab Card -->
 
                 {% for lab in labs %}
-                <div class="col-md-4 mb-4 lab-card">
+                <div class="col-12 col-sm-6 col-lg-4 mb-4 lab-card">
                     <div class="card h-100 shadow-sm position-relative">
-                        <img src="/media/{{lab.1.images.0}}"
-                            class="card-img-top" alt="Lab Image" loading="lazy">
+                        <img src="/media/{{lab.1.images.0}}" class="card-img-top" alt="Lab Image" loading="lazy">
                         <div class="card-body p-1">
                             <h5 class="card-title text-center mb-3 lab-name" lab-id="{{lab.0}}">{{lab.1.lab_name}}</h5>
                             <div class="d-flex justify-content-center">
@@ -490,38 +564,6 @@
                     </div>
                 </div>
                 {% endfor %}
-
-                <div class="col-md-4 mb-4 lab-card">
-                    <div class="card h-100 shadow-sm position-relative">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Contemporary_Computer_Lab.jpg"
-                            class="card-img-top" alt="Lab Image" loading="lazy">
-                        <div class="card-body p-1">
-                            <h5 class="card-title text-center mb-3">Computer Science Lab</h5>
-                            <div class="d-flex justify-content-center">
-                                <a href="/executives/show_lab_details/PhysicsLab"
-                                    class="btn btn-primary btn-sm me-2">Detail</a>
-                                <button class="btn btn-danger btn-sm delete-lab-btn">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col-md-4 mb-4 lab-card">
-                    <div class="card h-100 shadow-sm position-relative">
-                        <img src="  https://pub2014duminda.weebly.com/uploads/2/8/7/6/28762261/791518600.jpg?379"
-                            class="card-img-top" alt="Lab Image" loading="lazy">
-                        <div class="card-body p-1">
-                            <h5 class="card-title text-center mb-3">NLP Lab</h5>
-                            <div class="d-flex justify-content-center">
-                                <a href="labDetails.html?labId=1&labName=Physics Lab"
-                                    class="btn btn-primary btn-sm me-2">Detail</a>
-                                <button class="btn btn-danger btn-sm delete-lab-btn">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- More labs dynamically added here -->
             </div>
         </div>
     </div>
@@ -530,7 +572,8 @@
     <div class="modal fade" id="uploadLabModal" tabindex="-1" aria-labelledby="uploadLabModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <!-- {{ csrf_token }} -->
-            <form id="uploadLabForm" action="/executives/labs/create/" enctype="multipart/form-data" method="POST" class="modal-content">
+            <form id="uploadLabForm" action="/executives/labs/create/" enctype="multipart/form-data" method="POST"
+                class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="uploadLabModalLabel">Create New Lab</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -542,7 +585,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="newLabPhoto" class="form-label">Lab Photo</label>
-                        <input type="file" class="form-control" name="lab_photo" id="newLabPhoto" accept="image/*" required>
+                        <input type="file" class="form-control" name="lab_photo" id="newLabPhoto" accept="image/*"
+                            required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -557,46 +601,46 @@
     <!-- University Lab Section End-->
     <script src="{% static 'executives/javascripts/uni_info.js' %}"></script>
     <script>
-    document.querySelectorAll('.lab-card').forEach(labCard => {
-        deleteButton = labCard.querySelector('button');
-        console.log(deleteButton);
-        deleteButton.addEventListener('click', ()=> {
-            if (confirm('Are you sure to delete this lab')) {
-                lab = labCard.querySelector('.lab-name');
-                labName = lab.getAttribute('lab-id');
-                url=`/executives/labs/delete/${labName}`;
-                window.location.href = url;
-            }
-        })
-    });
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('uni-info-edit');
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const url = form.getAttribute('action');
-        const formData = new FormData(form);
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('uni-info-success').classList.remove('d-none');
-                setTimeout(() => {
-                    document.getElementById('uni-info-success').classList.add('d-none');
-                    // Optionally update preview fields here
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
-                    if (modal) modal.hide();
-                }, 1500);
-            }
+        document.querySelectorAll('.lab-card').forEach(labCard => {
+            deleteButton = labCard.querySelector('button');
+            console.log(deleteButton);
+            deleteButton.addEventListener('click', () => {
+                if (confirm('Are you sure to delete this lab')) {
+                    lab = labCard.querySelector('.lab-name');
+                    labName = lab.getAttribute('lab-id');
+                    url = `/executives/labs/delete/${labName}`;
+                    window.location.href = url;
+                }
+            })
         });
-    });
-});
-</script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('uni-info-edit');
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const url = form.getAttribute('action');
+                const formData = new FormData(form);
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('uni-info-success').classList.remove('d-none');
+                            setTimeout(() => {
+                                document.getElementById('uni-info-success').classList.add('d-none');
+                                // Optionally update preview fields here
+                                const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+                                if (modal) modal.hide();
+                            }, 1500);
+                        }
+                    });
+            });
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>   -->

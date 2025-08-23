@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Assessment Marks</title>
+
+  <!-- Poppins font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Primary Colors (University Branding) */
+      --primary: #003366; /* Deep Blue - main brand color */
+      --primary-light: #1a4d80; /* Lighter shade for hover states */
+      --primary-dark: #00264d; /* Darker shade for active states */
+
+      /* Secondary Colors */
+      --secondary: #FFD700; /* Gold - for accents and highlights */
+      --secondary-light: #ffe44d;
+
+      /* Background Colors */
+      --bg-light: #FFFFFF;
+      --bg-gray: #F5F5F5;
+
+      /* Text Colors */
+      --text-dark: #333333;
+      --text-black: #000000;
+      --text-light: #FFFFFF;
+
+      /* Status Colors */
+      --success: #4CAF50;
+      --error: #F44336;
+      --warning: #FFC107;
+      --info: #17A2B8;
+
+      /* Layout */
+      --radius: 1.2rem;
+      --shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text-dark);
+      background: linear-gradient(180deg, var(--bg-gray), #fff 30%);
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 32px auto 56px;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    .header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .title {
+      font-size: clamp(24px, 4vw, 34px);
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: var(--primary-dark);
+      margin: 0;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: var(--text-light);
+      padding: 10px 14px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Top Info Cards */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+      margin: 20px 0 10px;
+    }
+    .card {
+      border-top: 4px solid var(--primary-light);
+      background: var(--bg-light);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px 18px;
+    }
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--primary-light);
+    }
+    .card p {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-black);
+    }
+
+    .col-6 { grid-column: span 6; }
+    .col-4 { grid-column: span 4; }
+    .col-8 { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+
+    @media (max-width: 820px) {
+      .col-6, .col-4, .col-8 { grid-column: span 12; }
+      .header { grid-template-columns: 1fr; }
+    }
+
+    /* Chips row */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 8px 0 24px;
+    }
+    .chip {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-left: 6px solid var(--secondary);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+    }
+
+    /* Assessments */
+    .section-title {
+      margin: 26px 0 10px;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .assessments {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+
+    .assessment {
+      grid-column: span 12;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 14px;
+      border-radius: calc(var(--radius) - 4px);
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: var(--shadow);
+    }
+
+    .a-title { font-weight: 600; }
+    .a-score { font-weight: 700; }
+
+    .bar {
+      grid-column: span 2;
+      width: 100%;
+      height: 10px;
+      background: rgba(0,0,0,0.06);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .bar > span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--secondary), #ffeaa0);
+      width: var(--w, 0%);
+    }
+
+    /* Summary */
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+      margin-top: 22px;
+      align-items: stretch;
+    }
+    .summary-card {
+      grid-column: span 6;
+      display: grid;
+      gap: 10px;
+    }
+    .highlight {
+      background: var(--primary);
+      color: var(--text-light);
+    }
+    .highlight h3 { color: #cfe4ff; }
+    .highlight p { color: #fff; }
+
+    .stat {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-size: clamp(26px, 4vw, 36px);
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+    .muted { color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 500; }
+    .muted-dark { color: rgba(0,0,0,0.6); font-size: 14px; font-weight: 500; }
+
+    @media (max-width: 820px) {
+      .summary-card { grid-column: span 12; }
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      color: rgba(0,0,0,0.5);
+      margin-top: 28px;
+      font-size: 12px;
+    }
+
+    /* Print */
+    @media print {
+      body { background: #fff; }
+      .card, .assessment, .chip, .badge { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="header">
+      <h1 class="title">Assessment Results</h1>
+      <span class="badge" title="Overall status">Student • Subject Marks</span>
+    </div>
+
+    <!-- Top metadata cards -->
+    <section class="info-grid" aria-label="Course details">
+      <div class="card col-6">
+        <h3>Course Code</h3>
+        <p>{{batch_instructor.course.course_code}}</p>
+      </div>
+      <div class="card col-6">
+        <h3>Course Name</h3>
+        <p>{{batch_instructor.course.course_name}}</p>
+      </div>
+
+      <div class="card col-6">
+        <h3>Instructor</h3>
+        <p>{{batch_instructor.instructor.user.full_name}}</p>
+      </div>
+      <div class="card col-6">
+        <h3>Department</h3>
+        <p>{{batch_instructor.instructor.department.name}}</p>
+      </div>
+    </section>
+
+    <!-- Chips: term / degree / semester -->
+    <div class="chips" role="list" aria-label="Academic context">
+      <span class="chip" role="listitem">Term: {{batch_instructor.batch.term.term_name}}</span>
+      <span class="chip" role="listitem">Degree: {{batch_instructor.batch.semester.degree.name}}</span>
+      <span class="chip" role="listitem">{{batch_instructor.batch.semester.semester_name}}</span>
+    </div>
+
+    <!-- Assessments -->
+    <h2 class="section-title">Assessments</h2>
+    <section class="assessments" aria-label="Assessment marks">
+      <!-- quiz 1 10 out of 10 -->
+        {% for assessment_result in assessment_results %}
+        <div class="assessment">
+            <div class="a-title">{{ assessment_result.assessment.assessment.title }}</div>
+            <div class="a-score" aria-label="Score">
+            {{ assessment_result.mark }} / {{ assessment_result.assessment.assessment.total_mark }}
+            </div>
+            <div class="bar" aria-hidden="true">
+            <span style="--w:{% widthratio assessment_result.mark assessment_result.assessment.assessment.total_mark 100 %}%"></span>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+
+    <!-- Summary -->
+    <section class="summary" aria-label="Summary">
+      <div class="card summary-card highlight">
+        <h3>Overall</h3>
+        <div class="stat">
+          {{got_total}}<span class="muted">/ {{given_total}}</span>
+        </div>
+        <p class="muted">Comulative Assessment Results (For the whole semester period).</p>
+      </div>
+      <div class="card summary-card">
+        <h3>Overall Performance Percentage</h3>
+        <div class="stat" style="color: var(--primary-dark)">
+          {{percentage}}<span class="muted-dark">%</span>
+        </div>
+        <div class="bar" aria-hidden="true"><span style="--w: {{percentage}}%"></span></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

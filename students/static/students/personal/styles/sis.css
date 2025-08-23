@@ -1,10 +1,40 @@
+:root {
+    /* Primary Colors (University Branding) */
+    --primary: #003366; /* Deep Blue - main brand color */
+    --primary-light: #1a4d80; /* Lighter shade for hover states */
+    --primary-dark: #00264d; /* Darker shade for active states */
+    
+    /* Secondary Colors */
+    --secondary: #FFD700; /* Gold - for accents and highlights */
+    --secondary-light: #ffe44d;
+
+    /* Background Colors */
+    --bg-light: #FFFFFF;
+    --bg-gray: #F5F5F5;
+    
+    /* Text Colors */
+    --text-dark: #333333;
+    --text-black: #000000;
+    --text-light: #FFFFFF;
+    
+    /* Status Colors */
+    --success: #4CAF50;
+    --error: #F44336;
+    --warning: #FFC107;
+    --info: #17A2B8;
+}
+
+
+
 body, .form-control, .btn, label, h1, h4 {
     font-family: 'Poppins', Arial, sans-serif !important;
+    
 }
 
 body {
     font-family: 'Poppins', Arial, sans-serif;
-    background: linear-gradient(135deg, #e3f0ff 0%, #f4f8fb 100%);
+    /* background: linear-gradient(135deg, #e3f0ff 0%, #f4f8fb 100%); */
+    background: var(--primary-dark);
     margin: 0;
     padding: 0;
 }
@@ -16,6 +46,8 @@ body {
     border-radius: 2rem;
     box-shadow: 0 8px 32px 0 rgba(25, 118, 210, 0.10);
     padding: 2.5rem 2rem 1rem 2rem;
+    border-top: 6px solid var(--secondary);
+
 }
 
 h1, h4 {
@@ -24,32 +56,35 @@ h1, h4 {
 }
 
 h1 {
-    color: #1565c0;
+    color: var(--primary) !important;
     text-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
 }
 
 h4 {
-    color: #1976d2;
+    color: var(--primary);
     margin-bottom: 1.5rem;
 }
 
 .form-step {
-    background: linear-gradient(120deg, #e3f0ff 0%, #f4f8fb 100%);
+    /* background: linear-gradient(120deg, #e3f0ff 0%, #f4f8fb 100%); */
+    background: var(--bg-light)!important;
     border-radius: 1.5rem;
     box-shadow: 0 2px 12px 0 rgba(25, 118, 210, 0.06);
     padding: 2rem 1.5rem 1.5rem 1.5rem;
     margin-bottom: 2rem;
     transition: box-shadow 0.2s;
+    /* border-top: 6px solid var(--primary); */
+
 }
 
 .form-group label {
-    color: #1976d2;
+    color: var(--primary);
     font-weight: 500;
     margin-bottom: 0.5rem;
 }
 
 .form-control, .form-select, select.form-control {
-    border: 2px solid #90caf9;
+    border: 2px solid var(--primary);
     border-radius: 1.2rem;
     padding: 0.75rem 1.25rem;
     font-size: 1.05rem;
@@ -73,7 +108,7 @@ select.form-control {
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: #1976d2;
+    border-color: var(--primary);
     box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.15);
     background: #e3f0ff;
 }
@@ -93,34 +128,38 @@ textarea.form-control {
 }
 
 .btn-primary {
-    background: linear-gradient(90deg, #1976d2 60%, #1565c0 100%);
+    background: linear-gradient(90deg, var(--primary) 60%, var(--primary-light) 100%);
     border: none;
 }
 
 .btn-primary:hover, .btn-primary:focus {
-    background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+    background: linear-gradient(90deg, var(--primary-light) 60%, var(--primary) 100%);
     box-shadow: 0 4px 16px 0 rgba(25, 118, 210, 0.18);
+    transform: translateY(-1px);
+
 }
 
 .btn-secondary {
-    background: #e3f0ff;
-    color: #1976d2;
-    border: 2px solid #90caf9;
+    background: linear-gradient(90deg, var(--primary-light) 60%, var(--primary) 100%);
+    color: var(--text-light);
+    border: 2px solid var(--primary);
 }
 
 .btn-secondary:hover, .btn-secondary:focus {
-    background: #bbdefb;
-    color: #1565c0;
-    border-color: #1976d2;
+    background: linear-gradient(90deg, var(--primary-light) 60%, var(--primary) 100%);
+    color: var(--text-light);
+    border: 2px solid var(--primary);
+    transform: translateY(-1px);
+
 }
 
 .step-circle {
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    border: 2px solid #1976d2;
+    border: 2px solid var(--primary);
     background: #e3f0ff;
-    color: #1976d2;
+    color: var(--primary);
     font-weight: 700;
     margin: 0 4px;
     outline: none;
@@ -136,9 +175,9 @@ textarea.form-control {
 }
 
 .step-circle.active, .step-circle:focus {
-    background: linear-gradient(90deg, #1976d2 60%, #1565c0 100%);
+    background: linear-gradient(90deg, var(--primary) 60%, var(--primary-light) 100%);
     color: #fff;
-    border-color: #1565c0;
+    border-color: var(--primary-light);
     box-shadow: 0 4px 16px 0 rgba(25, 118, 210, 0.18);
 }
 
@@ -149,7 +188,7 @@ textarea.form-control {
 
 .form-check-input {
     border-radius: 0.7rem;
-    border: 2px solid #90caf9;
+    border: 2px solid var(--primary);
     width: 1.3em;
     height: 1.3em;
     margin-top: 0.2em;
@@ -157,12 +196,12 @@ textarea.form-control {
 }
 
 .form-check-input:checked {
-    background-color: #1976d2;
-    border-color: #1976d2;
+    background-color: var(--primary);
+    border-color: var(--primary);
 }
 
 .form-check-label {
-    color: #1976d2;
+    color: var(--primary);
     font-weight: 500;
     margin-left: 0.5em;
 }
@@ -259,4 +298,38 @@ textarea.form-control {
     .navbar-logo-mobile {
         display: none !important;
     }
+}
+.mobile-footer {
+    padding: 1rem;
+    text-align: left;
+}
+
+/* Styling for the back button link itself */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    background-color: var(--primary);
+    color:var(--text-light); /* iOS-style blue */
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--primary);
+    border-radius: 999px; /* For a pill-shaped button */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.back-button:hover {
+    background-color:var(--primary);
+    color: var(--text-light);
+    transform: translateY(-1px);
+
+    
+}
+
+/* Styling for the arrow icon */
+.back-arrow {
+    font-size: 1.5rem;
+    line-height: 1;
+    margin-right: 0.5rem;
 }

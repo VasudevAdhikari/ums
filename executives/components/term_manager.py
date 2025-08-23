@@ -1,8 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 import json
-from authorization.models import Term
+from authorization.models import Term, User
+from executives.result_components.result_email_sender import send_result_to_all_students
+import threading
+from django.contrib import messages
 
 def show_term_management(request):
     return render(request, 'executives/term_management.html')
@@ -68,3 +71,18 @@ def delete_term(request, term_id):
         except Exception as e:
             return HttpResponseBadRequest(str(e))
     return HttpResponseBadRequest('Invalid method')
+
+def send_results(request, term_id):
+    term = Term.objects.filter(pk=int(term_id)).first()
+    if not term:
+        return redirect('/public/access_denied/')
+
+    # Run the long task in a separate thread
+    executive = User.objects.filter(
+        email=request.COOKIES.get('my_user'),
+    )
+    threading.Thread(target=send_result_to_all_students, args=(term,executive,)).start()
+
+    # Immediately redirect
+    messages.info(request, 'The process of sending term results is running in the background. You will receive notifications upon completion or if any issues arise.')
+    return redirect('/executives/show_term_management')

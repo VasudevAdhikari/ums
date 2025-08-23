@@ -379,10 +379,18 @@ def lab_edit_api(request, lab_key):
     if lab_key not in labs:
         return JsonResponse({'success': False, 'error': 'Lab not found'})
     data = json.loads(request.body)
+    
+    # Handle head_of_lab update - convert profile object to user ID
+    if 'head_of_lab' in data:
+        head_data = data['head_of_lab']
+        if isinstance(head_data, dict) and 'id' in head_data:
+            data['head_of_lab'] = head_data['id']
+    
     # Update fields if present
     for field in ['lab_name', 'location', 'description', 'head_of_lab', 'department']:
         if field in data:
             labs[lab_key][field] = data[field]
+    
     save_labs_obj(labs_obj, labs)
     return JsonResponse({'success': True})
 
@@ -417,14 +425,30 @@ def lab_edit_project_api(request, lab_key, project_id):
     if request.method == 'POST':
         if request.content_type.startswith('application/json'):
             data = json.loads(request.body)
+            print(f"Received project data: {data}")
+            
             # Update simple fields
-            for field in ['title', 'description', 'project_lead', 'project_link', 'project_demo']:
+            for field in ['title', 'description', 'project_link', 'project_demo']:
                 if field in data:
                     project[field] = data[field]
+            
             # Update tags
             if 'tags' in data:
                 project['tags'] = data['tags']
-            # Add/remove members
+            
+            # Update project leader
+            if 'leader' in data:
+                project['leader'] = data['leader']
+                print(f"Updated project leader: {data['leader']}")
+            
+            # Update project members
+            if 'members' in data:
+                project['members'] = data['members']
+                print(f"Updated project members: {data['members']}")
+            
+            # Handle legacy fields for backward compatibility
+            if 'project_lead' in data:
+                project['project_lead'] = data['project_lead']
             if 'add_members' in data:
                 # Add new members (append to members dict)
                 idx = len(project.get('members', {})) + 1
@@ -434,15 +458,9 @@ def lab_edit_project_api(request, lab_key, project_id):
                     project['members'][f'member{idx}'] = {'id': member_name, 'role': ''}
                     idx += 1
             if 'remove_member' in data:
-                if to_remove := next(
-                    (
-                        k
-                        for k, v in project.get('members', {}).items()
-                        if v.get('id') == data['remove_member']
-                    ),
-                    None,
-                ):
-                    project['members'].pop(to_remove)
+                print(data['remove_member'])
+                project['members'] = [item for item in project['members'] if item["name"] != data['remove_member']]
+            
             save_labs_obj(labs_obj, labs)
             return JsonResponse({'success': True})
         else:

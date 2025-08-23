@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.text import Truncator
 from django.utils import timezone
 import json
-from django.db import DatabaseError
+from django.db import DatabaseError, transaction
 from django.core.exceptions import ValidationError
 
 class Gender(models.TextChoices):
@@ -13,10 +13,8 @@ class Gender(models.TextChoices):
     OTHER = 'O', 'Other' 
 
 class AdminLevel(models.TextChoices):
-    ROOT = 'R', 'Root'
-    SENIOR = 'S', 'Senior'
-    JUNIOR = 'J', 'Junior' 
-    VIEWER = 'V', 'Viewer'
+    READ = 'R', 'Read'
+    WRITE = 'W', 'Write'
 
 class EmploymentStatus(models.TextChoices):
     UNAPPROVED = 'U', 'Unapproved'
@@ -35,7 +33,8 @@ class AssessmentType(models.TextChoices):
     QUIZ = 'Q', 'Quiz'
     ASSIGNMENT = 'A', 'Assignment'
     MIDTERM = 'M', 'Midterm'
-    FINAL = 'F', 'Final'
+    FINAL = 'F', 'Final(Lab)'
+    FINAL_ONPAPER = 'D', 'Final(On Paper)'
     PROJECT = 'P', 'Project'
     LABTEST = 'L', 'Lab Test'
     PRACTICAL = 'V', 'Practical'
@@ -43,12 +42,13 @@ class AssessmentType(models.TextChoices):
     LABPROJECT = 'B', 'Lab Project'
     LABASSESSMENT = 'J', 'Lab Assessment'
     CLASS_PARTICIPATION = 'C', 'Class Participation'
+    TUTORIAL = 'Z', 'Tutorial'
 
 
 class StudentStatus(models.TextChoices):
     UNAPPROVED = 'U', 'Unapproved'
     REJECTED = 'R', 'Rejected'
-    ACTIVE = 'A', 'Active'
+    ACTIVE = 'A', 'Active' 
     GRADUATED = 'G', 'Graduated'
     SUSPENDED = 'S', 'Suspended'
     DROPPED = 'D', 'Dropped'
@@ -60,8 +60,9 @@ class MailboxPostStatus(models.TextChoices):
     DISQUALIFIED = 'D', 'Disqualified'
 
 class NotificationType(models.TextChoices):
-    STUDENT_QUIZ = 'S', 'Student Quiz'
-    STUDENT_ASSESSMENT = 'A', 'Student Assessment'
+    STUDENT = 'S', 'Student'
+    EXECUTIVE = 'E', 'Executive'
+    INSTRUCTOR = 'I', 'Instructor'
     STUDENT_MAILBOX = 'M', 'Student Mailbox'
 
 class BloodGroup(models.TextChoices):
@@ -74,6 +75,11 @@ class DocumentType(models.TextChoices):
     PUBLIC = 'A', 'Public'
     PRIVATE = 'B', 'Private'
     PROTECTED = 'C', 'Protected'
+
+class EnrollmentStatus(models.TextChoices):
+    APPROVED = 'A', 'Approved'
+    PENDING = 'P', 'Pending'
+    REJECTED = 'R', 'Rejected'
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -128,19 +134,18 @@ class User(AbstractUser, BaseModel):
         help_text='Specific permissions for this user.',
         verbose_name='user permissions',
     )
-
+    
     def save(self, *args, **kwargs):
         if not self.full_name:
             self.full_name = f"{self.first_name} {self.last_name}".strip()
         super().save(*args, **kwargs)
 
 # Admin Model
-class Admin(BaseModel):
+class Admin(BaseModel): 
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     degree = models.CharField(max_length=100, default='')
     position_in_university = models.CharField(max_length=100, default='')
-    office_location = models.CharField(max_length=100, default='')
-    admin_level = models.CharField(max_length=1, choices=AdminLevel.choices, default=AdminLevel.VIEWER)
+    admin_level = models.CharField(max_length=1, choices=AdminLevel.choices, default=AdminLevel.READ)
 
 # Faculty Model
 class Faculty(BaseModel):
@@ -187,7 +192,7 @@ class Degree(BaseModel):
     degree_type = models.CharField(max_length=1, choices=DegreeType.choices, default=DegreeType.BACHELORS)
     degree_image = models.ImageField(upload_to='degrees/', default='default.jpg')
     
- 
+  
 # Semester Model
 class Semester(BaseModel):
     semester_name = models.CharField(max_length=100, default='')
@@ -215,6 +220,7 @@ class Course(BaseModel):
     course_hours = models.PositiveIntegerField(default=30)
     course_credits = models.PositiveSmallIntegerField(default=3)
     description = models.TextField(default='')
+    marking_scheme = models.JSONField(default=dict)
 
 # Term Model
 class Term(BaseModel):
@@ -223,6 +229,28 @@ class Term(BaseModel):
     start_date = models.DateField(default=timezone.now, null=True)
     end_date = models.DateField(default=timezone.now, null=True)
     result_date = models.DateField(default=timezone.now, null=True)
+
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+            super().save(*args, **kwargs)
+            
+            if self.start_date and self.end_date and self.result_date:
+                notifications=[]
+                users=User.objects.filter(
+                    student__status=StudentStatus.ACTIVE,
+                ).distinct()
+
+                for user in users:
+                    notifications.append(Notification(
+                        user=user,
+                        type=NotificationType.STUDENT,
+                        notification={
+                            "text": f"A new term is starting on {self.start_date} having END DATE: {self.end_date} and  RESULT DATE : {self.result_date}. If it concerns you, you should consider an enrollment",
+                            "destination": f"/students/academics/home"
+                        }
+                    ))
+                Notification.objects.bulk_create(notifications)
+
 
 class Batch(BaseModel):
     name = models.CharField(max_length=100, default='')
@@ -236,6 +264,28 @@ class BatchInstructor(BaseModel):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     room_data = models.JSONField(default=None, null=True, blank=True)
     assigned_date = models.DateField(default=timezone.now)
+
+    def save(self, *args, **kwargs):
+        # Call the original save method
+        is_new = self.pk is None
+        with transaction.atomic():
+            super().save(*args, **kwargs)
+            # Create AssessmentScheme after saving BatchInstructor
+            if is_new:
+                assessment_scheme = AssessmentScheme(batch_instructor=self, scheme=self.course.marking_scheme)
+                assessment_scheme.save()
+                for i in range(1000):
+                    print('*')
+                    print(assessment_scheme)
+
+            if self.instructor:
+                Notification.objects.create(
+                    user=self.instructor.user,
+                    type=NotificationType.INSTRUCTOR,
+                    notification={
+                        "text": f"An admin has assigned you to teach {self.course.course_code} ({self.course.course_name}) for {self.batch.semester.degree.code} ({self.batch.semester.semester_name}) in {self.batch.term.term_name}. Go and check that out!!"
+                    }
+                )
 
 # Student Model
 class Student(BaseModel):
@@ -266,7 +316,7 @@ class SISForm(BaseModel):
     NRC = models.TextField(max_length=20, default='9/MKN(N)191305', null=False)
     birthplace = models.TextField(max_length=30, default='Yangon', null=False)
 
-    # Father's information
+    # Father's information 
     father_name = models.TextField(max_length=40, default='U Ba', null=False)
     father_NRC = models.TextField(max_length=20, default='9/MKN(N)191305', null=False)
     father_birthplace = models.TextField(max_length=30, default='Yangon', null=False)
@@ -300,19 +350,55 @@ class SISForm(BaseModel):
     spouse_name = models.TextField(max_length=50, null=False)
 
 
-# Student Term Model
-class StudentBatch(BaseModel):
-    batch_instructor = models.ForeignKey(BatchInstructor, on_delete=models.CASCADE, default=None, null=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    result = models.JSONField(default=dict)
-
-# Enrollment Model
 class Enrollment(BaseModel):
-    student_batch = models.OneToOneField(StudentBatch, on_delete=models.CASCADE, primary_key=True)
-    enrollment_form = models.JSONField(default=dict)
-    enrollment_date = models.DateField(default=timezone.now)
-    handled_by = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True, default=None)
+    batch = models.ForeignKey(Batch, on_delete=models.CASCADE, default=None, null=True, blank=True)
+    sis_form = models.ForeignKey(SISForm, on_delete=models.SET_NULL, default=None, null=True, blank=True)
+    selected_subjects = models.JSONField(default=dict)
+    result = models.JSONField(default=dict)
+    is_approved = models.BooleanField(default=False)
+    enrollment_status = models.CharField(max_length=1, choices=EnrollmentStatus.choices, default=EnrollmentStatus.PENDING)
 
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        old_status = None
+
+        if not is_new:
+            # fetch old status before saving
+            old_status = Enrollment.objects.filter(pk=self.pk).values_list("enrollment_status", flat=True).first()
+
+        super().save(*args, **kwargs)
+
+        # Only trigger if status changed
+        if old_status != self.enrollment_status:
+            student = getattr(self.sis_form, "student", None)  # assuming SISForm links to Student
+            if student and student.user:  # ensure student has a User account
+                if self.enrollment_status == EnrollmentStatus.APPROVED:
+                    msg = "Your enrollment has been approved. 🎉"
+                elif self.enrollment_status == EnrollmentStatus.REJECTED:
+                    msg = "Your enrollment has been rejected. Please contact admin."
+                else:
+                    msg = None
+
+                if msg:
+                    Notification.objects.create(
+                        user=student.user,
+                        type=NotificationType.STUDENT,
+                        notification={
+                            "text": msg,
+                            "destination": "/student/academics/home"
+                        }
+                    )
+
+
+
+# Student Term Model
+class EnrollmentCourse(BaseModel): 
+    batch_instructor = models.ForeignKey(BatchInstructor, on_delete=models.CASCADE, default=None, null=True)
+    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
+    rating = models.PositiveSmallIntegerField(default=0, null=False)
+    review = models.TextField(default=None, blank=True, null=True)
+
+    
 # Document Model
 class Document(BaseModel):
     name = models.CharField(max_length=100, default='')
@@ -325,6 +411,29 @@ class Document(BaseModel):
 class BatchInstructorDocument(BaseModel):
     batch_instructor = models.ForeignKey(BatchInstructor, on_delete=models.CASCADE, null=True)
     document = models.ForeignKey(Document, on_delete=models.CASCADE, null=True)
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+
+        if is_new and self.batch_instructor:
+            batch = self.batch_instructor.batch
+            # assuming Enrollment links students to batches
+            enrollments = Enrollment.objects.filter(batch=batch, enrollment_status=EnrollmentStatus.APPROVED).select_related("sis_form__student__user")
+
+            notifications = []
+            for enrollment in enrollments:
+                student = getattr(enrollment.sis_form, "student", None)
+                if student and student.user:
+                    notifications.append(Notification(
+                        user=student.user,
+                        type=NotificationType.STUDENT,
+                        notification={
+                            "text": f"New document has been uploaded for your batch {batch.name}.",
+                            "destination": "/student/documents/"
+                        }
+                    ))
+            Notification.objects.bulk_create(notifications)
 
 # Video Conference Model
 class VideoConference(BaseModel):
@@ -341,12 +450,54 @@ class AssessmentScheme(BaseModel):
     scheme = models.JSONField(default=dict)
 
 # Assessment Model
-class Assessment(BaseModel): 
-    assessment_scheme = models.ForeignKey(AssessmentScheme, on_delete=models.CASCADE)
-    assessment_type = models.TextField(max_length=1, choices=AssessmentType.choices)
+class Assessment(BaseModel):
+    assessment_scheme = models.ForeignKey(AssessmentScheme, on_delete=models.CASCADE, null=True, blank=True)
+    assessment_type = models.TextField(max_length=1, choices=AssessmentType.choices, default=AssessmentType.QUIZ)
     assessment = models.JSONField(default=dict)
-    assigned_date = models.DateTimeField(auto_now_add=True)
-    due_date = models.DateTimeField(auto_now_add=True)
+    assigned_date = models.DateTimeField(auto_now_add=False, default=None, null=True, blank=True)
+    due_date = models.DateTimeField(auto_now_add=False, default=None, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+            super().save(*args, **kwargs)
+
+            if not self.assessment.get('students'):
+                user = self.assessment_scheme.batch_instructor.instructor.user
+                batch_instructor = self.assessment_scheme.batch_instructor
+                batch = batch_instructor.batch
+                semester = batch.semester
+                semester_name = semester.semester_name
+                degree_name = semester.degree.name
+                term_name = batch.term.term_name
+                notification = Notification(
+                    user=user, 
+                    notification = {
+                        "text": f"You have created a {self.get_assessment_type_display()} ({self.assessment.get('title')}) for {term_name} - {degree_name} ({semester_name})",
+                        "destination": f"/faculty/course_management/{batch_instructor.pk}/"
+                    },
+                    seen=False,
+                    type=NotificationType.INSTRUCTOR
+                )
+                notification.save()
+            else:
+                users = User.objects.filter(pk__in=self.assessment.get('students'))
+                batch_instructor = self.assessment_scheme.batch_instructor
+                course = batch_instructor.course
+                instructor = batch_instructor.instructor.user
+                course_name, course_code = course.course_name, course.course_code
+                notifications = []
+                for user in users:
+                    notifications.append( Notification(
+                        user=user,
+                        notification = {
+                            "text": f"{instructor.full_name} has created a {self.get_assessment_type_display()} named {self.assessment.get('title')} with due date {self.due_date}",
+                            "destination": f"students/academics/batch_instructor/{batch_instructor.pk}"
+                        },
+                        seen=False,
+                        type=NotificationType.STUDENT,
+                    ))
+                Notification.objects.bulk_create(notifications)
+
 
 # Assessment Result Model
 class AssessmentResult(BaseModel):
@@ -354,6 +505,46 @@ class AssessmentResult(BaseModel):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, blank=True)
     answer = models.JSONField(default=dict)
     mark = models.PositiveIntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+            # Check if this instance already exists in DB
+            old_instance = None
+            if self.pk:
+                try:
+                    old_instance = AssessmentResult.objects.get(pk=self.pk)
+                except AssessmentResult.DoesNotExist:
+                    old_instance = None
+
+            super().save(*args, **kwargs)  # Save current state
+
+            # Notification for submission (your existing logic)
+            if self.assessment.assessment_type in (
+                AssessmentType.CLASS_PARTICIPATION, 
+                AssessmentType.FINAL_ONPAPER, 
+                AssessmentType.MIDTERM, 
+                AssessmentType.TUTORIAL
+            ):
+                Notification.objects.create(
+                    user=self.student.user,
+                    type=NotificationType.STUDENT,
+                    notification={
+                        "text": f"You have attempted and submitted {self.assessment.assessment.get('title')} successfully on {self.created_at}",
+                        "destination": f"/students/academics/batch_instructor/{self.assessment.assessment_scheme.batch_instructor.pk}"
+                    }
+                )
+
+            # Trigger: mark changed
+            if old_instance and old_instance.mark != self.mark:
+                # Perform action when mark changes
+                Notification.objects.create(
+                    user=self.student.user,
+                    type=NotificationType.STUDENT,
+                    notification={
+                        "text": f"{self.assessment.assessment_scheme.batch_instructor.instructor.user.full_name} provided you grades for {self.assessment.assessment.get('title')}. Check that out!!",
+                        "destination": f"/students/academics/batch_instructor/{self.assessment.assessment_scheme.batch_instructor}"
+                    }
+                )
 
 # Mailbox Admin Model
 class MailboxAdmin(BaseModel):

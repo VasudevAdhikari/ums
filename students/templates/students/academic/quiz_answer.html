@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz Answer</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'students/academic/styles/quiz.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'students/academic/styles/quiz.css' %}"> -->
     <link rel="stylesheet" href="{% static 'students/academic/styles/quiz_answer.css' %}">
 </head>
 <body>
@@ -25,6 +25,6 @@
         window.quiz_data = JSON.parse('{{quiz_data|escapejs}}');
         console.log(window.quiz_data);
     </script>
-    <script src="{% static 'students/academic/javascripts/quiz_answer.js' %}"></script>
+    <script type="module" src="{% static 'students/academic/javascripts/quiz_answer.js' %}"></script>
 </body>
 </html>

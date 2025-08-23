@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Access Page</title>
+  {% load static %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'faculty/css/instructor_course_management.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    .all-result-btn-div {
+      margin-bottom: 20px;
+    }
+
+    .all-result-btn-div button{
+      background-color: var(--primary-light);
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    // console.log('{{batch_instructor|escapejs}}'.replaceAll("'", '"'));
+    window.csrf_token = '{{csrf_token}}';
+    window.batch_instructor = JSON.parse('{{batch_instructor|escapejs}}'.replaceAll("'", '"'));
+    console.log(window.batch_instructor);
+    window.marking_types = JSON.parse('{{assessment_types|escapejs}}'.replaceAll("'", '"'));
+    console.log(window.marking_types);
+    window.instructor = '{{instructor.user.id}}';
+    window.other_instructors = [];
+  </script>
+
+  <!-- Navbar -->
+{% if request.user_role == 'instructor' %}
+    {% include "faculty/navbar.html" %}
+{% elif request.user_role == 'student' %}
+    {% include "students/academic/navbar.html" %}
+{% elif request.user_role == 'executive' %}
+    {% include "executives/navbar.html" %}
+{% else %}
+    {% include "public/navbar.html" %}
+{% endif %}
+
+  <!-- Main Content -->
+  <div class="main-content-demo">
+    <!-- Course Detail Card -->
+    <div class="course-card">
+      <h2 class="course-title">{{batch_instructor.course__course_code}} ({{batch_instructor.course__course_name}})</h2>
+      <div class="course-content-row" id="courseContentRow">
+        <div class="course-image" id="courseImageBox">
+          <i class="fa-solid fa-graduation-cap course-icon"></i>
+        </div>
+        <div class="course-description" id="courseDescriptionBox">
+          <span id="courseDescriptionText">{{batch_instructor.course__description}}</span>
+        </div>
+      </div>
+      <div id="markingSchemeSection">
+      </div>
+      <!-- Place your activities section here: -->
+      <div id="activitySection">
+        <!-- Quizzes and Assignments will be dynamically injected here -->
+      </div>
+
+      <!-- Document Sections START -->
+      <!-- Referred Documents -->
+      <div class="item-section-title-row">
+        <span class="item-section-title">Referred Documents</span>
+      </div>
+      <div class="item-grid" id="referredDocsGrid">
+        <!-- Dynamically filled by JS -->
+      </div>
+
+      <div class="all-result-btn-div">
+        <button class="btn btn-primary" onclick="window.location.href=`/students/academics/all_results/${window.batch_instructor.id}`">All Assessment Results</button>
+      </div>
+
+      <div id="instructorInfo">
+        <h3 class="instructor-header">Instructor Information</h3>
+        <div class="instructor-details">
+          <div class="instructor-image">
+            <img src="{{instructor.instructor.user.profile_picture.url|default:'https://www.transparentpng.com/download/user/gray-user-profile-icon-png-fP8Q1P.png'}}"
+              alt="{{instructor.instructor.user.profile_picture.url}}">
+          </div>
+          <div class="instructor-text">
+            <div>{{instructor.instructor.user.full_name|default:'Unknown Yet'}}</div>
+            <div>{{instructor.instructor.user.email|default:'Unknown'}}</div>
+            <div>Department: {{instructor.instructor.department.name|default:'Unknown'}}</div>
+            <div>Phone: {{instructor.instructor.user.phone|default:'Unknown'}}</div>
+            <div class="instructor-actions">
+            {% if not has_review %}
+              <button class="instructor-btn" type="button" id="reviewBtn">Review</button>
+            {% else %}
+              <button class="instructor-btn" type="button" id="reviewBtn" disabled style="display: none;"></button>
+            {% endif %}
+            {% if not has_rating %}
+              <button class="instructor-btn secondary" type="button" id="rateBtn">Rate</button>
+            {% else %}
+              <button class="instructor-btn secondary" type="button" id="rateBtn" disabled style="display: none;"></button>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Popup Modal -->
+      <div id="reviewPopup"
+        style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);z-index:9999;align-items:center;justify-content:center;">
+        <div
+          style="background:#fff;padding:2rem 1.5rem;border-radius:1rem;min-width:320px;max-width:90vw;box-shadow:0 2px 16px #0002;display:flex;flex-direction:column;align-items:center;">
+          <h3 style="color:#1a4d80;font-size:1.3rem;font-weight:700;margin-bottom:18px;">Give a Review</h3>
+          <textarea id="reviewText" rows="4"
+            style="width:100%;max-width:400px;padding:10px;border-radius:8px;border:1.5px solid #bfc6e0;font-size:1rem;margin-bottom:18px;resize:none;"></textarea>
+          <div style="display:flex;gap:16px;justify-content:center;width:100%;margin-top:8px;">
+            <button class="instructor-btn" id="submitReviewBtn" type="button">Submit</button>
+            <button class="instructor-btn secondary" id="cancelReviewBtn" type="button">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rating Popup Modal -->
+      <div id="ratingPopup"
+        style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);z-index:9999;align-items:center;justify-content:center;">
+        <div
+          style="background:#fff;padding:2rem 1.5rem;border-radius:1rem;min-width:320px;max-width:90vw;box-shadow:0 2px 16px #0002;display:flex;flex-direction:column;align-items:center;">
+          <h3 style="color:#1a4d80;font-size:1.3rem;font-weight:700;margin-bottom:18px;">Give a Rating</h3>
+          <div id="starContainer" style="display:flex;gap:10px;margin-bottom:18px;">
+            <span class="star" data-value="1" style="font-size:2.2rem;cursor:pointer;color:#bfc6e0;">&#9733;</span>
+            <span class="star" data-value="2" style="font-size:2.2rem;cursor:pointer;color:#bfc6e0;">&#9733;</span>
+            <span class="star" data-value="3" style="font-size:2.2rem;cursor:pointer;color:#bfc6e0;">&#9733;</span>
+            <span class="star" data-value="4" style="font-size:2.2rem;cursor:pointer;color:#bfc6e0;">&#9733;</span>
+            <span class="star" data-value="5" style="font-size:2.2rem;cursor:pointer;color:#bfc6e0;">&#9733;</span>
+          </div>
+          <div style="display:flex;gap:16px;justify-content:center;width:100%;margin-top:8px;">
+            <button class="instructor-btn" id="submitRatingBtn" type="button">Submit</button>
+            <button class="instructor-btn secondary" id="cancelRatingBtn" type="button">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script type="module" src="{% static 'students/academic/javascripts/course_management.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module" src="{% static 'students/academic/javascripts/rating_review.js' %}"></script>
+</html>

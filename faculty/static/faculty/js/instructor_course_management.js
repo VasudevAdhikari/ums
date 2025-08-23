@@ -7,10 +7,13 @@ async function fetchMarkingScheme() {
   const batchId = window.batch_instructor.id;
   try {
     const response = await fetch(`/faculty/api/assessment_scheme/${batchId}/`);
-    if (!response.ok) throw new Error('Failed to fetch marking scheme');
+    if (!response.ok) throw new Error("Failed to fetch marking scheme");
     const data = await response.json();
     if (data.scheme) {
-      return Object.entries(data.scheme).map(([type, mark]) => ({ type, mark }));
+      return Object.entries(data.scheme).map(([type, mark]) => ({
+        type,
+        mark,
+      }));
     }
     return [];
   } catch (err) {
@@ -22,70 +25,56 @@ async function fetchMarkingScheme() {
 async function saveMarkingSchemeToBackend(rows) {
   const batchId = window.batch_instructor.id;
   const scheme = {};
-  rows.forEach(row => {
+  rows.forEach((row) => {
     scheme[row.type] = Number(row.mark) || 0;
   });
   try {
     await fetch(`/faculty/api/assessment_scheme/${batchId}/`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': window.csrf_token
+        "Content-Type": "application/json",
+        "X-CSRFToken": window.csrf_token,
       },
-      body: JSON.stringify({ scheme })
+      body: JSON.stringify({ scheme }),
     });
-    alert("Marking scheme has been successfully changed.");
+    await alert("Marking scheme has been successfully changed.");
   } catch (err) {
-    console.error('Failed to save marking scheme', err);
+    console.error("Failed to save marking scheme", err);
   }
 }
 
 function renderMarkingScheme(rows = [], readonly = true) {
-  const section = document.getElementById('markingSchemeSection');
-  section.innerHTML = '';
+  const section = document.getElementById("markingSchemeSection");
+  section.innerHTML = "";
 
   if (rows.length === 0) {
     // No marking scheme yet, allow creation
-    const btn = document.createElement('button');
-    btn.textContent = 'Create Marking Scheme';
-    btn.className = 'create-scheme-btn';
-    btn.onclick = () => {
-      markingSchemeEditMode = true;
-      renderMarkingScheme([createEmptyRow(rows)], false);
-    };
+    const btn = document.createElement("div");
+    btn.textContent = "No Marking Scheme Provided Yet";
+    btn.className = "create-scheme-btn";
     section.appendChild(btn);
     return;
   }
 
-  // Header
-  const header = document.createElement('div');
-  header.className = 'marking-header';
-  header.innerHTML = `
-    <span>Marking Scheme</span>
-    ${readonly ? `
-      <button class="edit-btn" id="editMarkingSchemeBtn" title="Edit">
-        <i class="fa-solid fa-pen"></i>
-      </button>
-    ` : `
-      <button class="edit-btn" id="addMarkingRowBtn" title="Add row" ${rows.length >= MAX_ROWS ? 'style="display:none;"' : ''}>
-        <i class="fa-solid fa-plus"></i>
-      </button>
-    `}
-  `;
-  section.appendChild(header);
-
   // Table
-  const table = document.createElement('table');
-  table.className = 'marking-table';
-  table.innerHTML = rows.map((row, idx) => `
+  const table = document.createElement("table");
+  table.className = "marking-table";
+  table.innerHTML = rows
+    .map(
+      (row, idx) => `
     <tr>
       <td>
         ${readonly
           ? `<span>${row.type}</span>`
           : `<select class="mark-type-select" data-idx="${idx}">
-              ${MARKING_TYPES.map(type =>
-                `<option value="${type}" ${row.type === type ? 'selected' : ''} ${rows.some((r, i) => r.type === type && i !== idx) ? 'disabled' : ''}>${type}</option>`
-              ).join('')}
+              ${MARKING_TYPES.map(
+            (type) =>
+              `<option value="${type}" ${row.type === type ? "selected" : ""
+              } ${rows.some((r, i) => r.type === type && i !== idx)
+                ? "disabled"
+                : ""
+              }>${type}</option>`
+          ).join("")}
             </select>`
         }
       </td>
@@ -94,36 +83,33 @@ function renderMarkingScheme(rows = [], readonly = true) {
           ? `<span>${row.mark} %</span>`
           : `<input type="number" min="0" max="100" value="${row.mark}" class="mark-input" style="width:70px;" data-idx="${idx}"> %`
         }
-        ${!readonly ? `
+        ${!readonly
+          ? `
           <button class="edit-btn remove-row-btn" data-idx="${idx}" title="Remove row">
             <i class="fa-solid fa-trash"></i>
           </button>
-        ` : ''}
+        `
+          : ""
+        }
       </td>
     </tr>
-  `).join('');
+  `
+    )
+    .join("");
   section.appendChild(table);
 
-  // Edit button event
-  if (readonly) {
-    const editBtn = document.getElementById('editMarkingSchemeBtn');
-    if (editBtn) {
-      editBtn.onclick = () => {
-        markingSchemeEditMode = true;
-        renderMarkingScheme(rows, false);
-      };
-    }
-    return;
-  }
+
 
   // Add row event
-  const addBtn = document.getElementById('addMarkingRowBtn');
+  const addBtn = document.getElementById("addMarkingRowBtn");
   if (addBtn) {
     addBtn.onclick = () => {
       syncMarkingSchemeRows(section, rows);
       const total = rows.reduce((sum, row) => sum + (Number(row.mark) || 0), 0);
       if (total >= 100) {
-        showCustomWarning('Total marking percentage cannot exceed <b>100%</b>. You cannot add another marking scheme.');
+        showCustomWarning(
+          "Total marking percentage cannot exceed <b>100%</b>. You cannot add another marking scheme."
+        );
         return;
       }
       if (rows.length < MAX_ROWS) {
@@ -134,7 +120,7 @@ function renderMarkingScheme(rows = [], readonly = true) {
   }
 
   // Remove row event
-  section.querySelectorAll('.remove-row-btn').forEach(btn => {
+  section.querySelectorAll(".remove-row-btn").forEach((btn) => {
     btn.onclick = () => {
       const idx = +btn.dataset.idx;
       rows.splice(idx, 1);
@@ -143,7 +129,7 @@ function renderMarkingScheme(rows = [], readonly = true) {
   });
 
   // Prevent duplicate marking types
-  section.querySelectorAll('.mark-type-select').forEach(select => {
+  section.querySelectorAll(".mark-type-select").forEach((select) => {
     select.onchange = function () {
       const idx = +this.dataset.idx;
       rows[idx].type = this.value;
@@ -151,63 +137,39 @@ function renderMarkingScheme(rows = [], readonly = true) {
     };
   });
 
-  // Validation
-  section.querySelectorAll('.mark-input').forEach(input => {
-    input.oninput = () => validateMarkingScheme(section, rows);
-  });
-
-  // Save button
-  const saveBtn = document.createElement('button');
-  saveBtn.className = 'save-btn';
-  saveBtn.textContent = 'Save';
-  saveBtn.style.marginTop = '12px';
-  section.appendChild(saveBtn);
-
-  saveBtn.onclick = async function () {
-    syncMarkingSchemeRows(section, rows);
-    // Validate total
-    const total = rows.reduce((sum, row) => sum + (Number(row.mark) || 0), 0);
-    if (total !== 100) {
-      showCustomWarning('Total marking percentage must be exactly <b>100%</b>.');
-      return;
-    }
-    await saveMarkingSchemeToBackend(rows);
-    markingSchemeEditMode = false;
-    renderMarkingScheme(rows, true);
-  };
 }
 
 function createEmptyRow(rows) {
-  const used = rows.map(r => r.type);
-  const type = MARKING_TYPES.find(t => !used.includes(t)) || MARKING_TYPES[0];
+  const used = rows.map((r) => r.type);
+  const type = MARKING_TYPES.find((t) => !used.includes(t)) || MARKING_TYPES[0];
   return { type, mark: 0 };
 }
 
 function validateMarkingScheme(section, rows) {
-  const inputs = section.querySelectorAll('.mark-input');
+  const inputs = section.querySelectorAll(".mark-input");
   let total = 0;
-  inputs.forEach(input => {
+  inputs.forEach((input) => {
     total += Number(input.value) || 0;
   });
   if (total > 100) {
-    showCustomWarning('Total marking percentage cannot exceed <b>100%</b>.');
+    showCustomWarning("Total marking percentage cannot exceed <b>100%</b>.");
   }
 }
 
 function showCustomWarning(message) {
-  const popup = document.getElementById('customWarningPopup');
-  const msg = document.getElementById('customWarningMessage');
-  const okBtn = document.getElementById('customWarningOkBtn');
+  const popup = document.getElementById("customWarningPopup");
+  const msg = document.getElementById("customWarningMessage");
+  const okBtn = document.getElementById("customWarningOkBtn");
   msg.innerHTML = message;
-  popup.style.display = 'flex';
+  popup.style.display = "flex";
   okBtn.onclick = () => {
-    popup.style.display = 'none';
+    popup.style.display = "none";
   };
 }
 
 function syncMarkingSchemeRows(section, rows) {
-  const typeSelects = section.querySelectorAll('.mark-type-select');
-  const markInputs = section.querySelectorAll('.mark-input');
+  const typeSelects = section.querySelectorAll(".mark-type-select");
+  const markInputs = section.querySelectorAll(".mark-input");
   typeSelects.forEach((select, idx) => {
     rows[idx].type = select.value;
   });
@@ -229,25 +191,27 @@ function showLoading(targetId) {
 
 async function renderAllSections() {
   // Show loading for all sections
-  showLoading('markingSchemeSection');
-  showLoading('activitySection');
-  showLoading('yourDocsGrid');
-  showLoading('referredDocsGrid');
+  showLoading("markingSchemeSection");
+  showLoading("activitySection");
+  showLoading("yourDocsGrid");
+  showLoading("referredDocsGrid");
   // If you have other instructor grids, show loading there too
 
   // Fetch all data in parallel
   const markingPromise = fetchMarkingScheme();
   const assessmentsPromise = fetchAssessments();
+  console.log(assessmentsPromise);
   const docsPromise = fetchDocuments();
   const referredDocsPromise = fetchReferredDocuments();
 
   // Wait for all
-  const [markingRows, assessmentsByType, docsData, referredDocs] = await Promise.all([
-    markingPromise,
-    assessmentsPromise,
-    docsPromise,
-    referredDocsPromise
-  ]);
+  const [markingRows, assessmentsByType, docsData, referredDocs] =
+    await Promise.all([
+      markingPromise,
+      assessmentsPromise,
+      docsPromise,
+      referredDocsPromise,
+    ]);
 
   // Render marking scheme
   renderMarkingScheme(markingRows, markingRows.length > 0 ? true : false);
@@ -261,16 +225,16 @@ async function renderAllSections() {
 
 // Modified renderAssessments to accept data
 function renderAssessmentsWithData(markingRows, assessmentsByType) {
-  const section = document.getElementById('activitySection');
+  const section = document.getElementById("activitySection");
   if (!section) return;
-  section.innerHTML = '';
+  section.innerHTML = "";
 
-  const assessmentTypes = markingRows.map(row => row.type);
+  const assessmentTypes = markingRows.map((row) => row.type);
 
-  assessmentTypes.forEach(type => {
+  assessmentTypes.forEach((type) => {
     // Section title and add button
-    const sectionTitle = document.createElement('div');
-    sectionTitle.className = 'item-section-title';
+    const sectionTitle = document.createElement("div");
+    sectionTitle.className = "item-section-title";
     sectionTitle.innerHTML = `
       ${type}
       <button class="add-card-btn" data-type="${type}" title="Add ${type}">
@@ -280,41 +244,62 @@ function renderAssessmentsWithData(markingRows, assessmentsByType) {
     section.appendChild(sectionTitle);
 
     // Grid
-    const grid = document.createElement('div');
-    grid.className = 'item-grid';
+    const grid = document.createElement("div");
+    grid.className = "item-grid";
     grid.id = `assessmentGrid-${type}`;
     const assessments = assessmentsByType[type] || [];
-    grid.innerHTML = assessments.map((a, i) => `
-      <div class="item-card">
-        <div style="display: flex; align-items: center; gap: 6px; padding: 8px;">
-          <button class="item-card-edit" data-type="${type}" data-id="${a.id}" title="Edit" onclick="window.location.href = '/faculty/${type.toLowerCase().replace(/\s+/g, "")}_creation/${a.id}/';">
-            <i class="fa-solid fa-pen"></i>
-          </button>
-          <button class="item-card-delete" data-type="${type}" data-id="${a.id}" title="Delete"><i class="fa-solid fa-trash"></i></button>
-        </div>
-        <div class="item-card-title">${a.title || (type + ' ' + (i + 1))}</div>
-      </div>
-    `).join('');
+    grid.innerHTML = assessments
+      .map(
+        (a, i) => `
+          <div class="item-card">
+            <div style="display: flex; align-items: center; gap: 6px; padding: 8px;">
+              <button class="item-card-edit" data-type="${type}" data-id="${a.id}" title="Edit" 
+                onclick="window.location.href = '/faculty/${type.toLowerCase().replace(/\s+/g, '')}_creation/${a.id}/';">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+
+              <button class="item-card-delete" data-type="${type}" data-id="${a.id}" title="Delete">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+
+              <button class="item-card-view-results" title="View Results" 
+                onclick="window.location.href = '${type.toLowerCase().replace(/\s+/g, '') === 'quiz'
+                  ? `/faculty/quiz_results/${a.id}`
+                  : `/faculty/assessment_submissions/${a.id}`
+                }';">
+                <i class="fa-solid fa-chart-column"></i>
+              </button>
+            </div>
+
+            <div class="item-card-image">
+              <i class="fa-solid fa-cloud card-icon"></i>
+            </div>
+            <div class="item-card-title">${a.title || type + " " + (i + 1)}</div>
+          </div>
+        `
+      )
+      .join("");
+
     section.appendChild(grid);
-    grid.querySelectorAll(".item-card-delete").forEach(deleteBtn => {
+    grid.querySelectorAll(".item-card-delete").forEach((deleteBtn) => {
       deleteBtn.addEventListener("click", async () => {
-        const assessmentId = deleteBtn.getAttribute('data-id');
-        if (!confirm('Are you sure to remove this assessment?')) {
+        const assessmentId = deleteBtn.getAttribute("data-id");
+        if (!await confirm("Are you sure to remove this assessment?")) {
           return;
         }
         const ok = await deleteAssessment(assessmentId);
         if (ok) {
-          alert('Assessment deleted successfully');
+          await alert("Assessment deleted successfully");
           renderAllSections();
         }
       });
     });
   });
 
-  section.querySelectorAll('.add-card-btn').forEach(btn => {
-    btn.onclick = async function() {
-      const type = btn.getAttribute('data-type');
-      if (!confirm(`Create a new assessment for "${type}"?`)) return;
+  section.querySelectorAll(".add-card-btn").forEach((btn) => {
+    btn.onclick = async function () {
+      const type = btn.getAttribute("data-type");
+      if (!await confirm(`Create a new assessment for "${type}"?`)) return;
       const ok = await createAssessment(type);
       if (ok) renderAllSections();
     };
@@ -328,38 +313,46 @@ function renderDocumentsWithData(docsData, referredDocs) {
   const byInstructor = docsData.by_instructor;
 
   // Documents By You
-  const yourDocsGrid = document.getElementById('yourDocsGrid');
+  const yourDocsGrid = document.getElementById("yourDocsGrid");
   if (yourDocsGrid) {
-    yourDocsGrid.innerHTML = '';
+    yourDocsGrid.innerHTML = "";
     if (byInstructor[yourId]) {
-      yourDocsGrid.innerHTML = byInstructor[yourId].map((doc, i) => `
+      yourDocsGrid.innerHTML = byInstructor[yourId]
+        .map(
+          (doc, i) => `
         <div class="item-card">
           <div style="display:flex;align-items:center;gap:6px;padding:8px;">
             <button class="item-card-download" title="Download" onclick="window.open('${doc.file_link}', '_blank')"><i class="fa-solid fa-download"></i></button>
             <button class="item-card-delete" title="Delete" onclick="deleteDocument(${doc.id})"><i class="fa-solid fa-trash"></i></button>
           </div>
           <div class="item-card-image">
-            <i class="fa-solid fa-file" style="font-size:40px;color:#888;"></i>
+            <i class="fa-solid fa-file card-icon""></i>
           </div>
           <div class="item-card-title">${doc.name}</div>
           <button class="refer-btn" onclick="referDocumentHandler(${doc.id})">Refer to Students</button>
         </div>
-      `).join('');
+      `
+        )
+        .join("");
     }
   }
 
   // Remove all previous other instructor sections
-  document.querySelectorAll('.other-instructor-section').forEach(el => el.remove());
+  document
+    .querySelectorAll(".other-instructor-section")
+    .forEach((el) => el.remove());
 
   // Documents By Other Instructors - create elements dynamically
-  window.other_instructors.forEach(otherInstructorId => {
+  window.other_instructors.forEach((otherInstructorId) => {
     // Create section title row
-    const sectionTitleRow = document.createElement('div');
-    sectionTitleRow.className = 'item-section-title-row other-instructor-section';
-    sectionTitleRow.innerHTML = `<span class="item-section-title">Documents By ${byInstructor[otherInstructorId][0].uploader_name}</span>`;
+    const sectionTitleRow = document.createElement("div");
+    console.log(byInstructor[otherInstructorId]);
+    sectionTitleRow.className =
+      "item-section-title-row other-instructor-section";
+    sectionTitleRow.innerHTML = `<span class="item-section-title">Documents By ${byInstructor[otherInstructorId] ? byInstructor[otherInstructorId][0].uploader_name : ""}</span>`;
     // Create item grid
-    const grid = document.createElement('div');
-    grid.className = 'item-grid other-instructor-section';
+    const grid = document.createElement("div");
+    grid.className = "item-grid other-instructor-section";
     grid.id = `docsGrid-${otherInstructorId}`;
 
     // Try all key types: string, int, stringified int
@@ -368,73 +361,78 @@ function renderDocumentsWithData(docsData, referredDocs) {
     if (!docs) docs = byInstructor[String(parseInt(otherInstructorId))];
     if (!docs) docs = [];
 
-    grid.innerHTML = docs.map((doc, i) => `
+    grid.innerHTML = docs
+      .map(
+        (doc, i) => `
       <div class="item-card">
         <div style="display:flex;align-items:center;gap:6px;padding:8px;">
-          <button class="item-card-download" title="Download" onclick="window.open('${doc.file_link}', '_blank')"><i class="fa-solid fa-download"></i></button>
+          <button class="item-card-download" title="Download" onclick="window.open('${doc.file_link
+          }', '_blank')"><i class="fa-solid fa-download"></i></button>
         </div>
         <div class="item-card-image">
-          <i class="fa-solid fa-file" style="font-size:40px;color:#888;"></i>
+          <i class="fa-solid fa-file card-icon"></i>
         </div>
-        <div class="item-card-title">${doc.name}<br>${doc.uploader_name || instructors[otherInstructorId] || instructors[parseInt(otherInstructorId)] || instructors[String(parseInt(otherInstructorId))] || otherInstructorId}</div>
-        <button class="refer-btn" onclick="referDocumentHandler(${doc.id})">Refer to Students</button>
+        <div class="item-card-title">${doc.name}<br>${doc.uploader_name ||
+          instructors[otherInstructorId] ||
+          instructors[parseInt(otherInstructorId)] ||
+          instructors[String(parseInt(otherInstructorId))] ||
+          otherInstructorId
+          }</div>
+        <button class="refer-btn" onclick="referDocumentHandler(${doc.id
+          })">Refer to Students</button>
       </div>
-    `).join('');
+    `
+      )
+      .join("");
 
     // Insert after yourDocsGrid
-    const parent = document.querySelector('.course-card');
+    const parent = document.querySelector(".course-card");
     parent.appendChild(sectionTitleRow);
     parent.appendChild(grid);
   });
 
   // Referred Documents
-  const referredDocsGrid = document.getElementById('referredDocsGrid');
+  const referredDocsGrid = document.getElementById("referredDocsGrid");
   if (referredDocsGrid) {
-    referredDocsGrid.innerHTML = referredDocs.map((doc, i) => `
+    referredDocsGrid.innerHTML = referredDocs
+      .map(
+        (doc, i) => `
       <div class="item-card">
         <div style="display:flex;align-items:center;gap:6px;padding:8px;">
           <button class="item-card-download" title="Download" onclick="window.open('${doc.file_link}', '_blank')"><i class="fa-solid fa-download"></i></button>
           <button class="item-card-delete" title="Delete" onclick="deleteReferredDocument(${doc.id})"><i class="fa-solid fa-trash"></i></button>
         </div>
         <div class="item-card-image">
-          <i class="fa-solid fa-file" style="font-size:40px;color:#888;"></i>
+          <i class="fa-solid fa-file card-icon"></i>
         </div>
         <div class="item-card-title">${doc.name}<br>${doc.uploader_name}</div>
       </div>
-    `).join('');
+    `
+      )
+      .join("");
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
   renderAllSections();
 });
 
-const sidebar = document.getElementById('sidebarMenu');
-const toggleBtn = document.getElementById('sidebarToggle');
-toggleBtn.onclick = function() {
-  sidebar.classList.toggle('hide');
-  document.body.classList.toggle('sidebar-open', !sidebar.classList.contains('hide'));
-};
-
 let activities = {
-  quizzes: [
-    { title: "Quiz 1" },
-    { title: "Quiz 2" },
-    { title: "Quiz 3" }
-  ],
+  quizzes: [{ title: "Quiz 1" }, { title: "Quiz 2" }, { title: "Quiz 3" }],
   assignments: [
     { title: "Assignment 1" },
     { title: "Assignment 2" },
-    { title: "Assignment 3" }
-  ]
+    { title: "Assignment 3" },
+  ],
 };
 
-if (typeof pdfjsLib === 'undefined') {
-  alert('PDF.js is not loaded! Please check your script order.');
+if (typeof pdfjsLib === "undefined") {
+  await alert("PDF.js is not loaded! Please check your script order.");
 }
 
 if (window.pdfjsLib) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
 }
 
 function handleFileUpload(event, cardIdx) {
@@ -443,47 +441,61 @@ function handleFileUpload(event, cardIdx) {
 
   if (!file) return;
 
-  const ext = file.name.split('.').pop().toLowerCase();
+  const ext = file.name.split(".").pop().toLowerCase();
 
-  if (ext === 'pdf') {
+  if (ext === "pdf") {
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
       const typedarray = new Uint8Array(e.target.result);
-      pdfjsLib.getDocument({data: typedarray}).promise.then(function(pdf) {
-        pdf.getPage(1).then(function(page) {
-          const viewport = page.getViewport({scale: 1});
-          const canvas = document.createElement('canvas');
-          const context = canvas.getContext('2d');
-          canvas.height = 80;
-          canvas.width = 80 * viewport.width / viewport.height;
-          const renderContext = {
-            canvasContext: context,
-            viewport: page.getViewport({scale: canvas.height / viewport.height}),
-          };
-          page.render(renderContext).promise.then(function() {
-            const previewUrl = canvas.toDataURL();
-            saveDocData(file, status, cardIdx, previewUrl);
-          });
-        }).catch(function() {
-          const iconUrl = encodeSVG('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="#eee"/><text x="20" y="50" font-size="40" fill="#888">P</text></svg>');
+      pdfjsLib
+        .getDocument({ data: typedarray })
+        .promise.then(function (pdf) {
+          pdf
+            .getPage(1)
+            .then(function (page) {
+              const viewport = page.getViewport({ scale: 1 });
+              const canvas = document.createElement("canvas");
+              const context = canvas.getContext("2d");
+              canvas.height = 80;
+              canvas.width = (80 * viewport.width) / viewport.height;
+              const renderContext = {
+                canvasContext: context,
+                viewport: page.getViewport({
+                  scale: canvas.height / viewport.height,
+                }),
+              };
+              page.render(renderContext).promise.then(function () {
+                const previewUrl = canvas.toDataURL();
+                saveDocData(file, status, cardIdx, previewUrl);
+              });
+            })
+            .catch(function () {
+              const iconUrl = encodeSVG(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="#eee"/><text x="20" y="50" font-size="40" fill="#888">P</text></svg>'
+              );
+              saveDocData(file, status, cardIdx, iconUrl);
+            });
+        })
+        .catch(function () {
+          const iconUrl = encodeSVG(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="#eee"/><text x="20" y="50" font-size="40" fill="#888">P</text></svg>'
+          );
           saveDocData(file, status, cardIdx, iconUrl);
         });
-      }).catch(function() {
-        const iconUrl = encodeSVG('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="80" height="80" fill="#eee"/><text x="20" y="50" font-size="40" fill="#888">P</text></svg>');
-        saveDocData(file, status, cardIdx, iconUrl);
-      });
     };
     reader.readAsArrayBuffer(file);
-  } else if (['doc', 'docx', 'ppt', 'pptx'].includes(ext)) {
-    let icon = '';
-    if (ext.startsWith('doc')) {
-      icon = '<i class="fa-solid fa-file-word" style="font-size:40px;color:#2b579a;"></i>';
+  } else if (["doc", "docx", "ppt", "pptx"].includes(ext)) {
+    let icon = "";
+    if (ext.startsWith("doc")) {
+      icon =
+        '<i class="fa-solid fa-file-word" style="font-size:40px;color:#2b579a;"></i>';
     } else {
-      icon = '<i class="fa-solid fa-file-powerpoint" style="font-size:40px;color:#d24726;"></i>';
+      icon =
+        '<i class="fa-solid fa-file-powerpoint" style="font-size:40px;color:#d24726;"></i>';
     }
     previewBox.innerHTML = icon;
   } else {
-    previewBox.innerHTML = '<i class="fa-solid fa-file" style="font-size:40px;color:#888;"></i>';
+    previewBox.innerHTML = '<i class="fa-solid fa-file card-icon"></i>';
   }
 }
 
@@ -497,9 +509,9 @@ function downloadDoc(idx) {
   const doc = yourDocs[idx];
   if (!doc.fileBlob) return;
   const url = URL.createObjectURL(doc.fileBlob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
-  a.download = doc.fileName || 'document';
+  a.download = doc.fileName || "document";
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -507,41 +519,43 @@ function downloadDoc(idx) {
 }
 
 function openEditDocPopup(docIdx) {
-  document.getElementById('editDocPopup').style.display = 'flex';
-  document.getElementById('editDocForm').dataset.docIdx = docIdx;
-  document.getElementById('editDocForm').reset();
+  document.getElementById("editDocPopup").style.display = "flex";
+  document.getElementById("editDocForm").dataset.docIdx = docIdx;
+  document.getElementById("editDocForm").reset();
 }
 function closeEditDocPopup() {
-  document.getElementById('editDocPopup').style.display = 'none';
+  document.getElementById("editDocPopup").style.display = "none";
   isNewDoc = false;
   editingDocIdx = null;
 }
 
 function setupEditDocButtons() {
-  document.querySelectorAll('#yourDocsGrid .item-card-edit').forEach((btn, idx) => {
-    btn.onclick = function() {
-      isNewDoc = false;
-      openEditDocPopup(idx);
-    };
-  });
+  document
+    .querySelectorAll("#yourDocsGrid .item-card-edit")
+    .forEach((btn, idx) => {
+      btn.onclick = function () {
+        isNewDoc = false;
+        openEditDocPopup(idx);
+      };
+    });
 }
 
-const docAddForm = document.getElementById('editDocForm')
-docAddForm.onsubmit = function(e) {
+const docAddForm = document.getElementById("editDocForm");
+docAddForm.onsubmit = async function (e) {
   e.preventDefault();
-  if (!confirm('Are you sure to add this document')) return;
+  if (!await confirm("Are you sure to add this document")) return;
   docAddForm.submit();
 };
 
 function saveDocData(file, status, docIdx, previewUrl) {
   const docData = {
     title: file.name,
-    owner: 'You',
+    owner: "You",
     fileName: file.name,
     fileBlob: file,
     fileType: file.type,
     status: status,
-    previewUrl: previewUrl
+    previewUrl: previewUrl,
   };
   if (isNewDoc) {
     yourDocs.push(docData);
@@ -553,7 +567,7 @@ function saveDocData(file, status, docIdx, previewUrl) {
   editingDocIdx = null;
 }
 
-document.getElementById('addYourDocBtn').onclick = function() {
+document.getElementById("addYourDocBtn").onclick = function () {
   isNewDoc = true;
   editingDocIdx = yourDocs.length;
   openEditDocPopup(editingDocIdx);
@@ -562,19 +576,19 @@ document.getElementById('addYourDocBtn').onclick = function() {
 setupEditDocButtons();
 
 function encodeSVG(svg) {
-  return 'data:image/svg+xml,' + encodeURIComponent(svg);
+  return "data:image/svg+xml," + encodeURIComponent(svg);
 }
 
-function downloadDrDoc(idx) {
+async function downloadDrDoc(idx) {
   const doc = drDocs[idx];
   if (!doc.fileBlob) {
-    alert("No file available for download.");
+    await alert("No file available for download.");
     return;
   }
   const url = URL.createObjectURL(doc.fileBlob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
-  a.download = doc.fileName || doc.title || 'document';
+  a.download = doc.fileName || doc.title || "document";
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -582,11 +596,11 @@ function downloadDrDoc(idx) {
 }
 
 async function fetchAssessments() {
-  // alert('fetchAssessment()');
+  // await alert('fetchAssessment()');
   const batchId = window.batch_instructor.id;
   try {
     const response = await fetch(`/faculty/api/assessments/${batchId}/`);
-    if (!response.ok) throw new Error('Failed to fetch assessments');
+    if (!response.ok) throw new Error("Failed to fetch assessments");
     const data = await response.json();
     console.log(data);
     return data;
@@ -597,11 +611,13 @@ async function fetchAssessments() {
 }
 
 async function deleteAssessment(assessmentId) {
-  // alert('fetchAssessment()');
+  // await alert('fetchAssessment()');
   const batchId = window.batch_instructor.id;
   try {
-    const response = await fetch(`/faculty/api/assessments/delete/${assessmentId}/`);
-    if (!response.ok) throw new Error('Failed to delete assessments');
+    const response = await fetch(
+      `/faculty/api/assessments/delete/${assessmentId}/`
+    );
+    if (!response.ok) throw new Error("Failed to delete assessments");
     const data = await response.json();
     console.log(data);
     return data;
@@ -612,43 +628,45 @@ async function deleteAssessment(assessmentId) {
 }
 
 async function createAssessment(type) {
-  // alert(type);
+  // await alert(type);
   const batchId = window.batch_instructor.id;
   try {
     const response = await fetch(`/faculty/api/assessments/${batchId}/`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': window.csrf_token
+        "Content-Type": "application/json",
+        "X-CSRFToken": window.csrf_token,
       },
-      body: JSON.stringify({ type })
+      body: JSON.stringify({ type }),
     });
-    if (!response.ok) throw new Error('Failed to create assessment');
-    alert('Assessment created successfully.');
+    if (!response.ok) throw new Error("Failed to create assessment");
+    await alert("Assessment created successfully.");
+    renderAssessments();
     return true;
   } catch (err) {
-    alert('Failed to create assessment.');
+    await alert("Failed to create assessment.");
     return false;
   }
 }
 
 async function renderAssessments() {
   // Find the section to render assessments
-  const section = document.getElementById('activitySection');
+  const section = document.getElementById("activitySection");
   if (!section) return;
-  section.innerHTML = '';
+  section.innerHTML = "";
 
   // Get current marking scheme types
   const markingRows = await fetchMarkingScheme();
-  const assessmentTypes = markingRows.map(row => row.type);
+  const assessmentTypes = markingRows.map((row) => row.type);
 
   // Get assessments grouped by type
   const assessmentsByType = await fetchAssessments();
+  console.log(assessmentsByType);
 
-  assessmentTypes.forEach(type => {
+  assessmentTypes.forEach((type) => {
     // Section title and add button
-    const sectionTitle = document.createElement('div');
-    sectionTitle.className = 'item-section-title';
+    const sectionTitle = document.createElement("div");
+    sectionTitle.className = "item-section-title";
     sectionTitle.innerHTML = `
       ${type}
       <button class="add-card-btn" data-type="${type}" title="Add ${type}">
@@ -658,48 +676,67 @@ async function renderAssessments() {
     section.appendChild(sectionTitle);
 
     // Grid
-    const grid = document.createElement('div');
-    grid.className = 'item-grid';
+    const grid = document.createElement("div");
+    grid.className = "item-grid";
     grid.id = `assessmentGrid-${type}`;
     const assessments = assessmentsByType[type] || [];
-    grid.innerHTML = assessments.map((a, i) => `
+    grid.innerHTML = assessments
+      .map(
+        (a, i) => `
       <div class="item-card">
         <div style="display: flex; align-items: center; gap: 6px; padding: 8px;">
-          <button class="item-card-edit" data-type="${type}" data-id="${a.id}" title="Edit" onclick="window.location.href='/faculty/${type.toLowerCase().replace(/\s+/g, "")}_creation/${a.id}/';">
+          <button class="item-card-edit" data-type="${type}" data-id="${a.id}" title="Edit" 
+            onclick="window.location.href = '/faculty/${type.toLowerCase().replace(/\s+/g, '')}_creation/${a.id}/';">
             <i class="fa-solid fa-pen"></i>
           </button>
-          <button class="item-card-delete" data-type="${type}" data-id="${a.id}" title="Delete"><i class="fa-solid fa-trash"></i></button>
+
+          <button class="item-card-delete" data-type="${type}" data-id="${a.id}" title="Delete">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+
+          <button class="item-card-view-results" title="View Results" 
+            onclick="window.location.href = (type.toLowerCase().replace(/\s+/g, '') == 'quiz') 
+              ? '/faculty/quiz_results/${a.id}' 
+              : '/faculty/assessment_submissions/${a.id}';">
+            <i class="fa-solid fa-chart-column"></i>
+          </button>
         </div>
-        <div class="item-card-title">${a.title || (type + ' ' + (i + 1))}</div>
+
+        <div class="item-card-image">
+          <i class="fa-solid fa-cloud card-icon"></i>
+        </div>
+        <div class="item-card-title">${a.title || type + " " + (i + 1)}</div>
       </div>
-    `).join('');
+    `
+      )
+      .join("");
     section.appendChild(grid);
-    grid.querySelectorAll(".item-card-delete").forEach(deleteBtn => {
+    grid.querySelectorAll(".item-card-delete").forEach((deleteBtn) => {
       deleteBtn.addEventListener("click", async () => {
-        const assessmentId = deleteBtn.getAttribute('data-id');
-        // alert(assessmentId);
-        if (!confirm('Are you sure to remove this assessment?')) {
+        const assessmentId = deleteBtn.getAttribute("data-id");
+        // await alert(assessmentId);
+        if (!await confirm("Are you sure to remove this assessment?")) {
           return;
         }
         const ok = await deleteAssessment(assessmentId);
         if (ok) {
-          alert('Assessment deleted successfully');
+          await alert("Assessment deleted successfully");
           renderAssessments();
         }
+      });
     });
-  });
 
-  // Add assessment event
-  section.querySelectorAll('.add-card-btn').forEach(btn => {
-    btn.onclick = async function() {
-      const type = btn.getAttribute('data-type');
-      if (!confirm(`Create a new assessment for "${type}"?`)) return;
-      const ok = await createAssessment(type);
-      if (ok) renderAssessments();
-    };
+    // Add assessment event
+    section.querySelectorAll(".add-card-btn").forEach((btn) => {
+      btn.onclick = async function () {
+        const type = btn.getAttribute("data-type");
+        if (!await confirm(`Create a new assessment for "${type}"?`)) return;
+        const ok = await createAssessment(type);
+        if (ok) renderAssessments();
+      };
+    });
+    // Edit/delete logic can be added here as needed
   });
-  // Edit/delete logic can be added here as needed
-  })
 }
 
 async function fetchDocuments() {
@@ -707,7 +744,7 @@ async function fetchDocuments() {
   const instructorId = window.instructor?.id || null;
   try {
     const response = await fetch(`/faculty/api/documents/${courseId}/`);
-    if (!response.ok) throw new Error('Failed to fetch documents');
+    if (!response.ok) throw new Error("Failed to fetch documents");
     const data = await response.json(); // { by_instructor: {user_id: [doc, ...]}, instructors: {user_id: name}, you: user_id }
     // Ensure 'you' is set to window.instructor.id if available
     if (instructorId) {
@@ -723,8 +760,10 @@ async function fetchDocuments() {
 async function fetchReferredDocuments() {
   const batchInstructorId = window.batch_instructor.id;
   try {
-    const response = await fetch(`/faculty/api/referred_documents/${batchInstructorId}/`);
-    if (!response.ok) throw new Error('Failed to fetch referred documents');
+    const response = await fetch(
+      `/faculty/api/referred_documents/${batchInstructorId}/`
+    );
+    if (!response.ok) throw new Error("Failed to fetch referred documents");
     return await response.json(); // [{...doc}, ...]
   } catch (err) {
     console.error(err);
@@ -735,15 +774,16 @@ async function fetchReferredDocuments() {
 async function addDocument(formData) {
   try {
     const response = await fetch(`/faculty/api/documents/add/`, {
-      method: 'POST',
-      headers: { 'X-CSRFToken': window.csrf_token },
-      body: formData
+      method: "POST",
+      headers: { "X-CSRFToken": window.csrf_token },
+      body: formData,
     });
-    if (!response.ok) throw new Error('Failed to add document');
-    alert('Document added successfully.');
+    if (!response.ok) throw new Error("Failed to add document");
+    await alert("Document added successfully.");
+    renderDocuments();
     return true;
   } catch (err) {
-    alert('Failed to add document.');
+    await alert("Failed to add document.");
     return false;
   }
 }
@@ -751,16 +791,32 @@ async function addDocument(formData) {
 async function referDocument(documentId) {
   const batchInstructorId = window.batch_instructor.id;
   try {
-    const response = await fetch(`/faculty/api/refer_document/${batchInstructorId}/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': window.csrf_token },
-      body: JSON.stringify({ document_id: documentId })
-    });
-    if (!response.ok) throw new Error('Failed to refer document');
-    alert('Document referred successfully.');
+    const response = await fetch(
+      `/faculty/api/refer_document/${batchInstructorId}/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": window.csrf_token,
+        },
+        body: JSON.stringify({ document_id: documentId }),
+      }
+    );
+
+    // Parse the JSON response
+    const data = await response.json();
+
+    // Check if response was ok and backend returned success
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || "Failed to refer document");
+    }
+
+    await alert("Document referred successfully.");
+    window.location.reload();
     return true;
+
   } catch (err) {
-    alert('Failed to refer document.');
+    await alert(err);
     return false;
   }
 }
@@ -773,28 +829,32 @@ async function renderDocuments() {
   const byInstructor = docsData.by_instructor;
 
   // Documents By You (using window.instructor.id if available)
-  const yourDocsGrid = document.getElementById('yourDocsGrid');
-  yourDocsGrid.innerHTML = '';
+  const yourDocsGrid = document.getElementById("yourDocsGrid");
+  yourDocsGrid.innerHTML = "";
   if (byInstructor[yourId]) {
-    yourDocsGrid.innerHTML = byInstructor[yourId].map((doc, i) => `
+    yourDocsGrid.innerHTML = byInstructor[yourId]
+      .map(
+        (doc, i) => `
       <div class="item-card">
         <div style="display:flex;align-items:center;gap:6px;padding:8px;">
           <button class="item-card-download" title="Download" onclick="window.open('${doc.file_link}', '_blank')"><i class="fa-solid fa-download"></i></button>
           <button class="item-card-delete" title="Delete" onclick="deleteDocument(${doc.id})"><i class="fa-solid fa-trash"></i></button>
         </div>
         <div class="item-card-image">
-          <i class="fa-solid fa-file" style="font-size:40px;color:#888;"></i>
+          <i class="fa-solid fa-file card-icon"></i>
         </div>
         <div class="item-card-title">${doc.name}</div>
         <button class="refer-btn" onclick="referDocumentHandler(${doc.id})">Refer to Students</button>
       </div>
-    `).join('');
+    `
+      )
+      .join("");
   }
   // Add button
-  const addBtn = document.createElement('button');
-  addBtn.className = 'add-card-btn';
-  addBtn.id = 'addYourDocBtn';
-  addBtn.title = 'Add Document';
+  const addBtn = document.createElement("button");
+  addBtn.className = "add-card-btn";
+  addBtn.id = "addYourDocBtn";
+  addBtn.title = "Add Document";
   addBtn.innerHTML = '<i class="fa-solid fa-plus"></i>';
   addBtn.onclick = showAddDocumentPopup;
   // yourDocsGrid.parentElement.querySelector('.item-section-title-row').appendChild(addBtn);
@@ -804,49 +864,57 @@ async function renderDocuments() {
     if (userId == yourId) return;
     const grid = document.getElementById(`docsGrid-${userId}`);
     if (!grid) return;
-    grid.innerHTML = docs.map((doc, i) => `
+    grid.innerHTML = docs
+      .map(
+        (doc, i) => `
       <div class="item-card">
         <div style="display:flex;align-items:center;gap:6px;padding:8px;">
           <button class="item-card-download" title="Download" onclick="window.open('${doc.file_link}', '_blank')"><i class="fa-solid fa-download"></i></button>
         </div>
         <div class="item-card-image">
-          <i class="fa-solid fa-file" style="font-size:40px;color:#888;"></i>
+          <i class="fa-solid fa-file card-icon"></i>
         </div>
         <div class="item-card-title">${doc.name}<br>${doc.uploader_name}</div>
         <button class="refer-btn" onclick="referDocumentHandler(${doc.id})">Refer to Students</button>
       </div>
-    `).join('');
+    `
+      )
+      .join("");
   });
 
   // Referred Documents (no add-card-btn beside title)
-  const referredDocsGrid = document.getElementById('referredDocsGrid');
-  referredDocsGrid.innerHTML = referredDocs.map((doc, i) => `
+  const referredDocsGrid = document.getElementById("referredDocsGrid");
+  referredDocsGrid.innerHTML = referredDocs
+    .map(
+      (doc, i) => `
     <div class="item-card">
       <div style="display:flex;align-items:center;gap:6px;padding:8px;">
         <button class="item-card-download" title="Download" onclick="window.open('${doc.file_link}', '_blank')"><i class="fa-solid fa-download"></i></button>
         <button class="item-card-delete" title="Delete" onclick="deleteReferredDocument(${doc.id})"><i class="fa-solid fa-trash"></i></button>
       </div>
         <div class="item-card-image">
-          <i class="fa-solid fa-file" style="font-size:40px;color:#888;"></i>
+          <i class="fa-solid fa-file card-icon"></i>
         </div>
       <div class="item-card-title">${doc.name}<br>${doc.uploader_name}</div>
     </div>
-  `).join('');
+  `
+    )
+    .join("");
 }
 
 function showAddDocumentPopup() {
   // Create a popup div
-  const popup = document.createElement('div');
-  popup.style.position = 'fixed';
-  popup.style.top = '0';
-  popup.style.left = '0';
-  popup.style.width = '100vw';
-  popup.style.height = '100vh';
-  popup.style.background = 'rgba(0,0,0,0.3)';
-  popup.style.display = 'flex';
-  popup.style.alignItems = 'center';
-  popup.style.justifyContent = 'center';
-  popup.style.zIndex = '9999';
+  const popup = document.createElement("div");
+  popup.style.position = "fixed";
+  popup.style.top = "0";
+  popup.style.left = "0";
+  popup.style.width = "100vw";
+  popup.style.height = "100vh";
+  popup.style.background = "rgba(0,0,0,0.3)";
+  popup.style.display = "flex";
+  popup.style.alignItems = "center";
+  popup.style.justifyContent = "center";
+  popup.style.zIndex = "9999";
 
   popup.innerHTML = `
     <div style="background:#fff;padding:2rem;border-radius:1rem;min-width:320px;max-width:90vw;box-shadow:0 2px 16px #0002;">
@@ -876,26 +944,26 @@ function showAddDocumentPopup() {
   `;
   document.body.appendChild(popup);
 
-  document.getElementById('cancelAddDocBtn').onclick = function() {
+  document.getElementById("cancelAddDocBtn").onclick = function () {
     popup.remove();
   };
 
-  document.getElementById('addDocForm').onsubmit = async function(e) {
+  document.getElementById("addDocForm").onsubmit = async function (e) {
     e.preventDefault();
-    const name = document.getElementById('addDocName').value.trim();
-    const fileInput = document.getElementById('addDocFile');
-    const access = document.getElementById('addDocAccess').value;
+    const name = document.getElementById("addDocName").value.trim();
+    const fileInput = document.getElementById("addDocFile");
+    const access = document.getElementById("addDocAccess").value;
     const file = fileInput.files[0];
     if (!name || !file) {
-      alert('Please provide both document name and file.');
+      await alert("Please provide both document name and file.");
       return;
     }
-    if (!confirm('Are you sure you want to add this document?')) return;
+    if (!await confirm("Are you sure you want to add this document?")) return;
     const formData = new FormData();
-    formData.append('name', name);
-    formData.append('access_status', access);
-    formData.append('file', file);
-    formData.append('course_id', window.batch_instructor.course__id);
+    formData.append("name", name);
+    formData.append("access_status", access);
+    formData.append("file", file);
+    formData.append("course_id", window.batch_instructor.course__id);
     const ok = await addDocument(formData);
     if (ok) {
       popup.remove();
@@ -904,38 +972,36 @@ function showAddDocumentPopup() {
   };
 }
 
-window.referDocumentHandler = async function(documentId) {
-  if (!confirm('Refer this document to students?')) return;
+window.referDocumentHandler = async function (documentId) {
+  if (!await confirm("Refer this document to students?")) return;
   const ok = await referDocument(documentId);
   if (ok) renderDocuments();
 };
 
-window.deleteDocument = async function(documentId) {
-  if (!confirm('Are you sure to delete this document permanently?')) return;
+window.deleteDocument = async function (documentId) {
+  if (!await confirm("Are you sure to delete this document permanently?")) return;
   fetch(`/faculty/document/delete/${documentId}/`)
-  .then(
-    r => r.ok ? r.text().then( () =>{
-      alert('Document Deleted successfully');
-      renderDocuments();
-    }) : 
-    console.log('Error:', r.error)
-  )
-  .catch(e => 
-    console.log('Error:', e)
-  );
+    .then((r) =>
+      r.ok
+        ? r.text().then(async () => {
+          await alert("Document Deleted successfully");
+          renderDocuments();
+        })
+        : console.log("Error:", r.error)
+    )
+    .catch((e) => console.log("Error:", e));
 };
 
-window.deleteReferredDocument = async function(documentId) {
-  if (!confirm('Are you sure to unrefer this document?')) return;
+window.deleteReferredDocument = async function (documentId) {
+  if (!await confirm("Are you sure to unrefer this document?")) return;
   fetch(`/faculty/batch_instructor_document/delete/${documentId}/`)
-  .then(
-    r => r.ok ? r.text().then( () =>{
-      alert('Document Unreffered successfully');
-      renderDocuments();
-    }) : 
-    console.log('Error:', r.error)
-  )
-  .catch(e => 
-    console.log('Error:', e)
-  );
+    .then((r) =>
+      r.ok
+        ? r.text().then(async () => {
+          await alert("Document Unreffered successfully");
+          renderDocuments();
+        })
+        : console.log("Error:", r.error)
+    )
+    .catch((e) => console.log("Error:", e));
 };

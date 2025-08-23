@@ -3,471 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>University Student Portal</title>
+    <title>University Public Portal</title>
     <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins&display=swap');
-
-        :root {
-            /* Primary Colors (University Branding) */
-            --primary: #003366; /* Deep Blue - main brand color */
-            --primary-light: #1a4d80; /* Lighter shade for hover states */
-            --primary-dark: #00264d; /* Darker shade for active states */
-            
-            /* Secondary Colors */
-            --secondary: #FFD700; /* Gold - for accents and highlights */
-            --secondary-light: #ffe44d;
-  
-            /* Background Colors */
-            --bg-light: #FFFFFF;
-            --bg-gray: #F5F5F5;
-            
-            /* Text Colors */
-            --text-dark: #333333;
-            --text-black: #000000;
-            --text-light: #FFFFFF;
-            
-            /* Status Colors */
-            --success: #4CAF50;
-            --error: #F44336;
-            --warning: #FFC107;
-            --info: #17A2B8;
-        }
-        section {
-            padding-top: 3rem;
-            padding-bottom: 3rem;
-            scroll-margin-top: 70px; /* Account for fixed navbar */
-        }
-        body {
-            font-family: "Poppins", sans-serif;
-             font-style: normal;
-            background-color: var(--bg-gray);
-            color: var(--text-dark);
-            scroll-behavior: smooth;
-            box-sizing: border-box;
-        }
-
-        /* Navbar Styles */
-        .navbar {
-            background-color: var(--primary);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-brand, .nav-link {
-            color: var(--text-light) !important;
-            font-weight: 500;
-        }
-
-        .nav-link:hover {
-            color: var(--secondary) !important;
-            border-bottom: 2px solid var(--secondary);
-        }
-
-        .dropdown-menu {
-            background-color: var(--primary-light);
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .dropdown-item {
-            color: var(--text-light);
-            padding: 10px 20px;
-        }
-
-        .dropdown-item:hover {
-            background-color: var(--secondary) !important;
-            color: var(--text-dark) !important;
-            border-radius: 8px;
-        }
-        /* Remove Bootstrap's default active background */
-.dropdown-item.active {
-    background: transparent !important;
-}
-
-/* Ensure hover works in all states */
-.dropdown-item:hover {
-    background-color: var(--secondary) !important;
-    color: var(--text-dark) !important;
-    border-radius: 8px;
-}
-        
-       
-        .uni-logo {
-            height: 50px;
-            width: 50px;
-            border-radius: 8px;
-            margin-right: 15px;
-        }
-
-        .custom-nav-spacing .nav-item {
-            margin-right: 2rem;
-        }
-
-        @media (max-width: 991.98px) {
-            .custom-nav-spacing .nav-item {
-                margin-right: 0;
-                margin-bottom: 0.5rem;
-            }
-        }
-
-        .logout-button {
-            border-radius: 10px;
-            width: 70px;
-            height: 50px;
-            background-color: var(--error);
-        }
-
-        .logout-icon {
-            font-size: 1.7rem;
-            width: 20px;
-        }
-
-        .logout-icon:hover {
-            color: var(--secondary) !important;
-        }
-
-        /* Hero Section */
-        .hero-section {
-            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
-            color: var(--text-light);
-            padding: 60px 0;
-            text-align: center;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            margin-bottom: 30px;
-        }
-
-        .hero-section h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .hero-section p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        /* Section Headers */
-        .section-header {
-            font-size: 2.2rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 30px;
-            text-align: center;
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .section-header::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            bottom: 0;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background-color: var(--primary);
-            border-radius: 2px;
-        }
-
-        /* Cards */
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,.08);
-            margin-bottom: 25px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-header {
-            background-color: var(--primary);
-            color: var(--text-light);
-            border-top-left-radius: 15px !important;
-            border-top-right-radius: 15px !important;
-            font-weight: 500;
-        }
-
-        .card-body h5 {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        .department-title {
-            color: var(--primary);
-            font-weight: 500;
-        }
-
-        /* lab images */
-        .lab-img{
-            height: 270px;
-            object-fit: cover;
-        }
-        .card-img-top{
-             height: 270px;
-            object-fit: cover;
-            border-bottom: 0.5px solid var(--primary-light);
-            border-radius: 10px;
-        }
-        .profile-img{
-            object-fit: cover;
-            width: 150px;
-            height: 150px;
-            
-             border: 1px solid #929292;
-        }
-
-        /* Accordions */
-        .accordion-button:not(.collapsed) {
-            background-color: var(--primary);
-            color: var(--text-light);
-        }
-
-        .accordion-button:focus {
-            box-shadow: 0 0 0 0.25rem rgba(0, 51, 102, 0.25);
-        }
-
-        .accordion-item {
-            border-radius: 10px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,.05);
-            border: none;
-        }
-
-        /* Buttons */
-        .btn-primary {
-            background-color: var(--primary);
-            border-color: var(--primary);
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-            border-color: var(--primary-dark);
-        }
-
-        .btn-outline-primary {
-            border-color: var(--primary);
-            color: var(--primary);
-            border-radius: 8px;
-        }
-
-        .btn-outline-primary:hover {
-            background-color: var(--primary);
-            color: var(--text-light);
-        }
-
-        /* Badges */
-        .badge-custom {
-            background-color: var(--primary);
-            color: var(--text-light);
-            padding: 6px 10px;
-            border-radius: 5px;
-            font-size: 0.85em;
-            margin-right: 5px;
-            margin-bottom: 5px;
-            display: inline-block;
-        }
-
-        .badge-national { background-color: var(--success); }
-        .badge-international { background-color: var(--warning); color: var(--text-dark); }
-        .badge-cross-major { background-color: var(--info); }
-
-        /* Carousel */
-        .carousel-item img {
-            max-height: 500px;
-            object-fit: cover;
-            border-radius: 15px;
-        }
-
-        .carousel-caption {
-            background-color: rgba(77, 87, 117, 0.6);
-            border-radius: 10px;
-            padding: 10px 20px;
-            bottom: 20px;
-            color: var(--text-light);
-        }
-
-        /* Executive Cards */
-        .executive-card {
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            padding: 20px;
-            background-color: var(--bg-light);
-            transition: transform 0.3s ease, box-shadow 0.2s ease;
-            cursor: pointer;
-        }
-
-        .executive-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-        }
-
-       
-        .executive-img{
-           width: 60px;
-            height: 60px;
-             object-fit: cover; 
-              border-radius: 8px;
-        }
-
-        .executive-name {
-            font-weight: 600;
-            font-size: 1.25rem;
-        }
-
-        .executive-title {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        .executive-contact i {
-            margin-right: 8px;
-            color: var(--primary);
-        }
-
-        /* Footer */
-        .footer {
-            background-color: var(--primary);
-            color: var(--text-light);
-            padding: 40px 0;
-            margin-top: 50px;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-        }
-
-        .footer a {
-            color: var(--secondary);
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            color: var(--secondary-light);
-            text-decoration: underline;
-        }
-
-        /* Utility Classes */
-        .border-line {
-            border-top: 2px solid var(--secondary);
-        }
-
-        .border-line:hover {
-            box-shadow: 0 2px 6px 2px rgba(160, 99, 204, 0.2), 1px -2px 6px 2px rgba(186, 206, 104, 0.15);
-        }
-
-        .text-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0.5rem 1rem;
-        }
-
-        .info-line {
-            display: flex;
-            align-items: start;
-            font-size: 0.9rem;
-            color: var(--text-dark);
-        }
-
-        .info-line i {
-            width: 20px;
-            text-align: center;
-            margin-right: 0.5rem;
-            font-size: 0.95rem;
-            color: var(--primary);
-        }
-    </style>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'public/stylesheets/home.css' %}">
 </head>
 <body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="180" tabindex="0">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container-fluid">
-            <img src="https://www.ucsy.edu.mm/img/ucsylogo-icpc2017.png" class="uni-logo ms-4" alt="University Logo">
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav" >
-                
-                <ul class="navbar-nav ms-auto align-items-center custom-nav-spacing">
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            University Info
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#university-info"><i class="fas fa-info-circle me-2"></i> Overview</a></li>
-                            <li><a class="dropdown-item" href="#executives"><i class="fas fa-user-tie me-2"></i> Executives</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Academics
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#faculties">Faculties</a></li>
-                            <li><a class="dropdown-item" href="#departments">Departments</a></li>
-                            <li><a class="dropdown-item" href="#degrees">Degrees</a></li>
-                            <li><a class="dropdown-item" href="#instructors">Instructors</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Resources
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#partnerships"><i class="fas fa-handshake me-2"></i> Partnerships</a></li>
-                            <li><a class="dropdown-item" href="#certificates"><i class="fas fa-certificate me-2"></i> Certificates</a></li>
-                            <li><a class="dropdown-item" href="#labs"><i class="fas fa-flask me-2"></i> Labs</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item logout">
-                        <a class="nav-link logout-icon" href="logout.html" title="Logout">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+{% if request.user_role == 'instructor' %}
+    {% include "faculty/navbar.html" %}
+{% elif request.user_role == 'student' %}
+    {% include "students/academic/navbar.html" %}
+{% elif request.user_role == 'executive' %}
+    {% include "executives/navbar.html" %}
+{% else %}
+    {% include "public/navbar.html" %}
+{% endif %}
 
     <!-- Main Content -->
     <main class="container-fluid py-5" style="margin-top: 56px;">
         <!-- University Information -->
         <section id="university-info" class="py-5">
-            <h2 class="section-header">University of Computer Studies</h2>
+            <h2 class="section-header">{{university_info.name}}</h2>
             <div class="card p-4">
                 <div class="card-body">
                     <p class="lead">
-                        In 1971, it was founded as UCC, the university Computer Center. In 1988, it was established as an Institute of Computer Science and Technology (ICST). On July 1,
-                         1998, the Institute was changed to the University of Computer Studies, Yangon (UCSY).
+                        {{university_info.description}}
                     </p>
-
-                    <p class="lead">Welcome to University of Computer Studies, a beacon of academic excellence and innovation dedicated to fostering future leaders and driving societal progress. Established in 1971,
-                     our university has consistently been at the forefront of education, research, and community engagement.</p>
-                     <p class="lead">
-                        Our institution has grown from a small computer center to a comprehensive university offering cutting-edge programs in computer science, information technology, and related fields.
-                    </p>
-
                     <hr>
                     <h5 class="text-primary mb-3"><i class="fas fa-lightbulb me-2"></i> Our Mission</h5>
-                    <p>To provide a transformative educational experience, conduct groundbreaking research, and serve society through knowledge dissemination and creative endeavors in the field of computing and information technology.</p>
+                    <p>{{university_info.mission|default:"Not provided yet"}}</p>
 
                     <h5 class="text-primary mb-3 mt-4"><i class="fas fa-eye me-2"></i> Our Vision</h5>
-                    <p>To be a globally recognized institution for its pioneering research in computer science, innovative teaching methodologies, and a vibrant community that inspires critical thinking and technological innovation.</p>
+                    <p>{{university_info.vision|default:"Not provided yet"}}</p>
                 </div>
             </div>
             
@@ -475,32 +47,26 @@
             <h2 class="section-header mt-5">University Photos</h2>
             <div id="universityPhotosCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#universityPhotosCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#universityPhotosCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                    <button type="button" data-bs-target="#universityPhotosCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                </div>
+                    {% for id, photo in photos.items %}
+                      <button 
+                        type="button" 
+                        data-bs-target="#universityPhotosCarousel" 
+                        data-bs-slide-to="{{ forloop.counter0 }}" 
+                        {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                        aria-label="Slide {{ forloop.counter }}">
+                      </button>
+                    {% endfor %}
+                  </div>
                 <div class="carousel-inner rounded-4 shadow-lg">
-                    <div class="carousel-item active">
-                        <img src="https://ucsy.edu.mm/gallery/ucsy/slide_2.jpg" class="d-block w-100" alt="University Campus View">
+                    
+                    {% for id, photo in photos.items %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="/media/{{photo.image}}" class="d-block w-100" alt="{{photo.caption}}" loading="lazy">
                         <div class="carousel-caption d-none d-md-block">
-                            <h4>Vibrant Campus Life</h4>
-                            <p>Our beautiful campus offers a stimulating environment for learning and growth.</p>
+                            <h4>{{photo.caption}}</h4>
                         </div>
                     </div>
-                    <div class="carousel-item">
-                        <img src="https://presidencyuniversity.in/uploads/events/6720c1cf055bc1730200015.jpg" class="d-block w-100" alt="Modern Library">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h4>State-of-the-Art Library</h4>
-                            <p>Access a vast collection of resources and comfortable study spaces.</p>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <img src="https://cdn.gaijinpot.com/app/uploads/sites/4/2017/10/Japanese-college-class.jpg" class="d-block w-100" alt="Student Collaboration">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h4>Collaborative Learning Spaces</h4>
-                            <p>Engage with peers and faculty in dynamic, interactive settings.</p>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#universityPhotosCarousel" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -518,44 +84,19 @@
             <h2 class="section-header">Our Faculties</h2>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 <!-- Faculty 1 -->
+                {% for faculty in faculties %}
                 <div class="col">
                     <div class="card h-100">
-                        <img src="https://www.ucsy.edu.mm/img/testm1.jpeg" class="card-img-top" alt="Computer Science Faculty Logo">
+                        <img src="/media/{{faculty.faculty_photo}}" class="card-img-top" alt="{{faculty.name}}" loading="lazy">
                         <div class="card-body">
-                            <h5 class="card-title">Faculty of Computer Science</h5>
-                            <p class="card-text"><i class="fas fa-user-tie me-2"></i><strong>Head:</strong> Dr. Alex Johnson</p>
-                            <p class="card-text"><i class="fas fa-phone-alt me-2"></i><strong>Phone:</strong> +123 456 7890</p>
-                            <p class="card-text"><i class="fas fa-envelope me-2"></i><strong>Email:</strong> alex.johnson@uni.edu</p>
-                           
+                            <h5 class="card-title">{{faculty.name}}</h5>
+                            <p class="card-text"><i class="fas fa-user-tie me-2"></i><strong>Head:</strong> {{faculty.head_of_faculty.full_name}}</p>
+                            <p class="card-text"><i class="fas fa-phone-alt me-2"></i><strong>Phone:</strong> {{faculty.contact_phone}}</p>
+                            <p class="card-text"><i class="fas fa-envelope me-2"></i><strong>Email:</strong> {{faculty.contact_email}}</p>
                         </div>
                     </div>
                 </div>
-                <!-- Faculty 2 -->
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="https://www.ucsy.edu.mm/img/testm1.jpeg" class="card-img-top" alt="Information Technology Faculty Logo">
-                        <div class="card-body">
-                            <h5 class="card-title">Faculty of Information Technology</h5>
-                            <p class="card-text"><i class="fas fa-user-tie me-2"></i><strong>Head:</strong> Prof. Maria Garcia</p>
-                            <p class="card-text"><i class="fas fa-phone-alt me-2"></i><strong>Phone:</strong> +123 456 7891</p>
-                            <p class="card-text"><i class="fas fa-envelope me-2"></i><strong>Email:</strong> maria.garcia@uni.edu</p>
-                            
-                        </div>
-                    </div>
-                </div>
-                <!-- Faculty 3 -->
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="https://www.ucsy.edu.mm/ucsy/img/testm22.jpg" class="card-img-top" alt="Software Engineering Faculty Logo">
-                        <div class="card-body">
-                            <h5 class="card-title">Faculty of Software Engineering</h5>
-                            <p class="card-text"><i class="fas fa-user-tie me-2"></i><strong>Head:</strong> Dr. Sarah Lee</p>
-                            <p class="card-text"><i class="fas fa-phone-alt me-2"></i><strong>Phone:</strong> +123 456 7892</p>
-                            <p class="card-text"><i class="fas fa-envelope me-2"></i><strong>Email:</strong> sarah.lee@uni.edu</p>
-                          
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </section>
 
@@ -564,106 +105,46 @@
             <h2 class="section-header">Departments by Faculty</h2>
             <div class="accordion" id="departmentsAccordion">
                 <!-- Computer Science Faculty Departments -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingCS">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCS" aria-expanded="false" aria-controls="collapseCS">
-                            <i class="fas fa-laptop-code me-2"></i> Faculty of Computer Science
-                        </button>
-                    </h2>
-                    <div id="collapseCS" class="accordion-collapse collapse" aria-labelledby="headingCS" data-bs-parent="#departmentsAccordion">
-                        <div class="accordion-body">
+                {% for faculty, departments in department_data.items %}
+                    {% with counter=forloop.counter %}
+                        <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ counter }}">
+                            <button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#collapse{{ counter }}"
+                                    aria-expanded="false"
+                                    aria-controls="collapse{{ counter }}">
+                            <i class="fas fa-laptop-code me-2"></i> {{ faculty }}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ counter }}"
+                            class="accordion-collapse collapse"
+                            aria-labelledby="heading{{ counter }}"
+                            data-bs-parent="#departmentsAccordion">
+                            <div class="accordion-body">
                             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                                {% for department in departments %}
                                 <div class="col">
                                     <div class="card h-100">
-                                        <div class="card-body">
-                                            <img src="https://www.ucsy.edu.mm/img/ucsylogo-icpc2017.png" alt="CS Dept Logo" class="img-fluid rounded-circle mb-3" style="width: 70px; height: 70px; object-fit: cover;">
-                                            <h5 class="card-title department-title">Computer Science Department</h5>
-                                            <p class="card-text"><small><i class="fas fa-user-tie me-1"></i><strong>Head:</strong> Dr. Emily White</small></p>
-                                            <p class="card-text"><small><i class="fas fa-phone-alt me-1"></i><strong>Phone:</strong> +111 222 3333</small></p>
-                                            <p class="card-text"><small><i class="fas fa-envelope me-1"></i><strong>Email:</strong> emily.white@uni.edu</small></p>
-                                            
-                                        </div>
+                                    <div class="card-body">
+                                        <img src="/media/{{ department.department_photo }}"
+                                            alt="{{ department.name }} Dept Logo"
+                                            class="img-fluid rounded-circle mb-3"
+                                            style="width: 70px; height: 70px; object-fit: cover;" loading="lazy">
+                                        <h5 class="card-title department-title">{{ department.name }}</h5>
+                                        <p class="card-text"><small><i class="fas fa-user-tie me-1"></i><strong>Head:</strong> {{ department.head_of_department.full_name }}</small></p>
+                                        <p class="card-text"><small><i class="fas fa-phone-alt me-1"></i><strong>Phone:</strong> {{ department.contact_phone }}</small></p>
+                                        <p class="card-text"><small><i class="fas fa-envelope me-1"></i><strong>Email:</strong> {{ department.contact_email }}</small></p>
+                                    </div>
                                     </div>
                                 </div>
-                                <div class="col">
-                                    <div class="card h-100">
-                                        <div class="card-body">
-                                            <img src="https://www.ucsy.edu.mm/img/ucsylogo-icpc2017.png" alt="AI Dept Logo" class="img-fluid rounded-circle mb-3" style="width: 70px; height: 70px; object-fit: cover;">
-                                            <h5 class="card-title department-title">Artificial Intelligence Department</h5>
-                                            <p class="card-text"><small><i class="fas fa-user-tie me-1"></i><strong>Head:</strong> Dr. Robert Green</small></p>
-                                            <p class="card-text"><small><i class="fas fa-phone-alt me-1"></i><strong>Phone:</strong> +111 222 3334</small></p>
-                                            <p class="card-text"><small><i class="fas fa-envelope me-1"></i><strong>Email:</strong> robert.green@uni.edu</small></p>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="card h-100">
-                                        <div class="card-body">
-                                            <img src="https://www.ucsy.edu.mm/img/ucsylogo-icpc2017.png" alt="DS Dept Logo" class="img-fluid rounded-circle mb-3" style="width: 70px; height: 70px; object-fit: cover;">
-                                            <h5 class="card-title department-title">Data Science Department</h5>
-                                            <p class="card-text"><small><i class="fas fa-user-tie me-1"></i><strong>Head:</strong> Dr. Michael Chen</small></p>
-                                            <p class="card-text"><small><i class="fas fa-phone-alt me-1"></i><strong>Phone:</strong> +111 222 3335</small></p>
-                                            <p class="card-text"><small><i class="fas fa-envelope me-1"></i><strong>Email:</strong> michael.chen@uni.edu</small></p>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
+                                {% endfor %}
+                            </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- IT Faculty Departments -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingIT">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIT" aria-expanded="false" aria-controls="collapseIT">
-                            <i class="fas fa-server me-2"></i> Faculty of Information Technology
-                        </button>
-                    </h2>
-                    <div id="collapseIT" class="accordion-collapse collapse" aria-labelledby="headingIT" data-bs-parent="#departmentsAccordion">
-                        <div class="accordion-body">
-                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-                                <div class="col">
-                                    <div class="card h-100">
-                                        <div class="card-body">
-                                            <img src="https://www.ucsy.edu.mm/img/ucsylogo-icpc2017.png" alt="Networking Dept Logo" class="img-fluid rounded-circle mb-3" style="width: 70px; height: 70px; object-fit: cover;">
-                                            <h5 class="card-title department-title">Networking Department</h5>
-                                            <p class="card-text"><small><i class="fas fa-user-tie me-1"></i><strong>Head:</strong> Dr. Liam Brown</small></p>
-                                            <p class="card-text"><small><i class="fas fa-phone-alt me-1"></i><strong>Phone:</strong> +111 222 3336</small></p>
-                                            <p class="card-text"><small><i class="fas fa-envelope me-1"></i><strong>Email:</strong> liam.brown@uni.edu</small></p>
-                                           
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="card h-100">
-                                        <div class="card-body">
-                                            <img src="https://www.ucsy.edu.mm/img/ucsylogo-icpc2017.png" alt="Cybersecurity Dept Logo" class="img-fluid rounded-circle mb-3" style="width: 70px; height: 70px; object-fit: cover;">
-                                            <h5 class="card-title department-title">Cybersecurity Department</h5>
-                                            <p class="card-text"><small><i class="fas fa-user-tie me-1"></i><strong>Head:</strong> Prof. Olivia Davis</small></p>
-                                            <p class="card-text"><small><i class="fas fa-phone-alt me-1"></i><strong>Phone:</strong> +111 222 3337</small></p>
-                                            <p class="card-text"><small><i class="fas fa-envelope me-1"></i><strong>Email:</strong> olivia.davis@uni.edu</small></p>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="card h-100">
-                                        <div class="card-body">
-                                            <img src="https://www.ucsy.edu.mm/img/ucsylogo-icpc2017.png" alt="Web Tech Dept Logo" class="img-fluid rounded-circle mb-3" style="width: 70px; height: 70px; object-fit: cover;">
-                                            <h5 class="card-title department-title">Web Technologies Department</h5>
-                                            <p class="card-text"><small><i class="fas fa-user-tie me-1"></i><strong>Head:</strong> Dr. James Wilson</small></p>
-                                            <p class="card-text"><small><i class="fas fa-phone-alt me-1"></i><strong>Phone:</strong> +111 222 3338</small></p>
-                                            <p class="card-text"><small><i class="fas fa-envelope me-1"></i><strong>Email:</strong> james.wilson@uni.edu</small></p>
-                                           
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-                    </div>
-                </div>
+                    {% endwith %}
+                    {% endfor %}
             </div>
         </section>
 
@@ -673,7 +154,7 @@
                 <h1>Welcome, Future Innovator!</h1>
                 <p>Explore your academic journey and discover endless possibilities at our esteemed university.</p>
                 <div class="d-grid gap-2 col-6 mx-auto mt-4">
-                    <a href="degree.html" class="btn btn-light btn-lg rounded-pill shadow-sm">Explore Degrees <i class="fas fa-arrow-right ms-2"></i></a>
+                    <a href="/public/degrees" class="btn btn-light btn-lg rounded-pill shadow-sm">Explore Degrees <i class="fas fa-arrow-right ms-2"></i></a>
                 </div>
             </div>
         </section>
@@ -683,124 +164,56 @@
             <h2 class="section-header">Our Esteemed Instructors</h2>
             <div class="accordion" id="instructorsAccordion">
                 <!-- Computer Science Department Instructors -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingCSInstructors">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCSInstructors" aria-expanded="false" aria-controls="collapseCSInstructors">
-                            <i class="fas fa-laptop-code me-2"></i> Computer Science Department
-                        </button>
+                {% for department, instructors in instructor_data.items %}
+                {% with counter=forloop.counter %}
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingInstructor{{ counter }}">
+                      <button class="accordion-button collapsed" type="button"
+                              data-bs-toggle="collapse"
+                              data-bs-target="#collapseInstructor{{ counter }}"
+                              aria-expanded="false"
+                              aria-controls="collapseInstructor{{ counter }}">
+                        <i class="fas fa-laptop-code me-2"></i> {{ department }}
+                      </button>
                     </h2>
-                    <div id="collapseCSInstructors" class="accordion-collapse collapse" aria-labelledby="headingCSInstructors" data-bs-parent="#instructorsAccordion">
-                        <div class="accordion-body">
-                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-                                <div class="col">
-                                    <div class="card h-100 text-center border-line">
-                                        <div class="card-body">
-                                            <img src="https://img.lovepik.com/free-png/20220126/lovepik-business-women-png-image_401866619_wh1200.png" alt="Instructor Profile" class="profile-img mb-3">
-                                            <h6 class="card-title">Dr. John Doe</h6>
-                                            <div class="text-group">
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-phone-alt me-1"></i>+111 987 6543</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-envelope me-1"></i>john.doe@uni.edu</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-building me-1"></i>Computer Science</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-briefcase me-1"></i>Professor</small></p>
-                                            </div>
-                                          
-                                        </div>
-                                    </div>
+                    <div id="collapseInstructor{{ counter }}"
+                         class="accordion-collapse collapse"
+                         aria-labelledby="headingInstructor{{ counter }}"
+                         data-bs-parent="#instructorsAccordion">
+                      <div class="accordion-body">
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                          {% for instructor in instructors %}
+                            <div class="col">
+                              <div class="card h-100 text-center border-line">
+                                <div class="card-body">
+                                  <img src="{{ instructor.user.profile_picture.url }}"
+                                       alt="Instructor Profile"
+                                       class="profile-img mb-3" loading="lazy">
+                                  <h6 class="card-title">{{ instructor.user.full_name }}</h6>
+                                  <div class="text-group">
+                                    <p class="card-text mb-1 info-line">
+                                      <small><i class="fas fa-phone-alt me-1"></i>{{ instructor.user.phone }}</small>
+                                    </p>
+                                    <p class="card-text mb-1 info-line">
+                                      <small><i class="fas fa-envelope me-1"></i>{{ instructor.user.email }}</small>
+                                    </p>
+                                    <p class="card-text mb-1 info-line">
+                                      <small><i class="fas fa-building me-1"></i>{{ instructor.specialization }}</small>
+                                    </p>
+                                    <p class="card-text mb-1 info-line">
+                                      <small><i class="fas fa-briefcase me-1"></i>{{ instructor.position_in_university }}</small>
+                                    </p>
+                                  </div>
                                 </div>
-                                <div class="col">
-                                    <div class="card h-100 text-center border-line">
-                                        <div class="card-body">
-                                            <img src="https://www.shutterstock.com/image-photo/smiling-positive-attractive-asian-young-260nw-2317594959.jpg" alt="Instructor Profile" class="profile-img mb-3">
-                                            <h6 class="card-title">Dr. Mary Smith</h6>
-                                            <div class="text-group">
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-phone-alt me-1"></i>+111 987 6544</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-envelope me-1"></i>mary.smith@uni.edu</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-building me-1"></i>Computer Science</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-briefcase me-1"></i>Associate Professor</small></p>
-                                            </div>
-                                           
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="card h-100 text-center border-line">
-                                        <div class="card-body">
-                                            <img src="https://www.shutterstock.com/image-photo/smiling-positive-attractive-asian-young-260nw-2317594959.jpg" alt="Instructor Profile" class="profile-img mb-3">
-                                            <h6 class="card-title">Dr. Robert Brown</h6>
-                                            <div class="text-group">
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-phone-alt me-1"></i>+111 987 6545</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-envelope me-1"></i>robert.brown@uni.edu</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-building me-1"></i>Computer Science</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-briefcase me-1"></i>Assistant Professor</small></p>
-                                            </div>
-                                           
-                                        </div>
-                                    </div>
-                                </div>
+                              </div>
                             </div>
+                          {% endfor %}
                         </div>
+                      </div>
                     </div>
-                </div>
-
-                <!-- IT Department Instructors -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingITInstructors">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseITInstructors" aria-expanded="false" aria-controls="collapseITInstructors">
-                            <i class="fas fa-server me-2"></i> Information Technology Department
-                        </button>
-                    </h2>
-                    <div id="collapseITInstructors" class="accordion-collapse collapse" aria-labelledby="headingITInstructors" data-bs-parent="#instructorsAccordion">
-                        <div class="accordion-body">
-                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-                                <div class="col">
-                                    <div class="card h-100 text-center border-line">
-                                        <div class="card-body">
-                                            <img src="https://www.shutterstock.com/image-photo/smiling-positive-attractive-asian-young-260nw-2317594959.jpg" alt="Instructor Profile" class="profile-img mb-3">
-                                            <h6 class="card-title">Dr. Anna Garcia</h6>
-                                            <div class="text-group">
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-phone-alt me-1"></i>+111 987 6546</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-envelope me-1"></i>anna.garcia@uni.edu</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-building me-1"></i>Information Technology</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-briefcase me-1"></i>Professor</small></p>
-                                            </div>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="card h-100 text-center border-line">
-                                        <div class="card-body">
-                                            <img src="https://www.shutterstock.com/image-photo/smiling-positive-attractive-asian-young-260nw-2317594959.jpg" alt="Instructor Profile" class="profile-img mb-3">
-                                            <h6 class="card-title">Dr. David Wilson</h6>
-                                            <div class="text-group">
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-phone-alt me-1"></i>+111 987 6547</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-envelope me-1"></i>david.wilson@uni.edu</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-building me-1"></i>Information Technology</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-briefcase me-1"></i>Associate Professor</small></p>
-                                            </div>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="card h-100 text-center border-line">
-                                        <div class="card-body">
-                                            <img src="https://www.shutterstock.com/image-photo/smiling-positive-attractive-asian-young-260nw-2317594959.jpg" alt="Instructor Profile" class="profile-img mb-3">
-                                            <h6 class="card-title">Dr. Sarah Lee</h6>
-                                            <div class="text-group">
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-phone-alt me-1"></i>+111 987 6548</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-envelope me-1"></i>sarah.lee@uni.edu</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-building me-1"></i>Information Technology</small></p>
-                                                <p class="card-text mb-1 info-line"><small><i class="fas fa-briefcase me-1"></i>Assistant Professor</small></p>
-                                            </div>
-                                           
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                  </div>
+                {% endwith %}
+              {% endfor %}
             </div>
         </section>
 
@@ -809,70 +222,28 @@
             <h2 class="section-header">University Executives</h2>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 <!-- Executive 1 -->
+                 {% for executive in executives %}
                 <div class="col-lg-4 col-md-6 card-wrapper">
                     <div class="executive-card">
                         <div class="d-flex align-items-center mb-3">
                             <div class="me-3" >
-                                <img class="executive-img" src="https://static.vecteezy.com/system/resources/thumbnails/005/346/410/small_2x/close-up-portrait-of-smiling-handsome-young-caucasian-man-face-looking-at-camera-on-isolated-light-gray-studio-background-photo.jpg" alt="image">
+                                <img class="executive-img" src="{{executive.user.profile_picture.url}}" alt="image" loading="lazy">
                             </div>
                             <div>
-                                <div class="executive-name">Dr. Sarah Johnson</div>
-                                <a href="#" class="executive-title">University President</a>
-                                <div class="executive-role">Academic Affairs</div>
+                                <div class="executive-name">{{executive.user.full_name}}</div>
+                                <a href="#" class="executive-title">{{executive.position_in_university}}</a>
+                                <!-- <div class="executive-role">Academic Affairs</div> -->
                             </div>
                         </div>
                         <hr>
                         <div class="executive-contact">
-                            <p class="mb-1"><i class="fas fa-envelope me-2"></i> <a href="mailto:president@university.edu">president@university.edu</a></p>
-                            <p class="mb-1"><i class="fas fa-phone-alt me-2"></i> (555) 123-4567</p>
-                            <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i> Administration Building, Office 301</p>
+                            <p class="mb-1"><i class="fas fa-envelope me-2"></i> <a href="mailto:{{executive.user.email}}">{{executive.user.email}}</a></p>
+                            <p class="mb-1"><i class="fas fa-phone-alt me-2"></i> {{executive.user.phone}}</p>
+                            <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i> {{executive.degree|default:"Not Stated"}}</p>
                         </div>
                     </div>
                 </div>
-
-                <!-- Executive 2 -->
-                <div class="col-lg-4 col-md-6 card-wrapper">
-                    <div class="executive-card">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="me-3">
-                               <img src="https://static.vecteezy.com/system/resources/thumbnails/057/705/066/small_2x/a-young-man-in-a-suit-and-tie-free-photo.jpg" class="executive-img" alt="">
-                            </div>
-                            <div>
-                                <div class="executive-name">Dr. James Smith</div>
-                                <a href="#" class="executive-title">Vice President</a>
-                                <div class="executive-role">Student Affairs</div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="executive-contact">
-                            <p class="mb-1"><i class="fas fa-envelope me-2"></i> <a href="mailto:vp@university.edu">vp@university.edu</a></p>
-                            <p class="mb-1"><i class="fas fa-phone-alt me-2"></i> (555) 987-6543</p>
-                            <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i> Admin Block, Office 204</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Executive 3 -->
-                <div class="col-lg-4 col-md-6 card-wrapper">
-                    <div class="executive-card">
-                        <div class="d-flex align-items-center mb-3">
-                           <div class="me-3">
-                               <img src="https://static.vecteezy.com/system/resources/thumbnails/057/705/066/small_2x/a-young-man-in-a-suit-and-tie-free-photo.jpg" class="executive-img" alt="">
-                            </div>
-                            <div>
-                                <div class="executive-name">Dr. Emily Brown</div>
-                                <a href="#" class="executive-title">Dean</a>
-                                <div class="executive-role">Computer Science Faculty</div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="executive-contact">
-                            <p class="mb-1"><i class="fas fa-envelope me-2"></i> <a href="mailto:dean.cs@university.edu">dean.cs@university.edu</a></p>
-                            <p class="mb-1"><i class="fas fa-phone-alt me-2"></i> (555) 555-1212</p>
-                            <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i> CS Building, Room 101</p>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </section>
 
@@ -881,41 +252,18 @@
             <h2 class="section-header">University Partnerships</h2>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 <!-- Partnership 1 -->
+                 {% for partnership, details in partnerships.items %}
                 <div class="col">
                     <div class="card h-100">
-                        <img src="https://www.ucsy.edu.mm/img/interlogos/guilin_university.png" class="card-img-top" alt="TechCorp Logo">
+                        <img src="/media/{{details.image}}" class="card-img-top" alt="TechCorp Logo" loading="lazy">
                         <div class="card-body">
-                            <h5 class="card-title">TechCorp Innovations</h5>
-                            <p class="card-text">Strategic partnership for internships, research collaborations, and graduate employment opportunities in AI and software development.</p>
-                            <span class="badge badge-custom badge-international">International</span>
-                            <span class="badge badge-custom">Technology</span>
+                            <h5 class="card-title">{{partnership}}</h5>
+                            <p class="card-text">{{details.description}}</p>
+                            <span class="badge badge-custom badge-international">{{details.type}}</span>
                         </div>
                     </div>
                 </div>
-                <!-- Partnership 2 -->
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="https://www.ucsy.edu.mm/img/interlogos/ieee_myanmar.jpg" class="card-img-top" alt="Local Hospital Logo">
-                        <div class="card-body">
-                            <h5 class="card-title">City General Hospital</h5>
-                            <p class="card-text">Collaboration on clinical research, medical student placements, and community health initiatives.</p>
-                            <span class="badge badge-custom badge-national">National</span>
-                            <span class="badge badge-custom">Healthcare</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Partnership 3 -->
-                <div class="col">
-                    <div class="card h-100">
-                        <img src="https://www.ucsy.edu.mm/img/interlogos/ieee_myanmar.jpg" class="card-img-top" alt="Art Museum Logo">
-                        <div class="card-body">
-                            <h5 class="card-title">Metropolitan Art Museum</h5>
-                            <p class="card-text">Joint projects in art conservation, cultural studies, and public art exhibitions, bridging arts and science.</p>
-                            <span class="badge badge-custom badge-cross-major">Cross-Major</span>
-                            <span class="badge badge-custom">Arts & Culture</span>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </section>
 
@@ -924,35 +272,17 @@
             <h2 class="section-header">University Certificates</h2>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 <!-- Certificate 1 -->
+                 {% for id, certificate in certificates.items %}
                 <div class="col">
                     <div class="card h-100">
                         <div class="card-body">
-                            <h5 class="card-title">Advanced Data Analytics Certificate</h5>
-                            <p class="card-text">A professional certificate focusing on big data tools, statistical modeling, and machine learning applications.</p>
-                            <a href="https://www.tutorialspoint.com/html/html_tutorial.pdf" class="btn btn-outline-primary btn-sm rounded-pill mt-2"><i class="fas fa-file-pdf me-2"></i>View Certificate</a>
+                            <h5 class="card-title">{{certificate.title}}</h5>
+                            <p class="card-text">{{certificate.description}}</p>
+                            <a href="/media/{{certificate.file}}" class="btn btn-outline-primary btn-sm rounded-pill mt-2"><i class="fas fa-file-pdf me-2"></i>View Certificate</a>
                         </div>
                     </div>
                 </div>
-                <!-- Certificate 2 -->
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Cybersecurity Fundamentals Certificate</h5>
-                            <p class="card-text">Comprehensive program covering network security, ethical hacking, and digital forensics fundamentals.</p>
-                            <a href="https://www.tutorialspoint.com/html/html_tutorial.pdf" class="btn btn-outline-primary btn-sm rounded-pill mt-2"><i class="fas fa-file-alt me-2"></i>View Certificate</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Certificate 3 -->
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Cloud Computing Professional Certificate</h5>
-                            <p class="card-text">Hands-on training in AWS, Azure, and Google Cloud platforms for enterprise solutions.</p>
-                            <a href="https://www.tutorialspoint.com/html/html_tutorial.pdf" class="btn btn-outline-primary btn-sm rounded-pill mt-2"><i class="fas fa-file-pdf me-2"></i>View Certificate</a>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </section>
 
@@ -961,38 +291,18 @@
             <h2 class="section-header">Our Cutting-Edge Labs</h2>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 <!-- Lab 1: Robotics & AI Lab -->
+                 {% for id, lab in labs.items %}
                 <div class="col">
-                    <div class="card h-100 lab-card" onclick="navigateToLabDetails('robotics-ai')">
-                        <img src="https://vuniversity.in/wp-content/uploads/2022/08/15..jpg" class="lab-img card-img-top lab-card-img" alt="Robotics Lab Photo">
+                    <div class="card h-100 lab-card">
+                        <img src="/media/{{lab.images.0}}" class="lab-img card-img-top lab-card-img" alt="Robotics Lab Photo" loading="lazy">
                         <div class="card-body">
-                            <h5 class="card-title">Robotics & AI Lab</h5>
-                            <p class="card-text">Dedicated to advancing research in autonomous systems, machine learning, and human-robot interaction.</p>
-                            <button class="btn btn-primary mt-auto">Learn More <i class="fas fa-arrow-right ms-2"></i></button>
+                            <h5 class="card-title">{{lab.lab_name}}</h5>
+                            <p class="card-text">{{lab.description|truncatechars:100}}</p>
+                            <button class="btn btn-primary mt-auto" onclick="window.location.href=`{% url 'lab_details' id %}`">Learn More <i class="fas fa-arrow-right ms-2"></i></button>
                         </div>
                     </div>
                 </div>
-                <!-- Lab 2: Cybersecurity Lab -->
-                <div class="col">
-                    <div class="card h-100 lab-card" onclick="navigateToLabDetails('renewable-energy')">
-                        <img src="https://learn.neumann.edu/hubfs/Cybersecurity-lab.jpg" class="lab-img card-img-top lab-card-img" alt="Cybersecurity Lab Photo">
-                        <div class="card-body">
-                            <h5 class="card-title">Cybersecurity Lab</h5>
-                            <p class="card-text">State-of-the-art facility for research in network security, cryptography, and digital forensics.</p>
-                            <button class="btn btn-primary mt-auto">Learn More <i class="fas fa-arrow-right ms-2"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Lab 3: Data Science Lab -->
-                <div class="col">
-                    <div class="card h-100 lab-card" onclick="navigateToLabDetails('data-science')">
-                        <img src="https://www.youth.edu.mm/wp-content/uploads/2023/11/IMG_9935.jpg" class="lab-img card-img-top lab-card-img" alt="Data Science Lab Photo">
-                        <div class="card-body">
-                            <h5 class="card-title">Data Science Lab</h5>
-                            <p class="card-text">A hub for advanced data analysis, predictive modeling, and big data research across various domains.</p>
-                            <button class="btn btn-primary mt-auto">Learn More <i class="fas fa-arrow-right ms-2"></i></button>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </section>
     </main>
@@ -1013,15 +323,15 @@
                 <div class="col-md-4 mb-4 mb-md-0">
                     <h5>Contact Us</h5>
                     <ul class="list-unstyled">
-                        <li><i class="fas fa-map-marker-alt me-2"></i> University Street, Yangon</li>
-                        <li><i class="fas fa-phone-alt me-2"></i> +95 123 456 789</li>
-                        <li><i class="fas fa-envelope me-2"></i> info@ucsy.edu.mm</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> {{university_info.address}}</li>
+                        <li><i class="fas fa-phone-alt me-2"></i> {{university_info.opening_time}}</li>
+                        <li><i class="fas fa-envelope me-2"></i> {{university_info.contact_email}}</li>
                     </ul>
                 </div>
                 <div class="col-md-4">
                     <h5>Connect With Us</h5>
                     <div class="social-icons">
-                        <a href="#" class="me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.{{university_info.facebook}}" class="me-3"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" class="me-3"><i class="fab fa-twitter"></i></a>
                         <a href="#" class="me-3"><i class="fab fa-linkedin-in"></i></a>
                         <a href="#" class="me-3"><i class="fab fa-instagram"></i></a>
@@ -1038,41 +348,6 @@
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Function to navigate to lab details page
-        function navigateToLabDetails(labId) {
-            window.location.href = `lab-details.html?id=${labId}`;
-        }
-        
-        // Initialize tooltips
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        });
-
-       
-document.addEventListener('DOMContentLoaded', function() {
-  // Get all navbar links (including dropdown items)
-  const navLinks = document.querySelectorAll('.dropdown-item');
-  
-  // Get the navbar collapse element
-  const navbarCollapse = document.querySelector('.navbar-collapse');
-  
-  // Add click event to each link
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      // Check if navbar is expanded (mobile view)
-      if (navbarCollapse.classList.contains('show')) {
-        // Trigger the collapse
-        const toggleBtn = document.querySelector('.navbar-toggler');
-        if (toggleBtn) {
-          toggleBtn.click(); // Simulate click on toggle button
-        }
-      }
-    });
-  });
-});
-
-    </script>
+    <script src="{% static 'public/javascripts/home.js' %}"></script>
 </body>
 </html>

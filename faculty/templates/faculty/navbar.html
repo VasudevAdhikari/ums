@@ -1,0 +1,62 @@
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container-fluid">
+      <img src="{{request.uni_logo}}" class="uni-logo ms-4" alt="University Logo">
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center custom-nav-spacing">
+
+          <li class="nav-item">
+            <a class="nav-link" href="/public/" role="button" aria-expanded="false">
+              Home
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/faculty/" role="button" aria-expanded="false">
+              Dashboard
+            </a>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Academics
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/public/terms/">Terms</a></li>
+              <li><a class="dropdown-item" href="/public/degrees/">Degrees</a></li>
+              <li><a class="dropdown-item" href="/public/courses/">Courses</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Profile
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/faculty/profile/"><i class="fas fa-handshake me-2"></i> View Profile
+                  </a></li>
+              <li><a class="dropdown-item" href="#" id="btnLogoutLagjagale"><i class="fas fa-flask me-2"></i> Logout</a></li>
+            </ul>
+            
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/noticeboard/" role="button" aria-expanded="false">
+              Noticeboard
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/public/notifications/" role="button" aria-expanded="false">
+              Notifications
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>

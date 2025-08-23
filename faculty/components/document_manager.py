@@ -69,6 +69,9 @@ def refer_document_api(request, batch_instructor_id):
     try:
         doc = Document.objects.get(id=document_id)
         batch_instructor = BatchInstructor.objects.get(id=batch_instructor_id)
+
+        if BatchInstructorDocument.objects.filter(batch_instructor=batch_instructor, document=doc).exists():
+            return JsonResponse({'success': False, 'error': 'You have already referred this document to this batch'})
         BatchInstructorDocument.objects.create(batch_instructor=batch_instructor, document=doc)
         return JsonResponse({'success': True})
     except Exception as e:
@@ -135,9 +138,9 @@ def add_document(request):
 def delete_batch_instructor_document(request, batch_instructor_document_id):
     print('delete batch instructor document')
     try:
-        batch_instructor_document = BatchInstructorDocument.objects.get(
+        batch_instructor_document = BatchInstructorDocument.objects.filter(
             document__id=int(batch_instructor_document_id),
-        )
+        ).first()
         print(f"batch_instructor_document{batch_instructor_document}")
         batch_instructor_document.delete()
         return JsonResponse({'success': True, 'message': 'Document unreferred successfully'})

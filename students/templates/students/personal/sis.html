@@ -9,10 +9,11 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'students/personal/styles/sis.css' %}">
+    
 </head>
 
 
-<body class="bg-light" style="font-family: 'Poppins', Arial, sans-serif;">
+<body class="bg-dark" style="font-family: 'Poppins', Arial, sans-serif; background: var(--bg-gray) !important;">
     <nav class="navbar navbar-expand-lg blue-navbar">
         <div class="container-fluid">
             <!-- <span class="navbar-brand mb-0 h1 blue-title">I love Moe Thiha</span> -->
@@ -28,22 +29,25 @@
         </div>
     </nav>
     <div class="container">
-        <h1 class="text-center text-primary my-4">SIS submitting Form</h1>
-        <form id="multiStepForm" method="post" action="/students/personal/save_sis_form/">
+        <h1 class="text-center my-4" >SIS submitting Form</h1>
+        <form id="multiStepForm" method="post" action="{% if sis_form %}/students/personal/update_sis_form/ {% else %} students/personal/save_sis_form {% endif %}">
             {% csrf_token %}
             <!-- Step 1: Personal & Student Info -->
             <div class="form-step" id="step-1">
-                <h4 class="text-primary mt-4">Student Information</h4>
+                <h4 class=" mt-4">Student Information</h4>
                 <div class="form-row">
                     <div class="form-group col-md-4">
                         <label for="blood_group">Blood Group</label>
                         <select class="form-control" id="blood_group" name="blood_group" required>
                             <option value="">Select</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="AB">AB</option>
-                            <option value="O">O</option>
+                            <option value="A" id="A">A</option>
+                            <option value="B" id="B">B</option>
+                            <option value="AB" id="AB">AB</option>
+                            <option value="O" id="O">O</option>
                         </select>
+                        <script>
+                            document.getElementById("blood_group").value = '{{sis_form.get_blood_group_display}}';
+                        </script>
                     </div>
                     <div class="form-group col-md-4">
                         <label for="ethnicity">Ethnicity</label>
@@ -71,7 +75,7 @@
             </div>
             <!-- Step 2: Father Info -->
             <div class="form-step d-none" id="step-2">
-                <h4 class="text-primary mt-4">Father's Information</h4>
+                <h4 class=" mt-4">Father's Information</h4>
                 <div class="form-row">
                     <div class="form-group col-md-4">
                         <label for="father_name">Name</label>
@@ -126,7 +130,7 @@
             </div>
             <!-- Step 3: Mother Info -->
             <div class="form-step d-none" id="step-3">
-                <h4 class="text-primary mt-4">Mother's Information</h4>
+                <h4 class=" mt-4">Mother's Information</h4>
                 <div class="form-row">
                     <div class="form-group col-md-4">
                         <label for="mother_name">Name</label>
@@ -169,7 +173,7 @@
                     </div>
                     <div class="form-group col-md-4">
                         <label for="mother_ethnicity">Ethnicity</label>
-                        <input type="text" class="form-control" id="mother_ethnicity" name="mother_ethnicity" value="{{sis_form.mother_ethinicity}}"
+                        <input type="text" class="form-control" id="mother_ethnicity" name="mother_ethnicity" value="{{sis_form.mother_ethnicity}}"
                             maxlength="30" placeholder="Enter your mother's ethnicity" required>
                     </div>
                     <div class="form-group col-md-4">
@@ -181,7 +185,7 @@
             </div>
             <!-- Step 4: Spouse Info -->
             <div class="form-step d-none" id="step-4">
-                <h4 class="text-primary mt-4">Matriculation Information</h4>
+                <h4 class=" mt-4">Matriculation Information</h4>
                 <div class="form-row">
                     <div class="form-group col-md-3">
                         <label for="matric_roll_no">Matric Roll No</label>
@@ -204,7 +208,7 @@
                             placeholder="Enter your total marks" required>
                     </div>
                 </div>
-                <h4 class="text-primary mt-4">Spouse Information</h4>
+                <h4 class=" mt-4">Spouse Information</h4>
                 <div class="form-row align-items-center">
                     <div class="form-group col-md-2">
                         <div class="form-check mt-2">
@@ -234,11 +238,18 @@
             </div>
         </form>
     </div>
+
+    <footer class="mobile-footer">
+        <a href="#" class="back-button">
+            <span class="back-arrow">‹ </span>
+            <span class="back-text">Back to previous page</span>
+        </a>
+    </footer>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'students/personal/javascripts/sis.js' %}"></script>
+    <script type="module" src="{% static 'students/personal/javascripts/sis.js' %}"></script>
 </body>
 
 </html>

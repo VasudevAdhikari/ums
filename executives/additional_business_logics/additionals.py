@@ -18,15 +18,26 @@ def extract_filename_from_url(url):
 
 
 def get_formatted_lab_members(project_leaders):
+    print(f"DEBUG: get_formatted_lab_members called with {len(project_leaders)} users")
     all_project_leaders = []
+    
+    for i, project_leader in enumerate(project_leaders):
+        if i < 3:  # Only log first 3 for debugging
+            print(f"DEBUG: Processing user {i}: {project_leader.full_name}, has instructor: {hasattr(project_leader, 'instructor')}")
+            if hasattr(project_leader, 'instructor') and project_leader.instructor:
+                print(f"DEBUG: User {i} instructor dept: {getattr(project_leader.instructor, 'department_id', None)}")
+    
     all_project_leaders.extend(
         {
             'name': project_leader.full_name,
-            'img': f"/media/{project_leader.profile_picture}",
+            'img': f"/media/{project_leader.profile_picture}" if project_leader.profile_picture else "https://thumbs.dreamstime.com/b/anonymous-user-flat-icon-vector-illustration-long-shadow-anonymous-user-flat-icon-105446565.jpg",
             'id': project_leader.pk,
+            'department_id': getattr(project_leader.instructor, 'department_id', None) if hasattr(project_leader, 'instructor') else None,
         }
         for project_leader in project_leaders
     )
+    
+    print(f"DEBUG: get_formatted_lab_members returning {len(all_project_leaders)} formatted users")
     return all_project_leaders
 
 

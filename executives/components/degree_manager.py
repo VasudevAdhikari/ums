@@ -1,7 +1,8 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
-from authorization.models import Degree, Semester, Faculty
+from authorization.models import Degree, Semester, Faculty, Course
+from django.shortcuts import render, redirect
 
 def get_all_degrees():
     all_degrees = []
@@ -34,7 +35,6 @@ def get_all_degrees():
             "faculty": {
                 "name": degree.faculty.name if degree.faculty else '',
                 "id": degree.faculty.pk if degree.faculty else '',
-                # "photo": degree.faculty.faculty_photo if degree.faculty else '',
             },
             "faculty_id": degree.faculty.pk if degree.faculty else '',
             "duration": degree.duration,
@@ -50,7 +50,8 @@ def get_all_degrees():
             "image": degree.degree_image.url if hasattr(degree.degree_image, 'url') else './img/bachelor.png',
             "syllabus": syllabus
         })
-        return all_degrees
+    return all_degrees  # Moved here
+
 
 
 
@@ -89,9 +90,9 @@ def add_degree_api(request):
             folder = 'degree/'
             if not os.path.exists(os.path.join('media', folder)):
                 os.makedirs(os.path.join('media', folder), exist_ok=True)
-        image_name = f"{folder}{data['code']}_{data['name']}.{ext}"
-        with open(os.path.join('media', image_name), 'wb') as f:
-            f.write(base64.b64decode(imgstr))
+            image_name = f"{folder}{data['code']}_{data['name']}.{ext}"
+            with open(os.path.join('media', image_name), 'wb') as f:
+                f.write(base64.b64decode(imgstr))
 
         degree = Degree(
             name=data['name'],
@@ -123,11 +124,9 @@ def add_degree_api(request):
     except Exception as e:
         print(e)
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
-from django.shortcuts import render, redirect
-from authorization.models import Course
 
 
-def show_degree_management(request):
+def get_degree_page_data(request):
     course_models = Course.objects.all()
     all_courses = []
     for course in course_models:
@@ -156,6 +155,11 @@ def show_degree_management(request):
         "all_faculties": all_faculties,
         "all_degrees": all_degrees,
     }
+    return data
+
+
+def show_degree_management(request):
+    data = get_degree_page_data(request)
     return render(request, 'executives/degree_management.html', context=data)
 
 
@@ -244,3 +248,4 @@ def edit_degree_api(request, degree_id):
     except Exception as e:
         print(e)
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
+    

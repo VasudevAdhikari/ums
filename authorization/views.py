@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth import login, authenticate
-from .models import User, Student, EmergencyContact, OTP, LoginAttempt
+from .models import NotificationType, User, Student, EmergencyContact, OTP, LoginAttempt, Admin, Notification
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -8,14 +8,13 @@ from django.core.mail import send_mail
 from django.conf import settings
 import json
 import random
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.utils import timezone
 from django.core.files.storage import FileSystemStorage
-import os
-from django.db.models import Count
-from django.db.models.functions import TruncDay
 from django.contrib.auth.hashers import check_password
 from .models import StudentStatus, Student, Instructor, EmploymentStatus
+from django.core.exceptions import PermissionDenied
+from django.core.cache import cache
 
 # Create your views here.
 
@@ -416,14 +415,38 @@ def login(request):
         print('after-login')
         
         # Record successful login attempt
-        loginattempt = LoginAttempt.objects.create(
+        login_attempt = LoginAttempt(
             user=user,
             ip_address=request.META.get('REMOTE_ADDR'),
             user_agent=request.META.get('HTTP_USER_AGENT', ''),
             success=True
         )
+        login_attempt.save()
+
+        Notification.objects.create(
+            user=user,
+            type=NotificationType.STUDENT,
+            notification={
+                "text": "There is a login attempt to your account. If that was not you, you should consider changing your password",
+                "destination": f"/auth/profile/{user.pk}"
+            }
+        )
+
+        role = ""
+        if Student.objects.filter(user=user).exists():
+            role="student"
+        elif Instructor.objects.filter(user=user).exists():
+            role="instructor"
+        elif Admin.objects.filter(user=user).exists():
+            role="executive"
+        else:
+            raise PermissionDenied('You are not allowed to access this page')
         
-        response = JsonResponse({'success': True, 'is_instructor': user.is_staff})
+        role_cache = cache.get(f"user_role:{user.email}")
+        if not role_cache:
+            cache.set(f"user_role:{user.email}", role, timeout=60*60*24*30*2)
+        
+        response = JsonResponse({'success': True, 'is_instructor': user.is_staff, 'role': role})
         response.set_cookie('my_user', user, max_age=60*24*60*60)
         return response
             

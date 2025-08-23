@@ -65,11 +65,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Prevent form submit for demo
-  document
-    .getElementById("multiStepForm")
-    .addEventListener("submit", function (e) {
-      // e.preventDefault(); // Uncomment to prevent actual submission
-    });
+  const sisForm = document.getElementById("multiStepForm")
+  sisForm.addEventListener("submit", async function (e) {
+    e.preventDefault(); // Uncomment to prevent actual submission
+    if (!await confirm('Are you sure to submit your sis form?')) return;
+    sisForm.submit();
+  });
 
   // Initialize
   showStep(currentStep);

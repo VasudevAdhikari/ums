@@ -1,100 +1,218 @@
-/* Demo Navbar */
-.navbar-demo {
-  background: #1877f2;
-  color: #fff;
+/* Instructor Card Action Buttons */
+.instructor-actions {
+  margin-top: 18px;
   display: flex;
-  align-items: center;
-  padding: 0 28px;
-  height: 56px;
-  font-family: 'Poppins', Arial, sans-serif;
-  box-shadow: 0 2px 8px rgba(24,119,242,0.08);
-  position: fixed;      /* Make it fixed */
-  top: 0;               /* Stick to top */
-  left: 0;
-  right: 0;
-  z-index: 100;
+  gap: 16px;
+  justify-content: start;
 }
-.nav-hamburger {
-  background: none;
+.instructor-btn {
+  background: var(--primary-light);
+  color: #fff;
   border: none;
-  color: #fff;
-  font-size: 1.5rem;
-  margin-right: 18px;
-  cursor: pointer;
-}
-.nav-title {
-  font-size: 1.2rem;
+  border-radius: 8px;
+  padding: 10px 28px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 1px;
-  flex: 1;
+  box-shadow: 0 2px 8px rgba(24, 119, 242, 0.1);
+  cursor: pointer;
+  transition: background 0.18s, box-shadow 0.18s;
 }
-.nav-user {
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.instructor-btn:hover {
+  background: var(--primary-dark);
+  box-shadow: 0 4px 16px rgba(24, 119, 242, 0.16);
 }
-
-/* Demo Sidebar */
-.sidebar-demo {
-  position: fixed;
-  top: 56px;
-  left: 0;
-  width: 210px;
-  height: 100%;
+.instructor-btn.secondary {
+  background: var(--secondary-light);
+  color: var(--primary);
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.1);
+}
+.instructor-btn.secondary:hover {
+  background: var(--secondary);
+  color: var(--primary-dark);
+}
+/* Instructor Info Responsive Layout */
+#instructorInfo {
+  margin-bottom: 48px;
   background: #fff;
-  border-right: 2px solid #1877f2;
-  box-shadow: 2px 0 8px rgba(24,119,242,0.06);
-  padding-top: 18px;
-  transition: transform 0.2s;
-  transform: translateX(0);
-  z-index: 99;
-}
-.sidebar-demo.hide {
-  transform: translateX(-100%);
-}
-.sidebar-header-demo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 18px 18px 18px;
-  border-bottom: 1px solid #e0e6f6;
-  margin-bottom: 10px;
-}
-.sidebar-logo {
-  font-size: 1.5rem;
-  color: #1877f2;
-}
-.sidebar-title {
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: #1877f2;
-}
-.sidebar-list-demo {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.sidebar-list-demo li {
-  margin: 0;
-}
-.sidebar-list-demo a {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #222;
-  text-decoration: none;
-  padding: 12px 18px;
-  border-radius: 6px;
-  transition: background 0.15s, color 0.15s;
-  font-size: 1rem;
-}
-.sidebar-list-demo a:hover {
-  background: #e8f0fe;
-  color: #1877f2;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(24, 119, 242, 0.1);
+  padding: 32px 28px 24px 28px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px solid #e4eaf7;
 }
 
-/* Push main content right when sidebar is visible */
+.instructorInfo {
+  margin-bottom: 30px;
+}
+
+.instructor-details {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-left: 20px;
+  flex-wrap: wrap;
+}
+
+.instructor-image img {
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(primary-light);
+}
+
+.instructor-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-dark);
+}
+
+.instructor-text div:first-child {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--secondary-light);
+}
+
+@media (max-width: 700px) {
+  #instructorInfo {
+    padding: 18px 8px 16px 8px;
+    max-width: 98vw;
+  }
+  .instructor-details {
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+  }
+  .instructor-image img {
+    width: 200px;
+    height: 200px;
+  }
+  .instructor-text {
+    text-align: center;
+    font-size: 1rem;
+    min-width: 120px;
+    padding-left: 0;
+  }
+  .instructor-actions {
+    justify-content: center;
+  }
+}
+
+:root {
+  /* Primary Colors (University Branding) */
+  --primary: #003366;
+  /* Deep Blue - main brand color */
+  --primary-light: #1a4d80;
+  /* Lighter shade for hover states */
+  --primary-dark: #00264d;
+  /* Darker shade for active states */
+
+  /* Secondary Colors */
+  --secondary: #ffd700;
+  /* Gold - for accents and highlights */
+  --secondary-light: #ffe44d;
+
+  /* Background Colors */
+  --bg-light: #ffffff;
+  --bg-gray: #f5f5f5;
+
+  /* Text Colors */
+  --text-dark: #333333;
+  --text-black: #000000;
+  --text-light: #ffffff;
+
+  /* Status Colors */
+  --success: #4caf50;
+  --error: #f44336;
+  --warning: #ffc107;
+  --info: #17a2b8;
+}
+/* Navbar Styles */
+.navbar {
+  background-color: var(--primary);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand,
+.nav-link {
+  color: var(--text-light) !important;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: var(--secondary) !important;
+  border-bottom: 2px solid var(--secondary);
+}
+
+.dropdown-menu {
+  background-color: var(--primary-light);
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-item {
+  color: var(--text-light);
+  padding: 10px 20px;
+}
+
+.dropdown-item:hover {
+  background-color: var(--secondary) !important;
+  color: var(--text-dark) !important;
+  border-radius: 8px;
+}
+
+/* Remove Bootstrap's default active background */
+.dropdown-item.active {
+  background: transparent !important;
+}
+
+/* Ensure hover works in all states */
+.dropdown-item:hover {
+  background-color: var(--secondary) !important;
+  color: var(--text-dark) !important;
+  border-radius: 8px;
+}
+
+.uni-logo {
+  height: 50px;
+  width: 50px;
+  border-radius: 8px;
+  margin-right: 15px;
+}
+
+.custom-nav-spacing .nav-item {
+  margin-right: 2rem;
+}
+
+@media (max-width: 991.98px) {
+  .custom-nav-spacing .nav-item {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.logout-button {
+  border-radius: 10px;
+  width: 70px;
+  height: 50px;
+  background-color: var(--error);
+}
+
+.logout-icon {
+  font-size: 1.7rem;
+  width: 20px;
+}
+
+.logout-icon:hover {
+  color: var(--secondary) !important;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -122,12 +240,12 @@ body {
 }
 
 .main-content-demo {
-  max-width: 900px;           /* Fixed width */
+  max-width: 900px; /* Fixed width */
   width: 100%;
-  margin: 40px auto 0 auto;   /* Center horizontally */
+  margin: 40px auto 0 auto; /* Center horizontally */
   padding: 0 24px;
   padding-top: 56px;
-  min-height: 0;              /* Height grows with content */
+  min-height: 0; /* Height grows with content */
   transition: margin-left 0.2s;
 }
 
@@ -147,21 +265,22 @@ body.sidebar-open .main-content-demo {
 .course-card {
   background: #fff;
   border-radius: 14px;
-  box-shadow: 0 4px 24px rgba(24,119,242,0.08);
+  box-shadow: 0 4px 24px rgba(24, 119, 242, 0.08);
   padding: 32px 28px 24px 28px;
-  max-width: 900px;      /* Set a fixed width, e.g., 900px */
+  max-width: 900px; /* Set a fixed width, e.g., 900px */
   width: 100%;
   margin: 0 auto;
-  font-family: 'Poppins', Arial, sans-serif;
+  font-family: "Poppins", Arial, sans-serif;
   border: 2px solid #e4eaf7;
 }
 
-.course-title {
+.course-title,
+.instructor-header {
   text-align: center;
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 24px;
-  color: #1877f2;
+  color: var(--primary);
   letter-spacing: 1px;
 }
 
@@ -212,7 +331,7 @@ body.sidebar-open .main-content-demo {
 .edit-btn {
   background: #e8f0fe;
   border: none;
-  color: #1877f2;
+  color: var(--primary-light);
   font-size: 1.1rem;
   cursor: pointer;
   margin-left: 8px;
@@ -223,7 +342,7 @@ body.sidebar-open .main-content-demo {
   transition: background 0.2s;
 }
 .edit-btn:hover {
-  background: #1877f2;
+  background: var(--primary-light);
   color: #fff;
 }
 
@@ -237,12 +356,13 @@ body.sidebar-open .main-content-demo {
   font-weight: 700;
   margin-bottom: 10px;
   font-size: 1.18rem;
-  color: #1877f2;
+  color: var(--primary);
   letter-spacing: 0.5px;
   gap: 10px;
 }
 
 .marking-header .edit-btn {
+  color: var(--primary-light);
   margin-left: 8px;
   font-size: 1rem;
 }
@@ -258,7 +378,7 @@ body.sidebar-open .main-content-demo {
 .marking-table tr {
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(24,119,242,0.06);
+  box-shadow: 0 2px 8px rgba(24, 119, 242, 0.06);
 }
 
 .marking-table td {
@@ -270,7 +390,7 @@ body.sidebar-open .main-content-demo {
 
 .mark-type-select {
   background: #f0f4fa;
-  color: #1877f2;
+  color: var(--primary-light);
   border: 1.5px solid #bfc6e0;
   border-radius: 6px;
   padding: 8px 36px 8px 12px; /* extra right padding for arrow */
@@ -281,7 +401,7 @@ body.sidebar-open .main-content-demo {
   transition: border 0.18s;
   min-width: 160px;
   cursor: pointer;
-  box-shadow: 0 1px 4px rgba(24,119,242,0.04);
+  box-shadow: 0 1px 4px rgba(24, 119, 242, 0.04);
 
   /* Custom arrow using SVG */
   background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%231877f2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -302,14 +422,15 @@ body.sidebar-open .main-content-demo {
 }
 
 .mark-input:focus {
-  border: 1.5px solid #1877f2;
+  border: 1.5px solid var(--primary-light);
   background: #e8f0fe;
 }
 
-.edit-btn, .remove-row-btn {
+.edit-btn,
+.remove-row-btn {
   background: #e8f0fe;
   border: none;
-  color: #1877f2;
+  color: var(--primary-light);
   font-size: 1.1rem;
   cursor: pointer;
   border-radius: 6px;
@@ -318,15 +439,19 @@ body.sidebar-open .main-content-demo {
   transition: background 0.2s;
   vertical-align: middle;
 }
-.edit-btn:hover, .remove-row-btn:hover {
-  background: #1877f2;
+.edit-btn:hover,
+.remove-row-btn:hover {
+  background: var(--primary-light);
   color: #fff;
 }
 
 /* Modern Warning Popup Styles */
 .custom-warning-popup {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(24, 119, 242, 0.15); /* Facebook blue overlay */
   display: flex;
   align-items: center;
@@ -336,16 +461,16 @@ body.sidebar-open .main-content-demo {
 .custom-warning-content {
   background: #fff;
   border-radius: 14px;
-  box-shadow: 0 8px 32px rgba(24,119,242,0.18);
+  box-shadow: 0 8px 32px rgba(24, 119, 242, 0.18);
   padding: 32px 28px 24px 28px;
   min-width: 320px;
   max-width: 90vw;
   text-align: center;
-  border: 2.5px solid #1877f2;
+  border: 2.5px solid var(--primary-light);
   position: relative;
 }
 .custom-warning-header {
-  color: #1877f2;
+  color: var(--primary-light);
   font-size: 1.4rem;
   font-weight: 700;
   margin-bottom: 16px;
@@ -358,7 +483,7 @@ body.sidebar-open .main-content-demo {
   font-weight: 500;
 }
 .custom-warning-btn {
-  background: #1877f2;
+  background: var(--primary-light);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -374,7 +499,7 @@ body.sidebar-open .main-content-demo {
 
 .course-icon {
   font-size: 3.5rem;
-  color: #1877f2;
+  color: var(--primary-dark);
   display: block;
   margin: 0 auto;
 }
@@ -403,8 +528,9 @@ body.sidebar-open .main-content-demo {
   background: transparent;
 }
 
-.save-btn, .cancel-btn {
-  background: #1877f2;
+.save-btn,
+.cancel-btn {
+  background: var(--primary-light);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -431,7 +557,7 @@ body.sidebar-open .main-content-demo {
 }
 
 .create-scheme-btn {
-  background: #1877f2;
+  background: var(--primary-light);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -439,7 +565,7 @@ body.sidebar-open .main-content-demo {
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  box-shadow: 0 2px 8px rgba(24,119,242,0.10);
+  box-shadow: 0 2px 8px rgba(24, 119, 242, 0.1);
   cursor: pointer;
   transition: background 0.18s, box-shadow 0.18s;
   margin: 18px 0 0 0;
@@ -448,7 +574,7 @@ body.sidebar-open .main-content-demo {
 .create-scheme-btn:hover,
 .create-scheme-btn:focus {
   background: #145db2;
-  box-shadow: 0 4px 16px rgba(24,119,242,0.16);
+  box-shadow: 0 4px 16px rgba(24, 119, 242, 0.16);
 }
 .create-scheme-btn:disabled {
   background: #bfc6e0;
@@ -466,7 +592,7 @@ body.sidebar-open .main-content-demo {
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  box-shadow: 0 2px 8px rgba(34,197,94,0.10);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.1);
   cursor: pointer;
   transition: background 0.18s, box-shadow 0.18s;
   margin: 18px 0 0 0;
@@ -475,7 +601,7 @@ body.sidebar-open .main-content-demo {
 .create-scheme-btn.compact-green:hover,
 .create-scheme-btn.compact-green:focus {
   background: #16a34a;
-  box-shadow: 0 4px 16px rgba(34,197,94,0.16);
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.16);
 }
 .create-scheme-btn.compact-green:disabled {
   background: #bfc6e0;
@@ -485,7 +611,7 @@ body.sidebar-open .main-content-demo {
 }
 
 .add-card-btn {
-  background: #1877f2;
+  background: var(--primary-light);
   color: #fff;
   border: none;
   border-radius: 50%;
@@ -503,27 +629,34 @@ body.sidebar-open .main-content-demo {
   background: #145db2;
 }
 
-body, .main-content-demo, .course-card, .marking-table, .mark-type-select, .mark-input, .create-scheme-btn {
-  font-family: 'Poppins', Arial, sans-serif;
+body,
+.main-content-demo,
+.course-card,
+.marking-table,
+.mark-type-select,
+.mark-input,
+.create-scheme-btn {
+  font-family: "Poppins", Arial, sans-serif;
 }
 
-.item-section-title {
+.item-section-title,
+.item-section-title-row {
   font-size: 1.3rem;
   font-weight: 600;
-  color: #222;
+  color: var(--primary-light);
   margin: 28px 0 10px 0;
-  font-family: 'Poppins', Arial, sans-serif;
+  font-family: "Poppins", Arial, sans-serif;
 }
 
 .item-grid {
   display: flex;
-  flex-wrap: nowrap;         /* Prevent wrapping to new lines */
+  flex-wrap: nowrap; /* Prevent wrapping to new lines */
   gap: 32px;
   margin-bottom: 32px;
-  overflow-x: auto;          /* Enable horizontal scroll */
+  overflow-x: auto; /* Enable horizontal scroll */
   padding-bottom: 8px;
-  scrollbar-width: thin;     /* For Firefox */
-  scrollbar-color: #1877f2 #e4eaf7;
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: var(--primary-light) #e4eaf7;
 }
 
 .item-grid::-webkit-scrollbar {
@@ -532,14 +665,14 @@ body, .main-content-demo, .course-card, .marking-table, .mark-type-select, .mark
   border-radius: 6px;
 }
 .item-grid::-webkit-scrollbar-thumb {
-  background: #1877f2;
+  background: var(--primary-light);
   border-radius: 6px;
 }
 
 .item-card {
   background: #fff;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(24,119,242,0.06);
+  box-shadow: 0 2px 8px rgba(24, 119, 242, 0.06);
   flex: 0 0 210px; /* Do not shrink, do not grow, fixed width */
   width: 210px;
   min-width: 210px;
@@ -554,12 +687,12 @@ body, .main-content-demo, .course-card, .marking-table, .mark-type-select, .mark
   transition: box-shadow 0.18s, border 0.18s;
 }
 .item-card:hover {
-  box-shadow: 0 8px 32px rgba(24,119,242,0.14);
-  border: 1.2px solid #1877f2;
+  box-shadow: 0 8px 32px rgba(24, 119, 242, 0.14);
+  border: 1.2px solid var(--primary-light);
 }
 
 .item-card-image {
-  background: #e4eaf7;
+  background: var(--bg-light);
   height: 70px;
   display: flex;
   align-items: center;
@@ -579,13 +712,29 @@ body, .main-content-demo, .course-card, .marking-table, .mark-type-select, .mark
 }
 
 .item-card-title {
+  font-size: 14px;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
   width: 100%;
   max-width: 180px; /* Adjust as needed for your card width */
-  margin: 0 auto;
+  margin: 8px 0;
+  align-self: center;
+  text-align: center;
+}
+.item-card-due {
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  width: 100%;
+  max-width: 180px; /* Adjust as needed for your card width */
+  margin: 8px 0;
+  align-self: center;
   text-align: center;
 }
 
@@ -630,8 +779,27 @@ body, .main-content-demo, .course-card, .marking-table, .mark-type-select, .mark
 }
 .item-card-edit:hover,
 .item-card-download:hover {
-  background: #1877f2;
+  background: var(--primary-light);
   color: #fff;
+}
+
+.card-icon {
+  font-size: 40px;
+  color: var(--primary-light);
+}
+
+.refer-btn {
+  background: var(--primary-light);
+  color: #fff;
+  border: none;
+  border-bottom-left-radius: 8px; /* Adjust the value as needed */
+  border-bottom-right-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: auto; /* Push to bottom */
+  transition: background 0.2s;
 }
 
 @media (max-width: 1100px) {
@@ -643,4 +811,3 @@ body, .main-content-demo, .course-card, .marking-table, .mark-type-select, .mark
     max-width: 98vw;
   }
 }
-

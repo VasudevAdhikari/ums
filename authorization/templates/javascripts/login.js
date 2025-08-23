@@ -84,7 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             if (data.success) {
-                window.location.href = data.redirect_url || '/';
+                url = data.role=='student'? '/students/academics/home': data.role=='instructor'? '/faculty/': '/executives/dashboard/';
+                window.location.href = url;
             } else {
                 loginError.style.display = 'block';
                 loginError.textContent = data.error || 'Login failed. Please try again.';

@@ -4,57 +4,187 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Department Management</title>
+     <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(120deg, #e6eeff 0%, #f1f5fa 100%);
-            color: #1e293b;
-            margin: 0;
-            padding: 0;
-            font-size: 1.13rem; /* slightly larger */
+            font-family: "Poppins", sans-serif;
+             font-style: normal;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            scroll-behavior: smooth;
+            box-sizing: border-box;
         }
+         /* modified navbar */
+       :root {
+            /* Primary Colors (University Branding) */
+            --primary: #003366; /* Deep Blue - main brand color */
+            --primary-light: #1a4d80; /* Lighter shade for hover states */
+            --primary-dark: #00264d; /* Darker shade for active states */
+            
+            /* Secondary Colors */
+            --secondary: #FFD700; /* Gold - for accents and highlights */
+            --secondary-light: #ffe44d;
+  
+            /* Background Colors */
+            --bg-light: #FFFFFF;
+            --bg-gray: #F5F5F5;
+            
+            /* Text Colors */
+            --text-dark: #333333;
+            --text-black: #000000;
+            --text-light: #FFFFFF;
+            
+            /* Status Colors */
+            --success: #4CAF50;
+            --error: #F44336;
+            --warning: #FFC107;
+            --info: #17A2B8;
+
+             /* Typography */
+            --heading-1: 3rem;
+            --heading-2: 1.7rem;
+            --body-text: 1.1rem;
+            --small-text: 0.85rem;
+            --line-height: 1.6;
+            
+            /* Spacing */
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+        }
+        section {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+            scroll-margin-top: 70px; /* Account for fixed navbar */
+        }
+        
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: var(--primary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand, .nav-link {
+            color: var(--text-light) !important;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary) !important;
+            border-bottom: 2px solid var(--secondary);
+        }
+
+        .dropdown-menu {
+            background-color: var(--primary-light);
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .dropdown-item {
+            color: var(--text-light);
+            padding: 10px 20px;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--secondary) !important;
+            color: var(--text-dark) !important;
+            border-radius: 8px;
+        }
+        /* Remove Bootstrap's default active background */
+.dropdown-item.active {
+    background: transparent !important;
+}
+
+/* Ensure hover works in all states */
+.dropdown-item:hover {
+    background-color: var(--secondary) !important;
+    color: var(--text-dark) !important;
+    border-radius: 8px;
+}
+         
+        .uni-logo {
+            height: 50px;
+            width: 50px;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .custom-nav-spacing .nav-item {
+            margin-right: 2rem;
+        }
+
+        @media (max-width: 991.98px) {
+            .custom-nav-spacing .nav-item {
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        .logout-button {
+            border-radius: 10px;
+            width: 70px;
+            height: 50px;
+            background-color: var(--error);
+        }
+
+        .logout-icon {
+            font-size: 1.7rem;
+            width: 20px;
+        }
+
+        .logout-icon:hover {
+            color: var(--secondary) !important;
+        }
+        /* modified navbar */
+
         .title-main {
-            font-size: 2.8rem;
+           font-size: var(--heading-1); /* modified*/
             font-weight: 700;
-            color: #2563eb;
+            color: var(--primary);
             text-align: center;
-            margin: 2.7rem 0 1.7rem 0;
+           margin: var(--space-xl) 0 var(--space-lg) 0; /* modified */
             letter-spacing: 1px;
+             margin-top: 8rem; /*modified*/
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 1.2rem 2rem 1.2rem;
+            background: var(--bg-gray); /* modified */
         }
         .faculty-actions-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 1.7rem;
             gap: 1.2rem;
             flex-wrap: wrap;
         }
         .search-box {
             position: relative;
-            width: 180px;
+           width: 240px; /*modified width*/
             min-width: 0;
             flex-shrink: 1;
         }
         .search-box input {
             width: 100%;
-            padding: 11px 36px 11px 38px;
+            padding: 11px 20px 11px 38px; /* modified */
             border: 1.5px solid #2563eb;
             border-radius: 2rem;
             font-size: 1.09rem;
-            background: #f7faff;
-            color: #2563eb;
+            background: var(--bg-gray); /* modified */
+            color: var(--primary); /* modified */
             transition: border 0.2s;
             outline: none;
         }
         .search-box input:focus {
-            border-color: #1e40af;
+           border-color: var(--primary-dark); /*modified */
             background: #e6eeff;
         }
         .search-box .fa-search {
@@ -62,12 +192,12 @@
             left: 13px;
             top: 50%;
             transform: translateY(-50%);
-            color: #2563eb;
+            color: var(--primary); /* modified */
             font-size: 1.18rem;
             opacity: 0.8;
         }
         .add-faculty-btn {
-            background: linear-gradient(90deg, #2563eb 60%, #4eafff 100%);
+            background: linear-gradient(90deg,var(--primary) 60%, var(--primary-light) 100%); /*modified*/
             color: #fff;
             border: none;
             border-radius: 50%;
@@ -83,8 +213,8 @@
         }
         .add-faculty-btn:hover,
         .add-faculty-btn:focus {
-            background: linear-gradient(90deg, #1e40af 60%, #2563eb 100%);
-            color: #fff;
+            background: linear-gradient(90deg, var(--primary-dark) 60%, var(--primary) 100%); /*modified*/
+            color: var(--text-light); /* modified */
             box-shadow: 0 4px 16px rgba(37, 99, 235, 0.13);
         }
         .faculty-list {
@@ -105,9 +235,9 @@
             }
         }
         .faculty-card {
-            background: #fff;
-            border-radius: 1.3rem;
-            box-shadow: 0 2px 12px rgba(37,99,235,0.07);
+            background: var(--bg-light); /* modified */
+            border-radius: 1rem;/*modified*/
+            box-shadow: 0 8px 32px rgba(80, 82, 73, 0.13); /*modified*/
             padding: 2.2rem 2.2rem 1.6rem 2.2rem;
             display: flex;
             flex-direction: column;
@@ -148,11 +278,32 @@
             transition: background 0.2s, color 0.2s;
             border: none;
             outline: none;
+            margin-bottom: 5px;
         }
-        .faculty-action-icon:hover {
-            background: #2563eb;
-            color: #fff;
+                /* modified icon color */
+                .faculty-action-icon .edit-btn {
+            background: rgba(13, 110, 253, 0.1);  /* Light blue background */
+            color: #0d6efd;                       /* Bootstrap-style blue */
+            border: 1px solid rgba(13, 110, 253, 0.2);
         }
+        .edit-btn:hover {
+            background: var(--primary-light);                 /* Solid blue */
+            color: white;
+        }
+
+        /* DELETE BUTTON - Standard Red */
+        .delete-btn {
+            background: rgba(220, 53, 69, 0.1);   /* Light red background */
+            color: #dc3545;                       /* Bootstrap-style red */
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+
+        .delete-btn:hover {
+            background: #dc3545;                  /* Solid red */
+            color: white;
+        }
+        /* modified icon color */
+
         .faculty-header-row {
             display: flex;
             align-items: center;
@@ -163,8 +314,8 @@
             height: 90px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #2563eb;
-            background: #f7faff;
+            border: 3px solid var(--primary); /* modified */
+            background: var(--bg-gray); /* modified */
             box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
             flex-shrink: 0;
         }
@@ -176,25 +327,25 @@
             min-width: 0;
         }
         .faculty-name {
-            font-size: 1.45rem;
+            font-size: var(--heading-2); /* modified */
             font-weight: 700;
-            color: #2563eb;
-            margin-bottom: 0.1rem;
+            color: var(--primary); /* modified */
+            margin: 0.1rem 0;
             letter-spacing: 0.2px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         .faculty-head {
-            font-size: 1.12rem;
-            color: #1e40af;
+            font-size: var(--body-text); /* modified */
+            color: var(--primary-dark); /* modified */
             font-weight: 500;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
         .faculty-head .fa-user-tie {
-            color: #4eafff;
+            color: var(--secondary); /* modified */
             font-size: 1.18rem;
         }
         .faculty-contact-row {
@@ -204,23 +355,32 @@
             margin-top: 0.2rem;
         }
         .faculty-contact {
-            font-size: 1.08rem;
-            color: #334155;
+            font-size: var(--small-text); /* modified */
+            color:  var(--text-dark); /* modified */
             display: flex;
             align-items: center;
             gap: 0.4rem;
             opacity: 0.95;
         }
-        .faculty-contact .fa-envelope,
-        .faculty-contact .fa-phone,
-        .faculty-contact .fa-location-dot {
-            color: #2563eb;
+        /* modified icon color*/
+        .faculty-contact .fa-envelope{ 
+            color: var(--info);
             font-size: 1.13rem;
         }
-        .faculty-description {
+        .faculty-contact .fa-phone{
+            color: var(--success);
             font-size: 1.13rem;
-            color: #334155;
-            background: #f7faff;
+        }
+        .faculty-contact .fa-location-dot {
+            color: var(--primary); /* modified */
+            font-size: 1.13rem;
+        }
+        /* modified icon color */
+
+        .faculty-description {
+            font-size: var(--body-text); /* modified */
+            color: var(--text-dark); /* modified */
+            background: var(--bg-gray); /* modified */
             border-radius: 0.8rem;
             padding: 1.2rem 1.3rem;
             line-height: 1.7;
@@ -238,7 +398,7 @@
         }
         .read-more-btn {
             background: none;
-            color: #2563eb;
+            color: var(--primary); /* modified */
             border: none;
             font-size: 1.13rem;
             font-weight: 600;
@@ -249,9 +409,22 @@
             transition: color 0.2s;
         }
         .read-more-btn:hover {
-            color: #1e40af;
+            color: var(--primary-dark); /* modified */
             text-decoration: underline;
         }
+
+        /* modified mobile view */
+        @media (max-width: 800px) {
+    /* Add click effect for mobile cards */
+    .faculty-card {
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+        cursor: pointer;
+    }
+    .faculty-card:active {
+    transform: scale(0.98);
+}
+}
+/* modified mobile view */
         /* Edit Modal Styles */
         .modal {
             display: none;
@@ -279,9 +452,9 @@
             position: relative;
         }
         .modal-content h3 {
-            font-size: 1.55rem;
+            font-size: var(--heading-2); /* modified*/
             font-weight: 600;
-            color: #2563eb;
+            color: var(--primary); /* modified */
             margin-bottom: 0.5rem;
             text-align: center;
         }
@@ -477,10 +650,14 @@
         }
     </style>
 </head>
-<body>
+<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="180" tabindex="0"> 
+<!--modified Navbar -->
+{% include "executives/navbar.html" %}
+    <!-- modified navbar -->
+
     <div class="title-main">Department Management</div>
-    <div class="container">
-        <div class="faculty-actions-row">
+    <div class="container py-3">
+        <div class="faculty-actions-row mb-3">
             <button class="add-faculty-btn" onclick="openAddModal()" title="Add New Department"><i class="fa fa-plus"></i></button>
             <div class="search-box">
                 <i class="fa fa-search"></i>
@@ -492,13 +669,14 @@
             {% for dept in departments %}
             <div class="faculty-card" data-name="{{dept.name}}">
                 <div class="faculty-actions">
-                    <button class="faculty-action-icon" onclick="openEditModal('{{dept.name|escapejs}}', '{{dept.email|escapejs}}', '{{dept.phone|escapejs}}', '{{dept.location|escapejs}}', '{{dept.description|escapejs}}', '{{dept.head|escapejs}}', `{{dept.photo|escapejs}}`, '{{dept.id|escapejs}}', '{{dept.faculty_id|escapejs}}')"><i class="fa fa-pen"></i></button>
-                    <button class="faculty-action-icon" onclick="confirmDelete('{{dept.name}}', '{{dept.id}}')"><i class="fa fa-trash"></i></button>
+                    <button class="faculty-action-icon edit-btn" onclick="openEditModal('{{dept.name|escapejs}}', '{{dept.email|escapejs}}', '{{dept.phone|escapejs}}', '{{dept.location|escapejs}}', '{{dept.description|escapejs}}', '{{dept.head|escapejs}}', `{{dept.photo|escapejs}}`, '{{dept.id|escapejs}}', '{{dept.faculty_id|escapejs}}')"><i class="fa fa-pen"></i></button>
+                    <button class="faculty-action-icon delete-btn" onclick="confirmDelete('{{dept.name}}', '{{dept.id}}')"><i class="fa fa-trash"></i></button>
                 </div>
+                <div class="faculty-name">{{dept.name}}</div> <!--modified name-->
                 <div class="faculty-header-row">
                     <img src="{{dept.photo}}" alt="{{dept.name}}" class="faculty-image">
                     <div class="faculty-main-info">
-                        <div class="faculty-name">{{dept.name}}</div>
+                        
                         <div class="faculty-head"><i class="fa fa-user-tie"></i> Head: <span>{{dept.head}}</span></div>
                         <div class="faculty-contact-row">
                             <div class="faculty-contact"><i class="fa fa-envelope"></i> {{dept.email}}</div>
@@ -596,6 +774,8 @@
         </div>
     </div>
 
+     <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Sample users for head of faculty selection
         // const users = [
@@ -606,6 +786,44 @@
         //     { name: "Sara Lee", img: "https://randomuser.me/api/portraits/women/68.jpg" },
         //     { name: "David Brown", img: "https://randomuser.me/api/portraits/men/65.jpg" }
         // ];
+
+         //modified navbar js
+         // Function to navigate to lab details page
+        function navigateToLabDetails(labId) {
+            window.location.href = `lab-details.html?id=${labId}`;
+        }
+        
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+
+       
+document.addEventListener('DOMContentLoaded', function() {
+  // Get all navbar links (including dropdown items)
+  const navLinks = document.querySelectorAll('.dropdown-item');
+  
+  // Get the navbar collapse element
+  const navbarCollapse = document.querySelector('.navbar-collapse');
+  
+  // Add click event to each link
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      // Check if navbar is expanded (mobile view)
+      if (navbarCollapse.classList.contains('show')) {
+        // Trigger the collapse
+        const toggleBtn = document.querySelector('.navbar-toggler');
+        if (toggleBtn) {
+          toggleBtn.click(); // Simulate click on toggle button
+        }
+      }
+    });
+  });
+});
+
+        //modified navbar js
+
         let instructors = '{{instructors|escapejs}}';
         instructors = instructors.replaceAll("'", '"');
         // alert(instructors);

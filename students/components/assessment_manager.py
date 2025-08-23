@@ -1,19 +1,52 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from authorization.models import Assessment, AssessmentResult, Student
-import json
-import os
+from authorization.models import Assessment, AssessmentResult, Student, AssessmentType, User, BatchInstructor
+import json, os
+from datetime import datetime
+from django.utils.timezone import now
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from datetime import datetime
 
 def show_assessment_submission(request, assessment_id):
-    assessment = Assessment.objects.get(id=assessment_id)
+    type = request.GET.get('type')
+    if type in (
+        AssessmentType.CLASS_PARTICIPATION, 
+        AssessmentType.FINAL_ONPAPER, 
+        AssessmentType.MIDTERM, 
+        AssessmentType.TUTORIAL
+    ):
+        return render(request, 'htmls/access_denied.html', {'message': 'You cannot view or submit this assessment'})
 
+    assessment = Assessment.objects.get(id=assessment_id)
+    # Assigned date check
+    if not assessment.assigned_date or assessment.assigned_date > now():
+        return render(request, 'htmls/access_denied.html', {
+            'message': 'You cannot view or submit this assessment. The assessment time has not started yet.'
+        })
+    
+    email = request.COOKIES.get('my_user')
+    student = User.objects.filter(
+        email=email
+    ).first()
+    if student.pk not in assessment.assessment.get('students'):
+        return render(request, 'htmls/access_denied.html', {'message': 'You cannot view or submit this assessment. This assessment is not assigned for you.'})
+    
+    if type==AssessmentType.QUIZ:
+        return redirect(f'/students/academics/quiz/{assessment.id}')
+    
+    if AssessmentResult.objects.filter(student__user=student,assessment=assessment).exists():
+        return redirect(f'/students/academics/submitted_assessment/{assessment.id}')
+        # Due date check
+    if assessment.due_date < now():
+        return render(request, 'htmls/access_denied.html', {
+            'message': f'You cannot view or submit this assessment. The assignment was due by {assessment.due_date.strftime("%d.%m.%Y (%H:%M)")}'
+        })
     data = {
         'assessment': assessment,
     }
-
     return render(request, 'students/academic/assessment.html', context=data)
 
 # @login_required
@@ -56,23 +89,17 @@ def submit_assessment(request):
             if key.startswith('images['):
                 file = request.FILES[key]
                 if file.content_type.startswith('image/'):
-                    # Save image to media/assessment_submissions/images/
-                    file_path = f'assessment_submissions/{assessment_id}_{student.pk}_{file.name.replace(" ", "")}'
-                    with open(f'media/{file_path}', 'wb+') as destination:
-                        for chunk in file.chunks():
-                            destination.write(chunk)
-                    uploaded_images.append(file_path)
+                    file_path = f'assessment_submissions/images/{assessment_id}_{student.pk}_{file.name.replace(" ", "")}'
+                    saved_path = default_storage.save(file_path, ContentFile(file.read()))
+                    uploaded_images.append(saved_path)
         
         # Process uploaded files
         for key in request.FILES:
             if key.startswith('files['):
                 file = request.FILES[key]
-                # Save file to media/assessment_submissions/files/
-                file_path = f'assessment_submissions/{assessment_id}_{student.pk}_{file.name.replace(" ","")}'
-                with open(f'media/{file_path}', 'wb+') as destination:
-                    for chunk in file.chunks():
-                        destination.write(chunk)
-                uploaded_files.append(file_path)
+                file_path = f'assessment_submissions/files/{assessment_id}_{student.pk}_{file.name.replace(" ", "")}'
+                saved_path = default_storage.save(file_path, ContentFile(file.read()))
+                uploaded_files.append(saved_path)
         
         # Create assessment result with timing data
         answer_data = {
@@ -108,7 +135,6 @@ def submit_assessment(request):
     except Exception as e:
         print(e)
         return JsonResponse({'success': False, 'message': f'Error: {str(e)}'})
-
 def formatTimeTaken(milliseconds):
     """Format time taken in milliseconds to human readable format"""
     if milliseconds < 60000:  # Less than 1 minute
@@ -138,3 +164,49 @@ def show_submitted_assessment(request, assessment_id):
         return render(request, 'students/academic/submitted_assessment.html', {'result': None, 'error': 'Assessment result not found.'})
     except Exception as e:
         return render(request, 'students/academic/submitted_assessment.html', {'result': None, 'error': str(e)})
+    
+
+def show_all_assessment_results(request, batch_instructor_id):
+    batch_instructor = BatchInstructor.objects.filter(
+        pk=int(batch_instructor_id),
+    ).select_related(
+        'instructor__user',
+        'course',
+        'instructor__department',
+        'batch__term',
+        'batch__semester',
+        'batch__semester__degree'
+    ).first()
+
+    assessment_results = AssessmentResult.objects.filter(
+        assessment__assessment_scheme__batch_instructor_id=batch_instructor_id,
+        student__user__email=request.COOKIES.get('my_user'),
+    ).select_related(
+        'assessment'
+    )
+    given_total = 0
+    marking_scheme = batch_instructor.course.marking_scheme
+    for assessment, percent in marking_scheme.items():
+        if assessment != "Final":
+            given_total+=percent
+
+    all_results = {}
+    for ar in assessment_results:
+        assessment_type = ar.assessment.get_assessment_type_display()
+        if all_results.get(assessment_type):
+            all_results[assessment_type]+=ar.mark
+        else:
+            all_results[assessment_type]=ar.mark
+
+    got_total = 0
+    for _, marks in all_results.items():
+        got_total+=marks
+
+    data = {
+        'batch_instructor': batch_instructor,
+        'assessment_results': assessment_results,
+        'got_total': got_total,
+        'given_total': given_total,
+        'percentage': got_total * 100 / given_total,
+    }
+    return render(request, 'students/academic/all_results.html', context=data)

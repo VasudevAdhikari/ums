@@ -12,7 +12,7 @@ import json
 from authorization.models import UniversityDetails
 from django.views.decorators.http import require_POST
 from .additional_business_logics.additionals import *
-from .additional_business_logics.data_formatter import get_student_for_approval, get_instructor_for_approval
+from .additional_business_logics.data_formatter import get_student_for_approval, get_instructor_for_approval, get_lab_details_data
 from .lab_api import lab_edit_api, lab_delete_photo_api, lab_edit_project_api
 
 def is_executive(user):
@@ -30,6 +30,17 @@ def executive_home(request):
         'unapproved_instructor_count': Instructor.objects.filter(employment_status=EmploymentStatus.UNAPPROVED).count(),
     }
     return render(request, 'executives/home.html', context=data)
+
+def get_all_students(request):
+    students = Student.objects.all()
+    all_student = []
+    for student in students:
+        all_student.append(get_student_for_approval(student))
+
+    data = {
+        'students': all_student
+    }
+    return render(request, 'executives/all_students.html/', context=data)
 
 def get_unapproved_students(request):
     unapproved_student_data = Student.objects.filter(status=StudentStatus.UNAPPROVED)
@@ -79,6 +90,11 @@ def uni_info_edit(request):
             "facebook": request.POST.get("facebook", ""),
             "opening_time": request.POST.get("opening_time", ""),
             "description": request.POST.get("description", ""),
+            "mission": request.POST.get("mission", ""),
+            "vision": request.POST.get("vision", ""),
+            "linkedin": request.POST.get("linkedin", ""),
+            "twitter": request.POST.get("twitter", ""),
+            "instagram": request.POST.get("instagram", ""),
         }
 
         # Always update the first matching record, never create a new one if any exist
@@ -116,41 +132,53 @@ def show_uni_info(request):
         'university_info': university_info,
         'partnerships': dict(partnerships.details).items() if partnerships else {},
         'certificates': dict(certificates.details).items() if certificates else {},
-        'photos': dict(photos.details).items() if certificates else{},
+        'photos': dict(photos.details).items() if photos else{},
         'labs': dict(labs.details).items() if labs else{}
     }
+    # print(photos.details)
     return render(request, 'executives/uni_info.html', context=data)
 
 def show_lab_details(request, lab_name):
-    labs = UniversityDetails.objects.filter(name='labs').first().details
-    current_lab = labs.get(lab_name)
-
-    # project_leader ORM query has to be fixed to all admins and instructors
-    project_leaders = User.objects.all()
-    all_project_leaders = get_formatted_lab_members(project_leaders)
-
-    project_members = User.objects.all()
-    all_project_members = get_formatted_lab_members(project_members)
-
-    # lab_heads ORM query has to be fixed to all admins
-    lab_heads = User.objects.all()
-    all_lab_heads = get_formatted_lab_members(lab_heads)
-
-    head_of_lab = User.objects.get(pk=int(current_lab.get('head_of_lab'))) if current_lab.get('head_of_lab') else None
-    lab_head_dept = get_head_of_labs_department(head_of_lab)
-    projects = current_lab.get('projects')
-    
-    data = {
-        'lab_data': current_lab,
-        'lab_key': lab_name,
-        'all_project_leaders': all_project_leaders,
-        'all_project_members': all_project_members,
-        'all_lab_heads': all_lab_heads,
-        'head_of_lab': head_of_lab,
-        'lab_head_dept': lab_head_dept,
-        'projects': projects,
-    }
+    data = get_lab_details_data(request, lab_name)
     return render(request, 'executives/lab_details.html', context=data)
+
+@csrf_exempt
+def update_lab_department(request, lab_name):
+    """Update lab department"""
+    if request.method != "POST":
+        return JsonResponse({"success": False, "error": "POST method required"})
+    
+    try:
+        data = json.loads(request.body)
+        department_id = data.get('department_id')
+        department_name = data.get('department_name')
+        
+        if not department_id or not department_name:
+            return JsonResponse({"success": False, "error": "Department ID and name required"})
+        
+        # Get labs object
+        labs_obj = UniversityDetails.objects.filter(name='labs').first()
+        if not labs_obj:
+            return JsonResponse({"success": False, "error": "Labs not found"})
+        
+        labs = labs_obj.details
+        if lab_name not in labs:
+            return JsonResponse({"success": False, "error": "Lab not found"})
+        
+        # Update department
+        labs[lab_name]['department'] = {
+            'id': int(department_id),
+            'name': department_name
+        }
+        
+        # Save to database
+        labs_obj.details = labs
+        labs_obj.save()
+        
+        return JsonResponse({"success": True})
+        
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)})
 
 @csrf_exempt
 def add_partnership_ajax(request):
@@ -515,6 +543,28 @@ def delete_photo_ajax(request):
 
 def show_department_management(request):
     return render(request, 'executives/department_management.html')
+
+def show_all_executives(request):
+    executives = Admin.objects.all().select_related('user', 'user__emergency_contact')
+    data = {
+        'executives': executives
+    }
+    return render(request, 'executives/all_executives.html', context=data)
+
+def show_all_instructors(request):
+    instructors = Instructor.objects.exclude(employment_status=EmploymentStatus.UNAPPROVED).select_related('user', 'department', 'user__emergency_contact')
+    all_instructors = []
+    for instructor in instructors:
+        instructor_data = get_instructor_for_approval(instructor)
+        instructor_data['department'] = instructor.department.name if instructor.department else "Unknown"
+        instructor_data['role'] = instructor.position_in_university
+        all_instructors.append(instructor_data)
+
+    data = {
+        'instructors': all_instructors
+    }
+    return render(request, 'executives/all_instructors.html', context=data)
+
 
 def show_unapproved_instructors(request):
     unapproved_instructor_data = Instructor.objects.filter(employment_status=EmploymentStatus.UNAPPROVED)

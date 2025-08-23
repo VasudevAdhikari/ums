@@ -8,7 +8,8 @@ from django.db.models import Prefetch
 def show_batch_management(request, term_id):
     degrees = Degree.objects.all()
     semesters = Semester.objects.all()
-    batches = Batch.objects.filter(term=Term.objects.get(pk=int(term_id)))
+    term=Term.objects.get(pk=int(term_id))
+    batches = Batch.objects.filter(term=term)
     instructors = Instructor.objects.all()
     all_instructors = []
     all_instructors.extend([
@@ -24,6 +25,7 @@ def show_batch_management(request, term_id):
 
     
     data = {
+        'term_name': term.term_name,
         'degrees': degrees,
         'semesters': serializers.serialize('json', semesters),
         'all_instructors': json.dumps(all_instructors),
@@ -86,9 +88,11 @@ def edit_batch(request):
 
     # Create batch instructors in bulk if there are any
     if batch_instructors:
-        BatchInstructor.objects.bulk_create(batch_instructors)
+        for batch_instructor in batch_instructors:
+            batch_instructor.save()
+        # BatchInstructor.objects.bulk_create(batch_instructors)
 
-    return JsonResponse({'success': True, 'created_batches': len(batches), 'created_instructors': len(batch_instructors)})
+    return JsonResponse({'success': True, 'created_batches': len(batches), 'created_instructors': len(batch_instructors), 'message': 'Batch Data Edited Successfully'})
 
 
 def list_batches(request):
@@ -120,20 +124,13 @@ def list_batches(request):
     for degree in degrees:
         degree_batches = [batch for batch in batches if batch.semester.degree.pk == degree.pk]
 
-        courses = []
         seen_courses = set()
         semesters_list = []
 
         for batch in degree_batches:
-            semester = batch.semester
-            if semester.pk not in [s["semester_id"] for s in semesters_list]:
-                semesters_list.append({
-                    "semester_id": semester.pk,
-                    "semester_name": semester.semester_name,
-                })
 
             batch_instructors = BatchInstructor.objects.filter(batch=batch).select_related('course', 'instructor__user')
-
+            courses = []
             for batch_instructor in batch_instructors:
                 course = batch_instructor.course
 
@@ -156,16 +153,24 @@ def list_batches(request):
                     "course_code": course.course_code,
                     "department_id": course.department.pk,
                     "instructor": instructor_data,
-                    "batch_instructor_id": batch_instructor.pk,
                     "rooms": batch_instructor.room_data,
+                    "batch_instructor_id": batch_instructor.pk,
                 })
+
+                semester = batch.semester
+                if semester.pk not in [s["semester_id"] for s in semesters_list]:
+                    semesters_list.append({
+                        "semester_id": semester.pk,
+                        "semester_name": semester.semester_name,
+                        "courses": courses,
+                        "batch_instructor_id": batch.pk,
+                    })
                 # print(courses)
 
         batch_data["majors"].append({
             "degree_id": degree.pk,
             "degree_name": degree.name,
             "semesters": semesters_list,
-            "courses": courses,
         })
 
     return JsonResponse(batch_data)

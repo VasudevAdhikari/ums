@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'executives',
     'students',
     'faculty',
+    'noticeboard',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +59,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # my custom middlewares
+    'authorization.middleware.UserRoleMiddleware',
+    'authorization.middleware.ImgFallbackMiddleware',
+    'authorization.middleware.RateLimitMiddleware',
+    # 'authorization.middleware.CustomErrorMiddleware',
+    'authorization.middleware.PayloadSizeLimitMiddleware',
+    # 'authorization.middleware.GeoIPMyanmarMiddleware',
 ]
+
 
 ROOT_URLCONF = 'course_management.urls'
 
@@ -103,7 +113,7 @@ DATABASES = {
     }
 }
 
-DATABASES['default'] = dj_database_url.parse("postgresql://vasudevadhikari:fsF43n5osuo5W1PbwomCLtJ6sDzW4n2T@dpg-d1rs1hqdbo4c738hiokg-a.oregon-postgres.render.com/course_management_iawe")
+DATABASES['default'] = dj_database_url.parse("postgresql://vasudevadhikari:c6ErQRjPCq2Cfx0bmCsbyx1YFi13JQdI@dpg-d2eakrc9c44c738ojjag-a.oregon-postgres.render.com/course_management_hhva")
 
 
 # Password validation
@@ -167,6 +177,11 @@ if not os.path.exists(POST_MEDIA_ROOT):
 if not os.path.exists(MEDIA_ROOT):
     os.makedirs(MEDIA_ROOT)
     os.makedirs(os.path.join(MEDIA_ROOT, 'profile_pictures'))
+
+# Create results directory if it doesn't exist
+results_dir = os.path.join(MEDIA_ROOT, 'results')
+if not os.path.exists(results_dir):
+    os.makedirs(results_dir)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

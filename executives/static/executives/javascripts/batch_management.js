@@ -76,31 +76,34 @@ window.onclick = (e) => {
 // Handle submit
 submitMajorBatch.onclick = async () => {
     const major = majorSelect.value;
+    document.getElementById('majorModal').style.display='none';
+    document.getElementById('modalOverlay').style.display='none';
     const checkedSems = Array.from(semCheckboxList.querySelectorAll("input:checked")).map(cb => cb.value);
 
     if (!major) {
-        alert("Please select a major.");
+        await alert("Please select a major.");
         return;
     }
     if (checkedSems.length === 0) {
-        alert("Please select at least one semester.");
+        await alert("Please select at least one semester.");
         return;
     }
 
     // Confirm creation
-    if (!confirm(`Create batch for major "${major}" with semesters: ${checkedSems.join(", ")}?`)) {
+    if (!await confirm(`Create batch for major "${major}" with semesters: ${checkedSems.join(", ")}?`)) {
         return;
     }
 
     // Async POST to /executives/batchs/edit/
     try {
         const CSRFToken = window.getCsrfToken();
+        if (!await confirm('Are you sure to edit batch with provided data')) return;
         const resp = await fetch("/executives/batches/edit/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": CSRFToken,   
+                "X-CSRFToken": CSRFToken,
             },
             body: JSON.stringify({
                 term_id: window.TERM_ID,
@@ -109,14 +112,16 @@ submitMajorBatch.onclick = async () => {
         });
         if (!resp.ok) {
             throw new Error("Failed to create batch.");
-        } 
+        }
         if (resp.result) {
             console.log(resp.result);
+            if(resp.messsage) await alert(resp.message);
+            else await alert('Batch Data Edited Successfully');
         }
         window.location.reload();
         // Remove the intro message if present
         if (tabContentMsg) tabContentMsg.style.display = "none";
-        
+
         // Create the new tab
         const tab = document.createElement("div");
         tab.className = "created-tab";
@@ -129,7 +134,7 @@ submitMajorBatch.onclick = async () => {
         const semList = document.createElement("div");
         semList.className = "created-sem-list";
         semList.style.display = "none";
-        semList.innerHTML = checkedSems.map(sem => `<div class="created-sem-item" style="cursor:pointer;">${sem}</div>`).join("");
+        semList.innerHTML = checkedSems.map(sem => `<div class="created-sem-item" style="cursor:pointer;" data="${sem}"></div>`).join("");
 
         tab.onclick = function () {
             semList.classList.toggle("open");
@@ -154,7 +159,7 @@ submitMajorBatch.onclick = async () => {
                 const subjectTab = document.createElement("div");
                 subjectTab.className = "subject-tab";
                 subjectTab.style.margin = "12px 0 0 0";
-                subjectTab.style.background = "#f8fbff";
+                subjectTab.style.background = "#003366";
                 subjectTab.style.borderRadius = "10px";
                 subjectTab.style.boxShadow = "0 2px 8px rgba(44,62,80,0.08)";
                 subjectTab.style.padding = "18px 22px";
@@ -168,8 +173,8 @@ submitMajorBatch.onclick = async () => {
                     const btn = document.createElement("button");
                     btn.textContent = `Subject ${i}`;
                     btn.className = "subject-btn";
-                    btn.style.background = "#4da6ff";
-                    btn.style.color = "#fff";
+                    btn.style.background = "#FFFFFF";
+                    btn.style.color = "#FFFFFF";
                     btn.style.border = "none";
                     btn.style.borderRadius = "8px";
                     btn.style.padding = "18px 0";
@@ -198,7 +203,7 @@ submitMajorBatch.onclick = async () => {
         if (modalOverlay) modalOverlay.style.display = "none";
     } catch (err) {
         console.error(err);
-        alert("Error: " + err.message);
+        await alert("Error: " + err.message);
     }
 };
 
@@ -272,6 +277,7 @@ function showSubjectPopup(subjectBtn, semName, majorName) {
     // Create overlay
     let overlay = document.createElement('div');
     overlay.id = 'subjectPopupModal';
+    overlay.className = 'edit-subject-popup';
     overlay.style.position = 'fixed';
     overlay.style.top = 0;
     overlay.style.left = 0;
@@ -286,7 +292,7 @@ function showSubjectPopup(subjectBtn, semName, majorName) {
 
     // Modal box
     let modal = document.createElement('div');
-    modal.style.background = '#fff';
+    modal.style.background = '#FFFFFF';
     modal.style.borderRadius = '14px';
     modal.style.boxShadow = '0 8px 32px rgba(44,106,156,0.13)';
     modal.style.padding = '32px 28px 24px 28px';
@@ -303,7 +309,7 @@ function showSubjectPopup(subjectBtn, semName, majorName) {
     closeBtn.style.top = '12px';
     closeBtn.style.right = '18px';
     closeBtn.style.fontSize = '2rem';
-    closeBtn.style.color = '#4da6ff';
+    closeBtn.style.color = '#1a4d80';
     closeBtn.style.cursor = 'pointer';
     closeBtn.onclick = () => overlay.remove();
     modal.appendChild(closeBtn);
@@ -311,7 +317,7 @@ function showSubjectPopup(subjectBtn, semName, majorName) {
     // Title
     let title = document.createElement('h2');
     title.textContent = subjectData ? "Subject Details" : "Edit Subject";
-    title.style.color = '#3498db';
+    title.style.color = '#003366';
     title.style.margin = '0 0 18px 0';
     title.style.textAlign = 'center';
     modal.appendChild(title);
@@ -322,7 +328,7 @@ function showSubjectPopup(subjectBtn, semName, majorName) {
         modal.appendChild(closeBtn);
         let title = document.createElement('h2');
         title.textContent = "Edit Subject";
-        title.style.color = '#3498db';
+        title.style.color = '#003366';
         title.style.margin = '0 0 18px 0';
         title.style.textAlign = 'center';
         modal.appendChild(title);
@@ -363,9 +369,9 @@ function showSubjectPopup(subjectBtn, semName, majorName) {
         teacherSelect.id = "subjectTeacherToSubmit"
         teacherSelect.style.marginBottom = "14px";
         let departmentId = courseData.department_id;
-        // alert(departmentId);
+        // await alert(departmentId);
         (window.ALL_INSTRUCTORS || []).forEach(instr => {
-            // alert(instr.department);
+            // await alert(instr.department);
             if (instr.department == departmentId) {
                 let o = document.createElement('option');
                 o.value = instr.id;
@@ -388,15 +394,11 @@ function showSubjectPopup(subjectBtn, semName, majorName) {
         classroom1Label.style.marginBottom = "6px";
         modal.appendChild(classroom1Label);
 
-        let classroom1Select = document.createElement('select');
+        let classroom1Select = document.createElement('input');
         classroom1Select.id = "classroom1ToSubmit"
-        rooms = ["Room A", "Room B", "Room C"];
-        rooms.forEach(r => {
-            let o = document.createElement('option');
-            o.value = r;
-            o.textContent = r;
-            classroom1Select.appendChild(o);
-        });
+        classroom1Select.type = "text";
+        classroom1Select.maxLength = 20;
+        classroom1Select.placeholder = "Enter classroom";
         classroom1Select.style.marginBottom = "8px";
         modal.appendChild(classroom1Select);
 
@@ -422,18 +424,11 @@ function showSubjectPopup(subjectBtn, semName, majorName) {
         classroom2Label.style.marginBottom = "6px";
         modal.appendChild(classroom2Label);
 
-        let classroom2Select = document.createElement('select');
+        let classroom2Select = document.createElement('input');
         classroom2Select.id = "classroom2ToSubmit";
-        let emptyOpt = document.createElement('option');
-        emptyOpt.value = "";
-        emptyOpt.textContent = "-- None --";
-        classroom2Select.appendChild(emptyOpt);
-        ["Room A", "Room B", "Room C"].forEach(r => {
-            let o = document.createElement('option');
-            o.value = r;
-            o.textContent = r;
-            classroom2Select.appendChild(o);
-        });
+        classroom2Select.type = "text";
+        classroom2Select.placeholder = "Another classroom (optional)";
+        classroom2Select.maxLength = 20;
         classroom2Select.style.marginBottom = "8px";
         modal.appendChild(classroom2Select);
 
@@ -472,7 +467,7 @@ function showSubjectPopup(subjectBtn, semName, majorName) {
         let submitBtn = document.createElement('button');
         submitBtn.textContent = "Submit";
         submitBtn.className = "subject-submit-btn";
-        submitBtn.onclick = function () {
+        submitBtn.onclick = async function () {
             teacherToSubmit = document.getElementById('subjectTeacherToSubmit').value;
             classroom1ToSubmit = document.getElementById('classroom1ToSubmit').value;
             class1TimesToSubmit = document.getElementById('classTime1ToSubmit').value;
@@ -489,6 +484,8 @@ function showSubjectPopup(subjectBtn, semName, majorName) {
             }
             console.log(dataToSubmit);
 
+            if (!await confirm('Are you sure to edit batch with provided data')) return;
+
             fetch("/executives/batch_instructor/edit/", {
                 method: "POST",
                 headers: {
@@ -497,19 +494,20 @@ function showSubjectPopup(subjectBtn, semName, majorName) {
                 },
                 body: JSON.stringify(dataToSubmit)
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json(); // or response.text() if the response is not JSON
-            })
-            .then(data => {
-                console.log("Success:", data);
-                window.location.reload();
-            })
-            .catch(error => {
-                console.error("Error:", error);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json(); // or response.text() if the response is not JSON
+                })
+                .then(async data => {
+                    console.log("Success:", data);
+                    if (data.success) await alert('Batch Data Updated Successfully');
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
 
         };
         btnRow.appendChild(submitBtn);
@@ -542,8 +540,8 @@ editTabsBtn.onclick = function () {
                 btn.innerHTML = '&minus;';
                 btn.title = "Delete Tab";
                 btn.onclick = async function (e) {
-                    if (confirm('Are you sure you want to remove all the courses related to this semester for this term?')) {
-                        // alert(tab.getAttribute('degree-id'))
+                    if (await confirm('Are you sure you want to remove all the courses related to this semester for this term?')) {
+                        // await alert(tab.getAttribute('degree-id'))
                         const resp = await fetch("/executives/batch_instructor/delete/", {
                             method: "POST",
                             headers: {
@@ -558,7 +556,7 @@ editTabsBtn.onclick = function () {
                         });
                         if (!resp.ok) throw new Error("Failed to delete batch instructors.");
                         else {
-                            alert('deletion successful');
+                            await alert('deletion successful');
                             window.location.reload();
                         }
                     }
@@ -625,105 +623,266 @@ async function renderAllBatches() {
             method: "POST",
             headers: {
                 "Accept": "application/json",
+                "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": window.getCsrfToken(),
+                "X-CSRFToken": typeof window.getCsrfToken === "function" ? window.getCsrfToken() : ""
             },
-            body: JSON.stringify({
-                "term_id": window.TERM_ID
-            })
+            body: JSON.stringify({ term_id: window.TERM_ID })
         });
-        if (!resp.ok) throw new Error("Failed to fetch batches.");
-        const data = await resp.json(); // { term_id, term_name, majors: [...] }
-        console.log(data);
-        tabContainerBox.innerHTML = ""; // Clear existing
+        if (!resp.ok) throw new Error("Failed to fetch batches: " + resp.status);
+        const data = await resp.json();
+        console.log("batches data:", data);
 
-        // Term header
-        const termHeader = document.createElement("div");
-        termHeader.className = "term-header";
-        termHeader.textContent = data.term_name;
-        termHeader.style.fontWeight = "bold";
-        termHeader.style.fontSize = "1.2rem";
-        termHeader.style.margin = "18px 0 8px 0";
-        tabContainerBox.appendChild(termHeader);
+        tabContainerBox.innerHTML = "";
 
         (data.majors || []).forEach(major => {
-            // Major tab
             const tab = document.createElement("div");
             tab.className = "created-tab";
-            tab.textContent = major.degree_name;
-            tab.setAttribute('degree-id', major.degree_id);
+            tab.textContent = major.degree_name ?? "Major";
+            tab.setAttribute('degree-id', major.degree_id ?? "");
             addDeleteBtnIfEditMode(tab);
 
-            // Semesters list
             const semList = document.createElement("div");
             semList.className = "created-sem-list";
             semList.style.display = "none";
-            semList.innerHTML = (major.semesters || []).map(sem =>
-                `<div class="created-sem-item" data-sem-id="${sem.semester_id}" style="cursor:pointer;">${sem.semester_name}</div>`
-            ).join("");
+
+            (major.semesters || []).forEach(sem => {
+                const semItem = document.createElement("div");
+                semItem.className = "created-sem-item";
+                semItem.dataset.semId = String(sem.semester_id ?? "");
+                semItem.setAttribute('batch_instructor', sem.batch_instructor_id);
+                semItem.style.cursor = "pointer";
+                // semItem.textContent = sem.semester_name ?? "Semester";
+                semItem._semData = sem;
+                semItem.setAttribute('data', sem.semester_name)
+                semList.appendChild(semItem);
+            });
 
             tab.onclick = function () {
-                semList.classList.toggle("open");
-                semList.style.display = semList.classList.contains("open") ? "block" : "none";
+                const open = semList.style.display !== "none";
+                semList.style.display = open ? "none" : "block";
+                semList.classList.toggle("open", !open);
             };
 
             tabContainerBox.appendChild(tab);
             tabContainerBox.appendChild(semList);
 
-            // Attach click event for each sem item
+            const semesterKey = (function detectSemesterKeyOnCourses(courses) {
+                if (!Array.isArray(courses) || courses.length === 0) return null;
+                const sample = courses.find(c => c && typeof c === "object");
+                if (!sample) return null;
+                const keys = Object.keys(sample);
+                const candidates = keys.filter(k => /^(semester(_)?id|sem(_)?id|semesterId|semester_number|semester)$/i.test(k));
+                return candidates.length ? candidates[0] : null;
+            })(major.courses);
+
             Array.from(semList.getElementsByClassName("created-sem-item")).forEach(semItem => {
-                semItem.onclick = function (e) {
+
+                // Apply flex container styles
+                semItem.style.display = 'flex';
+                semItem.style.justifyContent = 'space-between';
+                semItem.style.alignItems = 'center';
+                semItem.style.padding = '10px';
+
+                // Create left element
+                const leftItem = document.createElement('div');
+                leftItem.textContent = semItem.getAttribute('data');
+                leftItem.style.backgroundColor = '#f0f0f0'; // optional styling
+       
+                // Create right element
+                const rightItem = document.createElement('button');
+                rightItem.textContent = 'Details';
+                rightItem.style.borderRadius = '10px';
+                rightItem.style.boxShadow = '1px 1px 2px var(--primary-light)';
+                rightItem.style.backgroundColor = '#ffe44d'; // optional styling
+
+                rightItem.onclick = () => {
+                    window.location.href = `/executives/batch_statistics/${semItem.getAttribute('batch_instructor')}/`;
+                }
+
+                leftItem.onclick = function (e) {
+                    console.log('left item clicked');
                     e.stopPropagation();
+
                     let next = semItem.nextElementSibling;
                     if (next && next.classList.contains("subject-tab")) {
                         next.style.display = next.style.display === "none" ? "block" : "none";
                         return;
                     }
-                    // Create subject tab
+
                     const subjectTab = document.createElement("div");
                     subjectTab.className = "subject-tab";
                     subjectTab.style.margin = "12px 0 0 0";
-                    subjectTab.style.background = "#f8fbff";
+                    subjectTab.style.background = "var(--bg-gray)";
                     subjectTab.style.borderRadius = "10px";
                     subjectTab.style.boxShadow = "0 2px 8px rgba(44,62,80,0.08)";
                     subjectTab.style.padding = "18px 22px";
                     subjectTab.style.display = "block";
-                    // Courses grid
+
                     const grid = document.createElement("div");
                     grid.style.display = "grid";
                     grid.style.gridTemplateColumns = "repeat(3, 1fr)";
-                    grid.style.gap = "12px";
-                    // Filter courses for this semester if possible
-                    let courses = [];
-                    if (major.courses && major.courses.length > 0) {
-                        // If course has semester_id, filter by semItem.dataset.semId
-                        courses = major.courses.filter(course =>
-                            course.semester_id ? course.semester_id == semItem.dataset.semId : true
-                        );
+                    grid.style.gap = "16px";
+
+                    let coursesForThisSem = [];
+                    const sem = semItem._semData || { semester_id: semItem.dataset.semId };
+
+                    if (Array.isArray(sem.courses) && sem.courses.length > 0) {
+                        coursesForThisSem = sem.courses;
+                    } else if (Array.isArray(major.courses) && major.courses.length > 0) {
+                        if (semesterKey) {
+                            coursesForThisSem = major.courses.filter(course =>
+                                course && course[semesterKey] != null &&
+                                String(course[semesterKey]) === String(sem.semester_id ?? semItem.dataset.semId)
+                            );
+                        } else if (major.courses.every(c => c.semester_id !== undefined)) {
+                            coursesForThisSem = major.courses.filter(course =>
+                                course && course.semester_id != null &&
+                                String(course.semester_id) === String(sem.semester_id ?? semItem.dataset.semId)
+                            );
+                        } else {
+                            console.warn(`No semester mapping found for major "${major.degree_name}". Provide either sem.courses or a semester-id property on each course.`);
+                        }
                     }
-                    // When creating the course button:
-                    courses.forEach(course => {
+
+                    if (!Array.isArray(coursesForThisSem) || coursesForThisSem.length === 0) {
+                        const emptyMsg = document.createElement("div");
+                        emptyMsg.textContent = "No courses assigned to this semester.";
+                        emptyMsg.style.padding = "8px 4px";
+                        subjectTab.appendChild(emptyMsg);
+                        subjectTab.appendChild(grid);
+                        semItem.parentNode.insertBefore(subjectTab, semItem.nextSibling);
+                        return;
+                    }
+
+                    coursesForThisSem.forEach(course => {
                         const btn = document.createElement("button");
-                        btn.textContent = (course.course_code || course.course_name || "Subject") + ', ' + (course.instructor.name || '-') + ', ' + (course.rooms.room1 || '-') + '/' + (course.rooms.room2 || '-');
+                        btn.type = "button";
                         btn.className = "subject-btn";
-                        // Attach course data for popup use
+
+                        // Styling container inside button for layout
+                        btn.style.display = "flex";
+                        btn.style.flexDirection = "column";
+                        btn.style.alignItems = "flex-start";
+                        btn.style.padding = "12px 14px";
+                        btn.style.borderRadius = "8px";
+                        btn.style.border = `1px solid var(--primary-light)`;
+                        btn.style.backgroundColor = "var(--bg-light)";
+                        btn.style.color = "var(--text-dark)";
+                        btn.style.cursor = "pointer";
+                        btn.style.transition = "background-color 0.3s ease";
+
+                        btn.onmouseover = () => btn.style.backgroundColor = "var(--primary-light)";
+                        btn.onmouseout = () => btn.style.backgroundColor = "var(--bg-light)";
+                        btn.onfocus = () => btn.style.outline = `2px solid var(--primary-dark)`;
+                        btn.onblur = () => btn.style.outline = "none";
+
+                        // Course name with graduation cap icon (unicode 🎓)
+                        const courseNameDiv = document.createElement("div");
+                        courseNameDiv.style.fontSize = "1.1rem";
+                        courseNameDiv.style.fontWeight = "700";
+                        courseNameDiv.style.color = "var(--primary)";
+                        courseNameDiv.style.display = "flex";
+                        courseNameDiv.style.alignItems = "center";
+                        courseNameDiv.style.gap = "6px";
+                        courseNameDiv.textContent = course.course_name || course.course_code || "Course";
+                        // prepend graduation cap icon
+                        const gradIcon = document.createElement("span");
+                        gradIcon.textContent = "🎓";
+                        gradIcon.style.fontSize = "1.2rem";
+                        courseNameDiv.prepend(gradIcon);
+                        
+                        // prepend graduation cap icon
+                        const editIcon = document.createElement("span");
+                        editIcon.innerHTML = '<i class="fas fa-pencil-alt me-2"></i>';
+                        editIcon.style.fontSize = "1.2rem";
+                        courseNameDiv.append(editIcon);
+                        btn.appendChild(courseNameDiv);
+
+                        // Instructor name with instructor icon (👨‍🏫)
+                        const instructorDiv = document.createElement("div");
+                        instructorDiv.style.fontSize = "0.85rem";
+                        instructorDiv.style.color = "var(--primary-dark)";
+                        instructorDiv.style.marginTop = "4px";
+                        instructorDiv.style.display = "flex";
+                        instructorDiv.style.alignItems = "center";
+                        instructorDiv.style.gap = "6px";
+                        instructorDiv.textContent = course.instructor?.name || "No Instructor";
+                        const instrIcon = document.createElement("span");
+                        instrIcon.textContent = "👨‍🏫";
+                        instrIcon.style.fontSize = "1rem";
+                        instructorDiv.prepend(instrIcon);
+                        btn.appendChild(instructorDiv);
+
+                        // Room1 and Room2 container
+                        const roomsDiv = document.createElement("div");
+                        roomsDiv.style.marginTop = "8px";
+                        roomsDiv.style.display = "flex";
+                        roomsDiv.style.gap = "10px";
+
+                        // Room 1 box
+                        const room1Box = document.createElement("div");
+                        room1Box.textContent = `Room 1: ${course.rooms?.room1 || "-"} (${course.rooms?.times1 || "-"} times)`;
+                        room1Box.style.backgroundColor = "var(--bg-light)";
+                        room1Box.style.border = `1px solid var(--primary-light)`;
+                        room1Box.style.borderRadius = "6px";
+                        room1Box.style.padding = "4px 8px";
+                        room1Box.style.fontSize = "0.85rem";
+                        room1Box.style.color = "var(--text-dark)";
+                        roomsDiv.appendChild(room1Box);
+
+                        // Room 2 box
+                        const room2Box = document.createElement("div");
+                        room2Box.textContent = `Room 2: ${course.rooms?.room2 || "-"} (${course.rooms?.times2 || "-"} times)`;
+                        room2Box.style.backgroundColor = "var(--bg-light)";
+                        room2Box.style.border = `1px solid var(--primary-light)`;
+                        room2Box.style.borderRadius = "6px";
+                        room2Box.style.padding = "4px 8px";
+                        room2Box.style.fontSize = "0.85rem";
+                        room2Box.style.color = "var(--text-dark)";
+                        roomsDiv.appendChild(room2Box);
+
+                        const ratingBox = document.createElement("button");
+                        ratingBox.textContent = `Ratings`;
+                        ratingBox.style.backgroundColor = "var(--secondary)";
+                        ratingBox.style.border = `1px solid var(--primary-light)`;
+                        ratingBox.style.borderRadius = "6px";
+                        ratingBox.style.padding = "4px 8px";
+                        ratingBox.style.fontSize = "0.85rem";
+                        ratingBox.style.color = "var(--primary-dark)";
+                        // ratingBox.onclick = window.location.href = `/executives/rating_review/${course.batchInstructorId}/`;
+                        roomsDiv.appendChild(ratingBox);
+
+                        btn.appendChild(roomsDiv);
+
+                        btn.dataset.batchInstructorId = String(course.batch_instructor_id ?? "");
                         btn._courseData = course;
-                        btn.onclick = function (ev) {
+
+                        editIcon.addEventListener("click", (ev) => {
                             ev.stopPropagation();
                             window.clicked_batch_instructor = course.batch_instructor_id;
-                            console.log(window.clicked_batch_instructor)
                             showSubjectPopup(btn, semItem.textContent, major.degree_name);
-                        };
+                        });
+
+                        ratingBox.addEventListener("click", (ev) => {
+                            ev.stopPropagation();
+                            window.location.href = `/executives/rating_review/${course.batch_instructor_id}/`;x
+                        });
+
                         grid.appendChild(btn);
                     });
+
                     subjectTab.appendChild(grid);
                     semItem.parentNode.insertBefore(subjectTab, semItem.nextSibling);
                 };
+                // Append items to container
+                semItem.appendChild(leftItem);
+                semItem.appendChild(rightItem);
             });
         });
     } catch (err) {
         console.error("Error rendering batches:", err);
-        if (tabContentMsg) tabContentMsg.style.display = "block";
+        if (typeof tabContentMsg !== "undefined" && tabContentMsg) tabContentMsg.style.display = "block";
     }
 }
 
@@ -734,5 +893,5 @@ document.addEventListener("DOMContentLoaded", renderAllBatches);
 /*
 [
 {"type": "Core", "course_code": "CS 101", "course_name": "Basic Programming with Python", "course_hours": 4, "course_credits": 4}, 
-{"type": "Elective", "course_code": "CS 101", "course_name": "Basic Programming with Python", "course_hours": 4, "course_credits": 4}]
+{"type": "Elective", "co urse_code": "CS 101", "course_name": "Basic Programming with Python", "course_hours": 4, "course_credits": 4}]
 */

@@ -41,6 +41,9 @@ h1 {
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #b6d0fa;
+    /* Ensure perfect circle */
+    aspect-ratio: 1;
+    flex-shrink: 0;
 }
 
 .icon-btn {

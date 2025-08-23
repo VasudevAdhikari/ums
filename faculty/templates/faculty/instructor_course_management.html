@@ -2,16 +2,28 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8"> 
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Instructor Course Management Page</title>
   {% load static %}
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'faculty/css/instructor_course_management.css' %}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'faculty/css/navbar.css' %}">
 </head>
 
 <body>
+{% if request.user_role == 'instructor' %}
+    {% include "faculty/navbar.html" %}
+{% elif request.user_role == 'student' %}
+    {% include "students/academic/navbar.html" %}
+{% elif request.user_role == 'executive' %}
+    {% include "executives/navbar.html" %}
+{% else %}
+    {% include "public/navbar.html" %}
+{% endif %}
   <script>
     // console.log('{{batch_instructor|escapejs}}'.replaceAll("'", '"'));
     window.csrf_token = '{{csrf_token}}';
@@ -22,29 +34,6 @@
     window.instructor = '{{instructor.user.id}}';
     window.other_instructors = [];
   </script>
-  <!-- Navbar -->
-  <nav class="navbar-demo">
-    <button class="nav-hamburger" id="sidebarToggle" aria-label="Toggle sidebar">
-      <i class="fa-solid fa-bars"></i>
-    </button>
-    <span class="nav-title">Instructor Portal</span>
-    <span class="nav-user"><i class="fa-solid fa-user"></i> {{instructor.user.full_name}}</span>
-  </nav>
-
-  <!-- Sidebar -->
-  <aside class="sidebar-demo" id="sidebarMenu">
-    <div class="sidebar-header-demo">
-      <span class="sidebar-logo"><i class="fa-solid fa-graduation-cap"></i></span>
-      <span class="sidebar-title">Menu</span>
-    </div>
-    <ul class="sidebar-list-demo">
-      <li><a href="#"><i class="fa-solid fa-book"></i> My Courses</a></li>
-      <li><a href="#"><i class="fa-solid fa-user-graduate"></i> Students</a></li>
-      <li><a href="#"><i class="fa-solid fa-clipboard-list"></i> Marking</a></li>
-      <li><a href="#"><i class="fa-solid fa-gear"></i> Settings</a></li>
-      <li><a href="#"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-    </ul>
-  </aside>
 
   <!-- Main Content -->
   <div class="main-content-demo">
@@ -59,6 +48,7 @@
           <span id="courseDescriptionText">{{batch_instructor.course__description}}</span>
         </div>
       </div>
+      <div><button class="btn btn-primary" onclick="window.location.href='/faculty/all_results/{{batch_instructor.id}}'">View All Results</button></div>
       <div id="markingSchemeSection"></div>
       <!-- Place your activities section here: -->
       <div id="activitySection">
@@ -83,62 +73,63 @@
       </div>
       <div class="item-grid" id="yourDocsGrid">
 
-      <!-- Docs by other instructors -->
-      {% for id in other_instructor_ids %}
-      <script>
-        window.other_instructors.push('{{id|stringformat:"s"}}');
-        console.log('id is {{id}}');
-      </script>
-      <div class="item-section-title-row">
-        <span class="item-section-title">Documents By Instructor {{id}}</span>
-      </div>
-      <div class="item-grid" id="docsGrid-{{id}}"></div>
-      {% endfor %}
-    </div>
-  </div>
-
-  <!-- Modern Warning Popup -->
-  <div id="customWarningPopup" class="custom-warning-popup" style="display:none;">
-    <div class="custom-warning-content">
-      <div class="custom-warning-header">
-        <span>Warning</span>
-      </div>
-      <div class="custom-warning-message" id="customWarningMessage"></div>
-      <button class="custom-warning-btn" id="customWarningOkBtn">OK</button>
-    </div>
-  </div>
-
-  <!-- Edit Document Popup -->
-  <div id="editDocPopup" class="custom-warning-popup" style="display:none;">
-    <div class="custom-warning-content" style="min-width:320px;max-width:90vw;">
-      <div class="custom-warning-header">
-        <span>Add Document</span>
-      </div>
-      <form id="editDocForm" method="POST" enctype="multipart/form-data" action="/faculty/document/add/">
-        {% csrf_token %}
-        <label style="display:block;margin-bottom:12px;">
-          Choose File:
-          <input type="file" id="editDocFile" name='document' accept=".pdf,.doc,.docx,.ppt,.pptx" required>
-        </label>
-        <input type="text" name='document_name' placeholder="Document Name">
-        <input type="hidden" name='course_id' value="{{batch_instructor.course__id}}">
-        <input type="hidden" name="batch_instructor_id" value="{{batch_instructor.id}}">
-        <label style="display:block;margin-bottom:12px;">
-          Status:
-          <select id="editDocStatus" required>
-            <option value="A">Public</option>
-            <option value="B">Private</option>
-          </select>
-        </label>
-        <div style="margin-top:18px;">
-          <button type="submit" class="save-btn">Save</button>
-          <button type="button" class="cancel-btn" onclick="closeEditDocPopup()">Cancel</button>
+        <!-- Docs by other instructors -->
+        {% for id in other_instructor_ids %}
+        <script>
+          window.other_instructors.push('{{id|stringformat:"s"}}');
+          console.log('id is {{id}}');
+        </script>
+        <div class="item-section-title-row">
+          <span class="item-section-title">Documents By Instructor {{id}}</span>
         </div>
-      </form>
+        <div class="item-grid" id="docsGrid-{{id}}"></div>
+        {% endfor %}
+      </div>
     </div>
-  </div>
+
+    <!-- Modern Warning Popup -->
+    <div id="customWarningPopup" class="custom-warning-popup" style="display:none;">
+      <div class="custom-warning-content">
+        <div class="custom-warning-header">
+          <span>Warning</span>
+        </div>
+        <div class="custom-warning-message" id="customWarningMessage"></div>
+        <button class="custom-warning-btn" id="customWarningOkBtn">OK</button>
+      </div>
+    </div>
+
+    <!-- Edit Document Popup -->
+    <div id="editDocPopup" class="custom-warning-popup" style="display:none;">
+      <div class="custom-warning-content" style="min-width:320px;max-width:90vw;">
+        <div class="custom-warning-header">
+          <span>Add Document</span>
+        </div>
+        <form id="editDocForm" method="POST" enctype="multipart/form-data" action="/faculty/document/add/">
+          {% csrf_token %}
+          <label style="display:block;margin-bottom:12px;">
+            Choose File:
+            <input type="file" id="editDocFile" name='document' accept=".pdf,.doc,.docx,.ppt,.pptx" required>
+          </label>
+          <input type="text" name='document_name' placeholder="Document Name">
+          <input type="hidden" name='course_id' value="{{batch_instructor.course__id}}">
+          <input type="hidden" name="batch_instructor_id" value="{{batch_instructor.id}}">
+          <label style="display:block;margin-bottom:12px;">
+            Status:
+            <select id="editDocStatus" required>
+              <option value="A">Public</option>
+              <option value="B">Private</option>
+            </select>
+          </label>
+          <div style="margin-top:18px;">
+            <button type="submit" class="save-btn">Save</button>
+            <button type="button" class="cancel-btn" onclick="closeEditDocPopup()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-<script src="{% static 'faculty/js/instructor_course_management.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module" src="{% static 'faculty/js/instructor_course_management.js' %}"></script>
 
 </html>

@@ -28,7 +28,7 @@ window.ajaxRequest = function sendAjaxRequest(formData, url) {
         });
 }
 
-// alert(window.ajaxRequest);
+// await await alert(window.ajaxRequest);
 
 function sendAjaxRequest(url, formData, callback) {
     fetch(url, {

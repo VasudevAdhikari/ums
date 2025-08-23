@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const addNewTermBtn = document.getElementById('addNewTermBtn');
   const termButtonsContainer = document.getElementById('termButtonsContainer');
-  submitted = false;
+  let submitted = false;
 
   // Animation helper function
   function animateIn(element) {
@@ -17,25 +17,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Load terms from backend
   function loadTerms() {
+    const loadingSpinner = document.getElementById('loadingSpinner');
+
     fetch('/executives/terms/')
       .then(res => {
         if (!res.ok) throw new Error('Network response was not ok');
         return res.json();
       })
       .then(data => {
+        // Hide loading spinner
+        if (loadingSpinner) {
+          loadingSpinner.classList.add('hidden');
+        }
+
         termButtonsContainer.innerHTML = '';
         data.terms.forEach(term => createTermButton(term));
       })
-      .catch(error => console.error('Error loading terms:', error));
+      .catch(error => {
+        console.error('Error loading terms:', error);
+        // Hide loading spinner on error too
+        if (loadingSpinner) {
+          loadingSpinner.classList.add('hidden');
+        }
+      });
   }
 
   // Create a term button
   function createTermButton(term) {
     const buttonWrapper = document.createElement('div');
-    buttonWrapper.className = 'flex flex-col items-center mb-2';
+    buttonWrapper.className = 'd-flex flex-column align-items-center mb-2';
 
     const button = document.createElement('button');
-    button.className = 'term-button bg-gray-200 px-6 py-3 rounded-md text-gray-700 hover:bg-gray-300 flex flex-row items-center';
+    button.className = 'term-button d-flex align-items-center gap-2 px-3 py-2 rounded';
     button.dataset.termId = term.id;
 
     // Icon
@@ -63,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Date info
     if (term.semStart || term.endDate || term.resultDate) {
       const dateInfo = document.createElement('div');
-      dateInfo.className = 'text-xs text-gray-500 mt-1 w-full';
+      dateInfo.className = 'small text-muted mt-1 w-100';
       dateInfo.innerHTML = `
         ${term.semStart ? `<div>Sem Start: <span class="readonly-date">${term.semStart}</span></div>` : ''}
         ${term.endDate ? `<div>End Date: <span class="readonly-date">${term.endDate}</span></div>` : ''}
@@ -74,10 +87,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Delete icon
     const deleteIcon = document.createElement('span');
-    deleteIcon.className = 'ml-2 cursor-pointer';
+    deleteIcon.className = 'deleteIcon ms-2';
     deleteIcon.innerHTML = `
       <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-red-500 hover:text-red-700">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
       </svg>
     `;
     deleteIcon.title = 'Delete term';
@@ -93,14 +106,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // View Details button
     const viewDetailsBtn = document.createElement('button');
     viewDetailsBtn.textContent = 'View Details';
-    viewDetailsBtn.className = 'mt-2 px-4 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 text-sm';
+    viewDetailsBtn.className = 'view-details-btn mt-2 me-2';
     viewDetailsBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       window.location.href = `/executives/batches/${term.id}`;
     });
 
+    // Send Result button
+    const sendResultBtn = document.createElement('button');
+    sendResultBtn.textContent = 'Send Result';
+    sendResultBtn.className = 'send-result-btn mt-2';
+    sendResultBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (!await confirm('Are you sure to send results of this term to all students?')) return;
+      window.location.href = `/executives/send_results/${term.id}`
+    });
+
     buttonWrapper.appendChild(button);
     buttonWrapper.appendChild(viewDetailsBtn);
+    buttonWrapper.appendChild(sendResultBtn);
 
     termButtonsContainer.appendChild(buttonWrapper);
   }
@@ -111,24 +135,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const popup = document.createElement('div');
     popup.id = 'delete-popup';
-    popup.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30';
+    popup.className = 'modal-overlay';
     popup.innerHTML = `
-      <div class="bg-white rounded-lg shadow-lg p-6 min-w-[300px]">
-        <h2 class="text-lg font-bold mb-4 text-red-600">Delete Term</h2>
-        <p class="mb-4">Are you sure you want to delete <span class="font-bold">${termName}</span>?</p>
-        <div class="flex justify-end gap-2">
-          <button id="deleteCancelBtn" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
-          <button id="deleteConfirmBtn" class="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600">Delete</button>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+        <h2 id="delete-modal-title">Delete Term</h2>
+        <p>Are you sure you want to delete <span class="fw-bold">${termName}</span>?</p>
+        <div class="d-flex justify-content-end gap-2">
+          <button id="deleteCancelBtn">Cancel</button>
+          <button id="deleteConfirmBtn">Delete</button>
         </div>
       </div>
     `;
-    const popupBox = popup.querySelector('div.bg-white');
+    const popupBox = popup.querySelector('div.modal-card');
     animateIn(popupBox);
 
     popup.querySelector('#deleteCancelBtn').addEventListener('click', () => popup.remove());
     popup.addEventListener('click', (e) => {
       if (e.target === popup) popup.remove();
     });
+    const escListener = (e) => {
+      if (e.key === 'Escape') {
+        popup.remove();
+        document.removeEventListener('keydown', escListener);
+      }
+    };
+    document.addEventListener('keydown', escListener);
     popup.querySelector('#deleteConfirmBtn').addEventListener('click', () => {
       fetch(`/executives/terms/${termId}/delete/`, {
         method: 'POST',
@@ -145,6 +176,78 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => console.error('Error deleting term:', error));
     });
     document.body.appendChild(popup);
+  }
+
+  function showSendResultConfirm(termId, termName) {
+    const existingPopup = document.getElementById('send-result-popup');
+    if (existingPopup) existingPopup.remove();
+
+    const popup = document.createElement('div');
+    popup.id = 'send-result-popup';
+    popup.className = 'modal-overlay';
+    popup.innerHTML = `
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="send-result-modal-title">
+        <h2 id="send-result-modal-title">Send Results</h2>
+        <p>Are you sure you want to send results for <span class="fw-bold">${termName}</span>?</p>
+        <p class="text-muted small">This will send result notifications to all students enrolled in this term.</p>
+        <div class="d-flex justify-content-end gap-2">
+          <button id="sendResultCancelBtn">Cancel</button>
+          <button id="sendResultConfirmBtn">Send Results</button>
+        </div>
+      </div>
+    `;
+    const popupBox = popup.querySelector('div.modal-card');
+    animateIn(popupBox);
+
+    popup.querySelector('#sendResultCancelBtn').addEventListener('click', () => popup.remove());
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) popup.remove();
+    });
+    const escListener = (e) => {
+      if (e.key === 'Escape') {
+        popup.remove();
+        document.removeEventListener('keydown', escListener);
+      }
+    };
+    document.addEventListener('keydown', escListener);
+    popup.querySelector('#sendResultConfirmBtn').addEventListener('click', () => {
+      fetch(`/executives/terms/${termId}/send-results/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCSRFToken() },
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Network response was not ok');
+          return res.json();
+        })
+        .then((data) => {
+          popup.remove();
+          // Show success message
+          showNotification('Results sent successfully!', 'success');
+        })
+        .catch(error => {
+          console.error('Error sending results:', error);
+          showNotification('Failed to send results. Please try again.', 'error');
+        });
+    });
+    document.body.appendChild(popup);
+  }
+
+  function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    document.body.appendChild(notification);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.remove();
+      }
+    }, 5000);
   }
 
   function handleTermButtonClick(event) {
@@ -169,40 +272,40 @@ document.addEventListener('DOMContentLoaded', () => {
         const term = data.terms.find(t => t.id == termId) || {};
         const popup = document.createElement('div');
         popup.id = 'date-popup';
-        popup.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-30';
+        popup.className = 'modal-overlay';
         popup.innerHTML = `
-          <div class="bg-white rounded-lg shadow-lg p-6 min-w-[300px]">
-            <h2 class="text-lg font-bold mb-4">Select Dates</h2>
-            <div class="mb-3 flex items-center gap-2">
-              <label class="block mb-1 font-medium w-28">Term Name</label>
-              <input type="text" class="border border-gray-300 rounded px-2 py-1 w-full" id="termName" value="${term.name || ''}" readonly>
-            </div>
-            <div class="mb-3 flex items-center gap-2">
-              <label class="block mb-1 font-medium w-28">Academic Year</label>
-              <input type="number" min="2000" max="2100" class="border border-gray-300 rounded px-2 py-1 w-full" id="year" value="${term.year || ''}" readonly>
-            </div>
-            <div class="mb-3 flex items-center gap-2">
-              <label class="block mb-1 font-medium w-28">Start Date</label>
-              <input type="date" class="border border-gray-300 rounded px-2 py-1 w-full" id="semStartDate" value="${term.semStart || ''}" readonly>
-            </div>
-            <div class="mb-3 flex items-center gap-2">
-              <label class="block mb-1 font-medium w-28">End Date</label>
-              <input type="date" class="border border-gray-300 rounded px-2 py-1 w-full" id="endDate" value="${term.endDate || ''}" readonly>
-            </div>
-            <div class="mb-4 flex items-center gap-2">
-              <label class="block mb-1 font-medium w-28">Result Date</label>
-              <input type="date" class="border border-gray-300 rounded px-2 py-1 w-full" id="resultDate" value="${term.resultDate || ''}" readonly>
-            </div>
-            <div class="flex justify-end gap-2">
-              <button id="popupEditBtn" class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600">Edit</button>
-              <button id="popupCancelBtn" class="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
-              <button id="popupSaveBtn" class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600">Save</button>
-            </div>
-          </div>
-        `;
-        const popupBox = popup.querySelector('div.bg-white');
+           <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="tm-modal-title">
+             <h2 id="tm-modal-title">Select Dates</h2>
+             <div class="mb-3 d-flex align-items-center gap-2">
+               <label class="mb-1 fw-semibold" style="min-width: 7rem;">Term Name</label>
+               <input type="text" class="form-control" id="termName" value="${term.name || ''}" readonly>
+             </div>
+             <div class="mb-3 d-flex align-items-center gap-2">
+               <label class="mb-1 fw-semibold" style="min-width: 7rem;">Academic Year</label>
+               <input type="number" min="2000" max="2100" class="form-control" id="year" value="${term.year || ''}" readonly>
+             </div>
+             <div class="mb-3 d-flex align-items-center gap-2">
+               <label class="mb-1 fw-semibold" style="min-width: 7rem;">Start Date</label>
+               <input type="date" class="form-control" id="semStartDate" value="${term.semStart || ''}" readonly>
+             </div>
+             <div class="mb-3 d-flex align-items-center gap-2">
+               <label class="mb-1 fw-semibold" style="min-width: 7rem;">End Date</label>
+               <input type="date" class="form-control" id="endDate" value="${term.endDate || ''}" readonly>
+             </div>
+             <div class="mb-4 d-flex align-items-center gap-2">
+               <label class="mb-1 fw-semibold" style="min-width: 7rem;">Result Date</label>
+               <input type="date" class="form-control" id="resultDate" value="${term.resultDate || ''}" readonly>
+             </div>
+             <div class="d-flex justify-content-end gap-2">
+               <button id="popupEditBtn">Edit</button>
+               <button id="popupCancelBtn">Cancel</button>
+               <button id="popupSaveBtn">Save</button>
+             </div>
+           </div>
+         `;
+        const popupBox = popup.querySelector('div.modal-card');
         animateIn(popupBox);
-        
+
         popup.querySelector('#popupEditBtn').addEventListener('click', () => {
           const inputs = popup.querySelectorAll('input');
           inputs.forEach(input => {
@@ -217,6 +320,13 @@ document.addEventListener('DOMContentLoaded', () => {
             popup.remove();
           }
         });
+        const escListener = (e) => {
+          if (e.key === 'Escape') {
+            popup.remove();
+            document.removeEventListener('keydown', escListener);
+          }
+        };
+        document.addEventListener('keydown', escListener);
 
         popup.querySelector('#popupSaveBtn').addEventListener('click', () => {
           const semStart = popup.querySelector('#semStartDate').value;
@@ -224,8 +334,6 @@ document.addEventListener('DOMContentLoaded', () => {
           const resultDate = popup.querySelector('#resultDate').value;
           const name = popup.querySelector('#termName').value;
           const year = popup.querySelector('#year').value;
-
-          alert("end date is " + endDate);
 
           fetch(`/executives/terms/${termId}/update/`, {
             method: 'POST',
@@ -298,8 +406,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = 'Add new term (e.g. 2022-2023)';
-    input.className = 'new-term-input flex-grow px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500';
-    input.style.border = '2px solid #2563eb';
+    input.className = 'new-term-input flex-grow px-4 py-2 rounded';
+    input.style.border = '2px solid #F5F5F5';
     const wrapper = document.createElement('div');
     wrapper.className = 'new-term-row';
     wrapper.appendChild(input);

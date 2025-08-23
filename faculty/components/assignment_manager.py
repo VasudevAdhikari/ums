@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
-from authorization.models import Assessment, Student, AssessmentResult
+from authorization.models import Assessment, AssessmentType, Student, AssessmentResult
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
 from django.db import transaction
+from django.db.models import Q
 import json, os
 from course_management import settings
 from datetime import datetime
@@ -20,8 +21,8 @@ def save_specific_file(files, target_filename, subdir):
 
 def get_assignment_data(assessment: Assessment):
     assignment_data = assessment.assessment
-    assignment_data['start_time'] = assessment.assigned_date.strftime('%Y-%m-%dT%H:%M:%S')
-    assignment_data['end_time'] = assessment.due_date.strftime('%Y-%m-%dT%H:%M:%S')
+    assignment_data['start_time'] = assessment.assigned_date.strftime('%Y-%m-%dT%H:%M:%S') if assessment.assigned_date else None
+    assignment_data['end_time'] = assessment.due_date.strftime('%Y-%m-%dT%H:%M:%S') if assessment.due_date else None
     return assignment_data
 
 def show_assignment_creation(request, assessment_id):
@@ -33,6 +34,9 @@ def show_assignment_creation(request, assessment_id):
 
         # to fix later => Students related to the related batch
         students = Student.objects.all().select_related('user')
+        students = Student.objects.filter(
+            sisform__enrollment__enrollmentcourse__batch_instructor = batch_instructor
+        ).select_related('user')
         student_data = []
         for student in students:
             avatar = "".join(word[0] for word in student.user.full_name.split()).upper()[:2]
@@ -109,7 +113,9 @@ def create_assignment(request):
             assessment.assessment = assignment_data
             assessment.due_date = end_time
             assessment.assigned_date = start_time
+
             assessment.save()
+                        
 
         return JsonResponse({'success': True, 'message': 'Assignment saved successfully.'})
 

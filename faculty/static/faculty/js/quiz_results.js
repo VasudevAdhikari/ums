@@ -1,17 +1,17 @@
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll('.icon-btn.approve').forEach(btn => {
-        btn.addEventListener('click', function (e) {
+        btn.addEventListener('click', async function (e) {
             e.stopPropagation();
-            if (!confirm("Are you sure you want to approve this user?")) {
+            if (!await confirm("Are you sure you want to approve this user?")) {
                 e.preventDefault();
             }
         });
     });
 
     document.querySelectorAll('.icon-btn.reject').forEach(btn => {
-        btn.addEventListener('click', function (e) {
+        btn.addEventListener('click', async function (e) {
             e.stopPropagation();
-            if (!confirm("Are you sure you want to reject this user?")) {
+            if (!await confirm("Are you sure you want to reject this user?")) {
                 e.preventDefault();
             }
         });

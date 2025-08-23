@@ -1,5 +1,4 @@
 // Global variables
-let timerInterval;
 let uploadedImages = [];
 let uploadedFiles = [];
 let isSubmitting = false;
@@ -7,72 +6,10 @@ let startTime = new Date(); // Track when student started the assessment
 
 // Initialize the assessment page
 document.addEventListener('DOMContentLoaded', function() {
-    initializeTimer();
     initializeFileUploads();
     initializeDragAndDrop();
     setupBeforeUnload();
 });
-
-// Timer functionality
-function initializeTimer() {
-    const dueDate = new Date(assessmentData.dueDate);
-    const timeLimit = assessmentData.timeLimit * 60 * 1000; // Convert to milliseconds
-    const now = new Date();
-    
-    // Calculate end time (due date + time limit)
-    const endTime = new Date(dueDate.getTime() + timeLimit);
-    
-    // If current time is past end time, auto-submit
-    if (now >= endTime) {
-        autoSubmit();
-        return;
-    }
-    
-    // Start timer
-    updateTimer(endTime);
-    timerInterval = setInterval(() => {
-        const currentTime = new Date();
-        if (currentTime >= endTime) {
-            clearInterval(timerInterval);
-            autoSubmit();
-        } else {
-            updateTimer(endTime);
-        }
-    }, 1000);
-}
-
-function updateTimer(endTime) {
-    const now = new Date();
-    const timeLeft = endTime - now;
-    
-    if (timeLeft <= 0) {
-        document.getElementById('timer').textContent = '00:00:00';
-        document.getElementById('timer-status').textContent = 'Time Expired';
-        return;
-    }
-    
-    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-    
-    const timerDisplay = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    document.getElementById('timer').textContent = timerDisplay;
-    
-    // Update timer status and styling
-    const timerElement = document.getElementById('timer');
-    const statusElement = document.getElementById('timer-status');
-    
-    if (timeLeft <= 5 * 60 * 1000) { // 5 minutes or less
-        timerElement.classList.add('timer-danger');
-        statusElement.textContent = 'Time Running Out!';
-    } else if (timeLeft <= 15 * 60 * 1000) { // 15 minutes or less
-        timerElement.classList.add('timer-warning');
-        statusElement.textContent = 'Time Running Low';
-    } else {
-        timerElement.classList.remove('timer-warning', 'timer-danger');
-        statusElement.textContent = 'Time Remaining';
-    }
-}
 
 // File upload functionality
 function initializeFileUploads() {
@@ -336,27 +273,27 @@ function performSubmission() {
         }
     })
     .then(response => response.json())
-    .then(data => {
+    .then(async data => {
         hideLoadingModal();
         if (data.success) {
             window.location.href = '/students/mailbox/';
         } else {
-            alert('Submission failed: ' + (data.message || 'Unknown error'));
+            await alert('Submission failed: ' + (data.message || 'Unknown error'));
             isSubmitting = false;
         }
     })
-    .catch(error => {
+    .catch(async error => {
         hideLoadingModal();
         console.error('Submission error:', error);
-        alert('Submission failed. Please try again.');
+        await alert('Submission failed. Please try again.');
         isSubmitting = false;
     });
 }
 
-function autoSubmit() {
+async function autoSubmit() {
     if (isSubmitting) return;
     
-    alert('Time has expired. Your assessment will be submitted automatically.');
+    await alert('Time has expired. Your assessment will be submitted automatically.');
     performSubmission();
 }
 
@@ -409,3 +346,37 @@ window.addEventListener('click', function(e) {
         return;
     }
 });
+
+let dueDate = window.date; // Django format ISO 8601
+let now = new Date();
+
+// Calculate the time difference in milliseconds
+let diff = dueDate.getTime() - now.getTime();
+console.log(diff);
+if (diff > 0) {
+    // Auto-submit when due date is reached
+    setTimeout(async () => {
+        await alert('Due Date exceeded. Submitting now.');
+        performSubmission();
+    }, diff);
+
+    // Warn the user 2, 5, 10, 20 minutes before due time
+    let times = [2, 5, 10, 20];
+    times.forEach(time => {
+        let warningTime = diff - time*60*1000;
+        if (warningTime > 0) {
+            setTimeout(async () => {
+                await alert(`After ${time} minutes your assessment will automatically be submitted`);
+            }, warningTime);
+        }
+    });
+} else {
+    // Already past due
+    console.log("Deadline already passed. Submitting now...");
+    performSubmission();
+}
+
+function performSubmission() {
+    const form = document.getElementById('quizForm');
+    if (form) form.submit();
+}

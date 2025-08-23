@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'profile.css' %}">
+</head>
+<body>
+    <script>
+        window.userId = '{{user.id}}';
+        window.CSRFToken = '{{csrf_token}}';
+        window.profilePictureUrl = '{{user.profile_picture.url}}';
+    </script>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            
+            <div class="profile-picture-container">
+                <img src="{{user.profile_picture.url}}" alt="Profile Picture" class="profile-picture" id="profilePicture">
+                {% if editable %}
+                <button class="profile-picture-upload" onclick="requestPasswordForAction('upload')">
+                    <i class="fas fa-camera"></i>
+                </button>
+                <input type="file" id="profilePictureInput" class="file-upload" accept="image/*">
+                {% endif %}
+            </div>
+            
+            <h1 class="profile-name" id="profileName">{{user.full_name}}</h1>
+            <p class="profile-role">{{role}}</p>
+        </div>
+
+        <div class="profile-content">
+            <!-- Personal Information Section -->
+            <div class="profile-section">
+                <h2 class="section-title">
+                    <i class="fas fa-user"></i>
+                    Personal Information
+                </h2>
+                
+                <div class="profile-fields" id="profileFieldsView">
+                    <div class="field-group">
+                        <label class="field-label">
+                            <i class="fas fa-user"></i>
+                            Full Name
+                        </label>
+                        <div class="field-value" id="fullNameValue">{{user.full_name}}</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">
+                            <i class="fas fa-envelope"></i>
+                            Email
+                        </label>
+                        <div class="field-value" id="emailValue">{{user.email}}</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">
+                            <i class="fab fa-microsoft"></i>
+                            Outlook Email
+                        </label>
+                        <div class="field-value" id="outlookValue">{{user.outlook_email}}</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">
+                            <i class="fas fa-phone"></i>
+                            Phone
+                        </label>
+                        <div class="field-value" id="phoneValue">{{user.phone}}</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">
+                            <i class="fab fa-telegram"></i>
+                            Telegram
+                        </label>
+                        <div class="field-value" id="telegramValue">{{user.telegram_username}}</div>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">
+                            <i class="fas fa-city"></i>
+                            City
+                        </label>
+                        <div class="field-value" id="cityValue">{{user.city}}</div>
+                    </div>
+                </div>
+
+                <!-- Edit Form (Hidden by default) -->
+                <form class="profile-fields hidden" id="profileFieldsEdit">
+                    <div class="field-group">
+                        <label class="field-label">
+                            <i class="fas fa-user"></i>
+                            Full Name
+                        </label>
+                        <input type="text" class="field-input" id="fullNameInput" value="{{user.full_name}}" required disabled>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">
+                            <i class="fas fa-envelope"></i>
+                            Email
+                        </label>
+                        <input type="email" class="field-input" id="emailInput" value="{{user.email}}" required disabled>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">
+                            <i class="fab fa-microsoft"></i>
+                            Outlook Email
+                        </label>
+                        <input type="email" class="field-input" id="outlookInput" value="{{user.outlook_email}}" disabled>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">
+                            <i class="fas fa-phone"></i>
+                            Phone
+                        </label>
+                        <input type="text" class="field-input" id="phoneInput" value="{{user.phone}}" required disabled>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">
+                            <i class="fab fa-telegram"></i>
+                            Telegram
+                        </label>
+                        <input type="text" class="field-input" id="telegramInput" value="{{user.telegram_username}}" disabled>
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">
+                            <i class="fas fa-city"></i>
+                            City
+                        </label>
+                        <input type="text" class="field-input" id="cityInput" value="{{user.city}}" required disabled>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="profile-actions" id="viewActions">
+                <button class="btn btn-outline" onclick="showPasswordModal()">
+                    <i class="fas fa-key"></i>
+                    Change Password
+                </button>
+                {% if editable %}
+                <button class="btn btn-primary" onclick="requestPasswordForAction('edit')">
+                    <i class="fas fa-edit"></i>
+                    Edit Profile
+                </button>
+                {% endif %}
+                <button class="btn btn-danger" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+
+            <div class="profile-actions hidden" id="editActions">
+                <button class="btn btn-danger" onclick="cancelEdit()">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+                <button class="btn btn-primary" onclick="confirmSaveProfile()">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Verification Modal -->
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Enter Password</h3>
+            <p style="margin-bottom: 20px; color: var(--text-dark);">Please enter your password to continue</p>
+            <input type="password" class="modal-input" id="passwordInput" placeholder="Enter your password">
+            <div class="error-message" id="passwordError"></div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closePasswordModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="verifyPassword()">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Change Modal -->
+    <div class="modal" id="changePasswordModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Change Password</h3>
+            <input type="password" class="modal-input" id="currentPassword" placeholder="Current Password">
+            <input type="password" class="modal-input" id="newPassword" placeholder="New Password">
+            <input type="password" class="modal-input" id="confirmPassword" placeholder="Confirm New Password">
+            <div class="error-message" id="changePasswordError"></div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeChangePasswordModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="changePassword()">Change Password</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmationModal">
+        <div class="modal-content">
+            <h3 class="modal-title" id="confirmationTitle">Confirm Action</h3>
+            <p id="confirmationMessage" style="margin-bottom: 20px; color: var(--text-dark);">Are you sure you want to proceed?</p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeConfirmationModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="executeConfirmedAction()">Confirm</button>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'profile.js' %}"></script>
+</body>
+</html>

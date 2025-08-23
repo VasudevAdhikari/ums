@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Instrctor Home Page</title>
   <!-- boostrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
@@ -16,87 +16,92 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <!-- CSS -->
-  <link rel="stylesheet" href="../../static/faculty/css/faculty_home.css">
+   {% load static %}
+  <link rel="stylesheet" href="{% static 'faculty/css/faculty_home.css' %}">
+  <link rel="stylesheet" href="{% static 'faculty/css/navbar.css' %}">
 </head>
 
 <body>
-
-  <header class="">
-    <div class="nav-left">
-      <div class="menu-icon" id="menu-icon"><i class="fa-solid fa-bars"></i></div>
-      <img class="uni-logo logoPreview"
-        src="https://www.logologo.com/logos/abstract-isometric-logo-design-free-logo.jpg" alt="">
-      <div class="uni-name">University of Computer Studies</div>
-    </div>
-
-    <div class="nav-right">
-
-      <div class="noti "><i class="fa-solid fa-bell"></i></div>
-      <img
-        src="https://www.shutterstock.com/shutterstock/photos/1554086789/display_1500/stock-photo-close-up-portrait-of-yong-woman-casual-portrait-in-positive-view-big-smile-beautiful-model-posing-1554086789.jpg"
-        alt="" class="header-profile">
-    </div>
-  </header>
-  <!-- Side bar menu -->
-  <div class="sidebar" id="sidebarMenu">
-    <div class="menu-list">
-      <div class="menu">
-        <ul>
-          <li><a href="#"><i class="fa-solid fa-building-columns icon"></i><span class="sidebar-text">University
-                Information</span></a></li>
-          <li><a href="#"><i class="fa-solid fa-book-open icon"></i><span class="sidebar-text">Courses &
-                Syallbi</span></a></li>
-          <li><a href="#"><i class="fa-solid fa-user-tie icon"></i><span class="sidebar-text">Instructor
-                Management</span></a></li>
-          <li><a href="#"><i class="fa-solid fa-user-group icon"></i><span class="sidebar-text">Student
-                Management</span></a></li>
-          <li><a href="#"><i class="fa-solid fa-address-book icon"></i><span class="sidebar-text">Instructors
-                Management</span></a></li>
-          <li><a href="#"><i class="fa-solid fa-gears icon"></i><span class="sidebar-text">Setting</span></a></li>
-        </ul>
-      </div>
-      <div class="menu log-out">
-        <ul>
-          <li><a href="#"><i class="fa-solid fa-right-from-bracket icon"></i><span class="sidebar-text">Log
-                Out</span></a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div class="overlay" id="sidebarOverlay"></div>
-
-  <!-- Side bar menu End-->
+{% if request.user_role == 'instructor' %}
+    {% include "faculty/navbar.html" %}
+{% elif request.user_role == 'student' %}
+    {% include "students/academic/navbar.html" %}
+{% elif request.user_role == 'executive' %}
+    {% include "executives/navbar.html" %}
+{% else %}
+    {% include "public/navbar.html" %}
+{% endif %}
 
   <section class="container" id="main-content">
     <div class="home-title">Assigned Courses</div>
     <hr style="border: 1px solid black;">
 
-    <form class="search-bar">
-      <input type="search" name="" id="" placeholder="Search here.....">
+    <form class="search-bar" id="course-search-form" onsubmit="return false;">
+      <input type="search" name="" id="course-search-input" placeholder="Search here....." autocomplete="off">
       <i class="fa fa-search search-icon"></i>
     </form>
 
     {% regroup batch_instructors by batch.term as term_groups %}
 
     {% for term_group in term_groups %}
-    <h5 class="mt-4 mb-3">{{ term_group.grouper.term_name }}</h5>
-    <div class="row g-5 d-flex justify-content-around">
-      {% for bi in term_group.list %}
-      <div class="col-md-3 col-sm-6 course-img-card">
-        <div class="card course-card" onclick="window.location.href='/faculty/course_management/{{bi.id}}/'">
-          <img
-            src="https://img.freepik.com/premium-vector/english-language-lesson-school-idea-education_277904-2451.jpg"
-            class="card-img-top course-photo img-fluid" alt="Course Image">
-          <div class="card-body text-center">
-            <h6 class="card-title mb-1">{{ bi.course.course_code }}</h6>
-            <small class="text-muted">{{ bi.course.course_credits }} Credits</small>
+    <div class="term-group" data-term-name="{{ term_group.grouper.term_name|lower }}">
+      <h5 class="mt-4 mb-3">{{ term_group.grouper.term_name }}</h5>
+      <div class="row g-5 d-flex justify-content-around term-course-row">
+        {% for bi in term_group.list %}
+        <div class="col-md-3 col-sm-6 course-img-card" onclick="window.location.href='/faculty/course_management/{{ bi.id}}'">
+          <div class="card course-card"
+               data-course-code="{{ bi.course.course_code|lower }}"
+               data-term="{{ term_group.grouper.term_name|lower }}">
+            <img
+              src="https://i0.wp.com/pearlyarts.com/wp-content/uploads/2023/05/FREE-Graduation-Cap-Clipart-FB.png"
+              class="card-img-top course-photo img-fluid" alt="Course Image">
+            <div class="card-body text-center">
+              <h6 class="card-title mb-1">{{ bi.course.course_code }}</h6>
+              <small class="text-muted">{{ bi.course.course_credits }} Credits</small>
+            </div>
           </div>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
     {% endfor %}
+
+        
   </section>
+  <script type="module" src="{% static 'faculty/js/faculty_home.js' %}"></script>
+  <!-- Add Bootstrap JS for navbar functionality -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Collapse navbar on mobile after clicking a dropdown item
+    document.addEventListener('DOMContentLoaded', function () {
+      const navLinks = document.querySelectorAll('.dropdown-item');
+      const navbarCollapse = document.querySelector('.navbar-collapse');
+      navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          if (navbarCollapse.classList.contains('show')) {
+            const toggleBtn = document.querySelector('.navbar-toggler');
+            if (toggleBtn) {
+              toggleBtn.click();
+            }
+          }
+        });
+      });
+
+      // Term search: show only the term group whose title matches the input (case-insensitive, partial match)
+      const searchInput = document.getElementById('course-search-input');
+      searchInput.addEventListener('input', function () {
+        const query = this.value.trim().toLowerCase();
+        document.querySelectorAll('.term-group').forEach(termGroup => {
+          const termName = termGroup.getAttribute('data-term-name');
+          if (!query || (termName && termName.includes(query))) {
+            termGroup.style.display = '';
+          } else {
+            termGroup.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
 </body>
-<script src="../../static/faculty/js/faculty_home.js"></script>
+
 </html>

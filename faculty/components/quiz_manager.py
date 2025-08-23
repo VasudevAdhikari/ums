@@ -23,8 +23,8 @@ def save_specific_image(images, target_filename):
 
 def get_quiz_data(assessment: Assessment):
     quiz_data = assessment.assessment
-    quiz_data['start_time'] = assessment.assigned_date.strftime('%Y-%m-%dT%H:%M:%S')
-    quiz_data['end_time'] = assessment.due_date.strftime('%Y-%m-%dT%H:%M:%S')
+    quiz_data['start_time'] = assessment.assigned_date.strftime('%Y-%m-%dT%H:%M:%S') if assessment.assigned_date else None
+    quiz_data['end_time'] = assessment.due_date.strftime('%Y-%m-%dT%H:%M:%S') if assessment.due_date else None
     print(quiz_data)
     return quiz_data
 
@@ -37,7 +37,11 @@ def show_quiz_creation(request, assessment_id):
         semester_name = batch_instructor.batch.semester.semester_name
 
         # to fix (select all the students related to this batch)
-        students = Student.objects.all().select_related('user')
+        students = Student.objects.filter(
+            sisform__enrollment__enrollmentcourse__batch_instructor=batch_instructor
+        ).select_related(
+            'user',
+        )
         student_data = []
         for student in students:
             avatar = "".join(word[0] for word in student.user.full_name.split()).upper()[:2]
@@ -45,7 +49,7 @@ def show_quiz_creation(request, assessment_id):
                 'id': student.user.pk,
                 'name': student.user.full_name,
                 'email': student.user.email,
-                'semester': semester_name,
+                'roll_no': student.roll_no,
                 'avatar': avatar,
             })
 

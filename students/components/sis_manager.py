@@ -100,8 +100,81 @@ def save_sis_form(request):
             has_spouse=has_spouse,
             spouse_name=spouse_name,
         )
+        
         sis_form.save()
         messages.info(request, 'SIS Form Filling Successful')
         return redirect('/students/mailbox/')
     else:
         return JsonResponse({'success': False, 'error': 'Only Post Requests are allowed'})
+    
+def update_sis_form(request):
+    if request.method == 'POST':
+        user_email = request.COOKIES.get('my_user')
+        user = User.objects.get(email=user_email)
+        student = Student.objects.get(user=user)
+
+        sis_form = SISForm.objects.filter(student=student).first()
+        if not sis_form:
+            return JsonResponse({'success': False, 'error': 'No SIS Form found to update'})
+
+        # Update fields
+        sis_form.blood_group = request.POST.get('blood_group')
+        sis_form.ethnicity = request.POST.get('ethnicity')
+        sis_form.religion = request.POST.get('religion')
+        sis_form.NRC = request.POST.get('nrc')
+        sis_form.birthplace = request.POST.get('birthplace')
+
+        sis_form.father_name = request.POST.get('father_name')
+        sis_form.father_NRC = request.POST.get('father_NRC')
+        sis_form.father_birthplace = request.POST.get('father_birthplace')
+        sis_form.father_city = request.POST.get('father_city')
+        sis_form.father_phone = request.POST.get('father_phone')
+        sis_form.father_profession = request.POST.get('father_profession')
+        sis_form.father_gmail = request.POST.get('father_gmail')
+        sis_form.father_ethnicity = request.POST.get('father_ethnicity')
+        sis_form.father_religion = request.POST.get('father_religion')
+
+        sis_form.mother_name = request.POST.get('mother_name')
+        sis_form.mother_NRC = request.POST.get('mother_NRC')
+        sis_form.mother_birthplace = request.POST.get('mother_birthplace')
+        sis_form.mother_city = request.POST.get('mother_city')
+        sis_form.mother_phone = request.POST.get('mother_phone')
+        sis_form.mother_profession = request.POST.get('mother_profession')
+        sis_form.mother_gmail = request.POST.get('mother_gmail')
+        sis_form.mother_ethnicity = request.POST.get('mother_ethnicity')
+        sis_form.mother_religion = request.POST.get('mother_religion')
+
+        sis_form.matric_roll_no = request.POST.get('matric_roll_no')
+        sis_form.exam_dept = request.POST.get('exam_dept')
+        sis_form.passed_year = request.POST.get('passed_year')
+        sis_form.total_marks = request.POST.get('total_marks')
+
+        has_spouse = request.POST.get('has_spouse') == 'on'
+        sis_form.has_spouse = has_spouse
+        sis_form.spouse_name = request.POST.get('spouse_name') if has_spouse else ''
+
+        sis_form.save()
+        messages.info(request, 'SIS Form Updated Successfully')
+        return redirect('/students/mailbox/')
+    else:
+        return JsonResponse({'success': False, 'error': 'Only Post Requests are allowed'})
+    
+
+def show_profile(request):
+    email = request.COOKIES.get('my_user')
+    sis_form=None
+    try:
+        sis_form = SISForm.objects.filter(
+            student__user__email=email,
+        ).select_related(
+            'student',
+            'student__user', 
+            'student__user__emergency_contact'
+        ).first()
+        student = sis_form.student
+    except Exception as e:
+        student = Student.objects.filter(
+            user__email=email,
+        ).first()
+        sis_form = SISForm(student=student)
+    return render(request, 'students/personal/profile.html', {'sis_form': sis_form})

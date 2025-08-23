@@ -53,7 +53,7 @@ function createStudentCard(student) {
             <div class="student-name">${student.name}</div>
             <div class="student-details">
                 ${student.email}<br>
-                Semester: ${student.semester}
+                Roll No.: ${student.roll_no}
             </div>
         </div>
     `;
@@ -469,7 +469,7 @@ function addOption(button) {
     updateCorrectPreview(optionContent.querySelector('input[type="text"]'));
 }
 
-function removeOption(button) {
+async function removeOption(button) {
     const optionItem = button.closest('.option-content');
     if (!optionItem) return; // Defensive: if not found, do nothing
     const question = button.closest('.question');
@@ -478,7 +478,7 @@ function removeOption(button) {
 
     // Don't allow removing if only 2 options remain
     if (optionsContainer.children.length <= 2) {
-        alert('A question must have at least 2 options.');
+        await alert('A question must have at least 2 options.');
         return;
     }
 
@@ -600,12 +600,12 @@ function setupEventListeners() {
     });
 }
 
-function handleFormSubmission(event) {
+async function handleFormSubmission(event) {
     event.preventDefault();
 
     // Validate that students are selected
     if (selectedStudents.length === 0) {
-        alert('Please select at least one student for the quiz.');
+        await alert('Please select at least one student for the quiz.');
         return;
     }
 
@@ -613,10 +613,10 @@ function handleFormSubmission(event) {
     const questions = document.querySelectorAll('.question');
     let allValid = true;
 
-    questions.forEach((question, index) => {
+    questions.forEach(async (question, index) => {
         const correctAnswer = question.querySelector('.correct-answer').value;
         if (!correctAnswer) {
-            alert(`Please select a correct answer for Question ${index + 1}.`);
+            await alert(`Please select a correct answer for Question ${index + 1}.`);
             allValid = false;
             return;
         }
@@ -687,6 +687,7 @@ function handleFormSubmission(event) {
         title: quizTitle,
         students: selectedStudents,
         time_limit: timeLimit,
+        total_mark: parseInt(document.getElementById('totalMarks').value),
         questions_per_student: questionsPerStudent,
         questions: quizQuestions
     };
@@ -705,7 +706,7 @@ function handleFormSubmission(event) {
 
     // Confirm before sending
     console.log('Quiz JSON:', quiz);
-    if (!confirm("Are you sure to save quiz data?")) return;
+    if (!await confirm("Are you sure to save quiz data?")) return;
 
     // Send using fetch
     fetch('/faculty/create_quiz/', {
@@ -717,19 +718,19 @@ function handleFormSubmission(event) {
         body: formData
     })
     .then(response => response.json())
-    .then(data => {
+    .then(async data => {
         if (data.success) {
-            alert('Quiz created successfully');
+            await alert('Quiz created successfully');
             // Optionally redirect:
             window.location.href = `/faculty/course_management/${window.BATCH_INSTRUCTOR_ID}`;
         } else {
             console.error('Server error:', data);
-            alert('Failed to create quiz: ' + (data.message || data.error || 'Unknown error'));
+            await alert('Failed to create quiz: ' + (data.message || data.error || 'Unknown error'));
         }
     })
-    .catch((error) => {
+    .catch(async (error) => {
         console.error('Error:', error);
-        alert('An error occurred while creating the quiz.');
+        await alert('An error occurred while creating the quiz.');
     });
 }
 
@@ -941,12 +942,12 @@ function removeOptionImage(optionNumber) {
 
 // --- Patch handleFormSubmission to handle image deletion ---
 
-function handleFormSubmission(event) {
+async function handleFormSubmission(event) {
     event.preventDefault();
 
     // Validate that students are selected
     if (selectedStudents.length === 0) {
-        alert('Please select at least one student for the quiz.');
+        await alert('Please select at least one student for the quiz.');
         return;
     }
 
@@ -954,10 +955,10 @@ function handleFormSubmission(event) {
     const questions = document.querySelectorAll('.question');
     let allValid = true;
 
-    questions.forEach((question, index) => {
+    questions.forEach(async (question, index) => {
         const correctAnswer = question.querySelector('.correct-answer').value;
         if (!correctAnswer) {
-            alert(`Please select a correct answer for Question ${index + 1}.`);
+            await alert(`Please select a correct answer for Question ${index + 1}.`);
             allValid = false;
             return;
         }
@@ -967,6 +968,7 @@ function handleFormSubmission(event) {
 
     // Build quiz JSON
     const quizTitle = document.getElementById('quizTitle') ? document.getElementById('quizTitle').value : '';
+    const totalMark = document.getElementById('totalMarks').value;
     const timeLimit = parseInt(document.getElementById('quizDuration').value) || 30;
     const questionsPerStudent = parseInt(document.getElementById('questionsPerStudent').value) || questions.length;
 
@@ -1026,6 +1028,7 @@ function handleFormSubmission(event) {
 
     const quiz = {
         title: quizTitle,
+        total_mark: parseInt(totalMark),
         students: selectedStudents,
         time_limit: timeLimit,
         questions_per_student: questionsPerStudent,
@@ -1046,7 +1049,7 @@ function handleFormSubmission(event) {
 
     // Confirm before sending
     console.log('Quiz JSON:', quiz);
-    if (!confirm("Are you sure to save quiz data?")) return;
+    if (!await confirm("Are you sure to save quiz data?")) return;
 
     // Send using fetch
     fetch('/faculty/create_quiz/', {
@@ -1058,19 +1061,19 @@ function handleFormSubmission(event) {
         body: formData
     })
     .then(response => response.json())
-    .then(data => {
+    .then(async data => {
         if (data.success) {
-            alert('Quiz created successfully');
+            await alert('Quiz created successfully');
             // Optionally redirect:
             window.location.href = `/faculty/course_management/${window.BATCH_INSTRUCTOR_ID}`;
         } else {
             console.error('Server error:', data);
-            alert('Failed to create quiz: ' + (data.message || data.error || 'Unknown error'));
+            await alert('Failed to create quiz: ' + (data.message || data.error || 'Unknown error'));
         }
     })
-    .catch((error) => {
+    .catch(async (error) => {
         console.error('Error:', error);
-        alert('An error occurred while creating the quiz.');
+        await alert('An error occurred while creating the quiz.');
     });
 }
 
@@ -1084,7 +1087,7 @@ async function fillQuizForm(quiz) {
     document.getElementById('quizDuration').value = quiz.time_limit || 30;
     updateClockDisplay();
     // Questions per student
-    // alert(quiz.questions_per_student);
+    // await alert(quiz.questions_per_student);
     document.getElementById('questionsPerStudent').value = quiz.questions_per_student;
     // Start/end time
     if (quiz.start_time) document.getElementById('quizStart').value = quiz.start_time;

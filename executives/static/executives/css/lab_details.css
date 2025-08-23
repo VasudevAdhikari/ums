@@ -1,11 +1,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
+/* Color Variables */
+:root {
+    /* Primary Colors (University Branding) */
+    --primary: #003366; /* Deep Blue - main brand color */
+    --primary-light: #1a4d80; /* Lighter shade for hover states */
+    --primary-dark: #00264d; /* Darker shade for active states */
+    
+    /* Secondary Colors */
+    --secondary: #FFD700; /* Gold - for accents and highlights */
+    --secondary-light: #ffe44d;
+
+    /* Background Colors */
+    --bg-light: #FFFFFF;
+    --bg-gray: #F5F5F5;
+    
+    /* Text Colors */
+    --text-dark: #333333;
+    --text-black: #000000;
+    --text-light: #FFFFFF;
+    
+    /* Status Colors */
+    --success: #4CAF50;
+    --error: #F44336;
+    --warning: #FFC107;
+    --info: #17A2B8;
+}
+
 body {
     margin: 0;
     font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
-    background: #e6eeff;
+    background: var(--bg-light);
     /* 60%: light blue */
-    color: #1e293b;
+    color: var(--primary-dark);
     /* dark blue-grey */
 }
 
@@ -20,19 +47,29 @@ body {
     box-sizing: border-box;
 }
 
-.toggle-group {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
+/* Section padding and scroll margin */
+section,
+.hero {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    scroll-margin-top: 70px;
+    /* ...existing code... */
 }
 
+.toggle-group {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Toggle Button */
 .toggle-btn {
     padding: 1rem 2.5rem;
     border: none;
     border-radius: 2rem;
-    background: #f1f5fa;
+    background: var(--bg-gray);
     /* 30%: white/grey */
-    color: #2563eb;
+    color: var(--primary);
     /* accent blue */
     font-size: 1.25rem;
     font-family: inherit;
@@ -41,11 +78,10 @@ body {
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
     box-shadow: 0 2px 8px rgba(30, 41, 59, 0.04);
 }
-
 .toggle-btn.active {
-    background: #2563eb;
+    background: var(--primary);
     /* accent blue */
-    color: #fff;
+    color: var(--secondary);
     font-weight: 700;
     box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
 }
@@ -67,7 +103,7 @@ body {
 
 .lab-location {
     font-size: 1.3rem;
-    color: #2563eb;
+    color: var(--primary);
     font-weight: 600;
     margin-bottom: 1.2rem;
     display: flex;
@@ -98,7 +134,7 @@ body {
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #2563eb;
+    border: 3px solid var(--primary);
     box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
     background: #f1f5fa;
 }
@@ -111,9 +147,10 @@ body {
 }
 
 .lab-head-name {
-    font-size: 1.5rem;
+    font-size: 2.2rem;
     font-weight: 600;
-    color: #2563eb;
+    color: var(--primary);
+    border: none;
 }
 
 .lab-head-title {
@@ -126,10 +163,41 @@ body {
     color: #64748b;
 }
 
+/* Lab Department Block */
+.lab-department-block {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: 600px;
+}
+
+.lab-department-title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--primary);
+    border: none;
+}
+
+.lab-department-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lab-department-name {
+    font-size: 1.1rem;
+    color: #334155;
+    font-weight: 500;
+}
+
 .lab-description {
     max-width: 800px;
     margin: 0 auto 2.2rem;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     color: #334155;
     line-height: 1.7;
     text-align: justify;
@@ -146,7 +214,7 @@ body {
 }
 
 .lab-desc-toggle {
-    color: #2563eb;
+    color: var(--primary);
     cursor: pointer;
     font-weight: 600;
     margin-left: 0.5rem;
@@ -169,10 +237,11 @@ body {
 .lab-photos-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #2563eb;
+    color: var(--primary);
     margin-bottom: 1rem;
     text-align: left;
     margin-left: 1.5rem;
+    border: none;
 }
 
 .lab-photos {
@@ -188,15 +257,14 @@ body {
     height: 160px;
     object-fit: cover;
     border-radius: 1.2rem;
-    border: 3px solid #e6eeff;
-    background: #f1f5fa;
+    border: 3px solid var(--bg-gray);
+    background: var(--bg-light);
     box-shadow: 0 2px 8px rgba(37, 99, 235, 0.06);
     transition: box-shadow 0.2s, border-color 0.2s;
 }
-
 .lab-photo:hover {
     box-shadow: 0 4px 16px rgba(37, 99, 235, 0.13);
-    border-color: #2563eb;
+    border-color: var(--primary);
 }
 
 .lab-details-list {
@@ -220,22 +288,74 @@ body {
 }
 
 .lab-details-list li strong {
-    color: #2563eb;
+    color: var(--primary);
 }
 
 .hero-content h1 {
     font-size: 2.5rem;
-    color: #2563eb;
+    color: var(--primary);
     font-weight: 700;
     margin-bottom: 1.2rem;
     letter-spacing: 0.5px;
     text-align: center;
+    border: none;
+}
+@media (min-width: 700px) {
+    .hero-content h1 {
+        font-size: 3.5rem;
+    }
 }
 
-.hero-content p {
-    font-size: 1.25rem;
-    color: #334155;
-    margin-bottom: 2.2rem;
+/* Section Headers */
+.hero-content h1,
+.lab-photos-title,
+.project-title,
+.lab-head-name {
+    border: none;
+}
+
+/* Body Text */
+.hero-content p,
+.lab-description,
+.lab-details-list,
+.lab-head-title,
+.lab-head-dept,
+.project-desc-block,
+.project-members-title,
+.project-member-name,
+.project-tag,
+.project-link,
+.profile-select-name {
+    font-size: 1.1rem;
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    border: none;
+}
+@media (max-width: 600px) {
+    .hero-content p,
+    .lab-description,
+    .lab-details-list,
+    .lab-head-title,
+    .lab-head-dept,
+    .project-desc-block,
+    .project-members-title,
+    .project-member-name,
+    .project-tag,
+    .project-link,
+    .profile-select-name {
+        font-size: 1rem;
+    }
+}
+
+/* Small Text */
+.profile-select-nores,
+.project-members-title,
+.project-tag,
+.lab-location-icon,
+.lab-desc-toggle,
+.project-desc-toggle {
+    font-size: 0.85em;
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    border: none;
 }
 
 /* Edit icon styling */
@@ -249,12 +369,12 @@ body {
     display: inline-block;
     opacity: 0;
     margin-left: 0.4rem;
-    color: #2563eb;
+    color: var(--primary-light);
     font-size: 1.5rem;
     vertical-align: middle;
     cursor: pointer;
     transition: opacity 0.2s, color 0.2s, background 0.2s;
-    background: #fff;
+    background: var(--bg-light);
     border-radius: 50%;
     padding: 2px 5px;
     box-shadow: 0 1px 4px rgba(37, 99, 235, 0.07);
@@ -272,7 +392,7 @@ body {
     position: absolute;
     top: 8px;
     right: 8px;
-    background: #fff;
+    background: var(--bg-light);
     border-radius: 50%;
     padding: 2px 5px;
     font-size: 1.1rem;
@@ -314,12 +434,13 @@ body {
     gap: 1.2rem;
     position: relative;
     width: 70vw;
+    color: #00264d;
 }
 
 .edit-popup-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #2563eb;
+    color: #00264d;
     margin-bottom: 0.5rem;
     text-align: center;
 }
@@ -332,12 +453,12 @@ body {
     outline: none;
     font-family: inherit;
     background: #f7faff;
-    color: #1e293b;
+    color: #00264d;
     transition: border-color 0.2s;
 }
 
 .edit-popup-input:focus {
-    border-color: #2563eb;
+    border-color: var(--primary);
 }
 
 .edit-popup-textarea {
@@ -348,7 +469,7 @@ body {
   outline: none;
   font-family: inherit;
   background: #f7faff;
-  color: #1e293b;
+  color: #00264d;
   transition: border-color 0.2s;
   width: 100%;
   min-width: 0;
@@ -360,12 +481,12 @@ body {
 }
 
 .edit-popup-textarea:focus {
-  border-color: #2563eb;
+  border-color: var(--primary);
 }
 
 .edit-popup-save {
-    background: #2563eb;
-    color: #fff;
+    background: var(--primary);
+    color: var(--secondary);
     font-weight: 600;
     border: none;
     border-radius: 0.7rem;
@@ -378,12 +499,12 @@ body {
 }
 
 .edit-popup-save:hover {
-    background: #1e40af;
+    background: var(--primary-dark);
 }
 
 .edit-popup-cancel {
-    background: #f1f5fa;
-    color: #2563eb;
+    background: var(--bg-gray);
+    color: var(--primary);
     border: none;
     border-radius: 0.7rem;
     padding: 0.7rem 1.5rem;
@@ -397,8 +518,8 @@ body {
 }
 
 .edit-popup-cancel:hover {
-    background: #e6eeff;
-    color: #1e40af;
+    background: var(--primary-light);
+    color: var(--secondary);
 }
 
 /* Delete photo button */
@@ -406,7 +527,7 @@ body {
     position: absolute;
     top: 8px;
     right: 8px;
-    background: #fff;
+    background: var(--bg-light);
     color: #e11d48;
     border: none;
     border-radius: 50%;
@@ -442,7 +563,7 @@ body {
 }
 
 .add-photo-btn {
-    background: #2563eb;
+    background: var(--primary);
     color: #fff;
     border: none;
     border-radius: 50%;
@@ -497,7 +618,7 @@ body {
 .profile-select-item:hover,
 .profile-select-item.selected {
     background: #e6eeff;
-    border-color: #2563eb;
+    border-color: var(--primary);
     box-shadow: 0 2px 8px rgba(37, 99, 235, 0.09);
 }
 
@@ -506,7 +627,7 @@ body {
     height: 48px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #2563eb;
+    border: 2px solid var(--primary);
     background: #fff;
 }
 
@@ -521,13 +642,13 @@ body {
     color: #64748b;
     padding: 1.2rem 0;
     font-size: 1.05rem;
-}
+} 
 
 /* Project card styles */
 .project-card {
-  background: #f7faff;
+  background: var(--bg-gray);
   border-radius: 1.2rem;
-  box-shadow: 0 2px 12px rgba(37,99,235,0.07);
+  box-shadow: 0 4px 24px rgba(0, 51, 102, 0.13); /* stronger shadow */
   padding: 2rem 2rem 1.5rem 2rem;
   margin: 2rem auto;
   max-width: 700px;
@@ -547,10 +668,11 @@ body {
 .project-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2563eb;
+  color: var(--primary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  border: none;
 }
 
 .project-tags {
@@ -561,8 +683,8 @@ body {
 }
 
 .project-tag {
-  background: #e6eeff;
-  color: #2563eb;
+  background: var(--secondary);
+  color: var(--primary-dark);
   font-size: 0.95rem;
   font-weight: 600;
   border-radius: 0.7rem;
@@ -605,7 +727,7 @@ body {
 }
 
 .project-desc-toggle {
-  color: #2563eb;
+  color: var(--primary);
   cursor: pointer;
   font-weight: 600;
   margin-left: 0.5rem;
@@ -631,13 +753,13 @@ body {
   height: 48px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #2563eb;
+  border: 2px solid var(--primary);
   background: #fff;
 }
 
 .project-leader-name {
   font-size: 1.1rem;
-  color: #2563eb;
+  color: var(--primary);
   font-weight: 600;
 }
 
@@ -672,7 +794,7 @@ body {
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #2563eb;
+  border: 2px solid var(--primary);
   background: #fff;
 }
 
@@ -693,19 +815,18 @@ body {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  color: #2563eb;
+  color: var(--primary);
   font-weight: 600;
   text-decoration: none;
-  background: #e6eeff;
+  background: var(--secondary);
   border-radius: 0.7rem;
   padding: 0.4rem 1rem;
   font-size: 1.05rem;
   transition: background 0.2s, color 0.2s;
 }
-
 .project-link:hover {
-  background: #2563eb;
-  color: #fff;
+  background: var(--primary);
+  color: var(--secondary);
   text-decoration: underline;
 }
 
@@ -738,6 +859,7 @@ body {
     padding: 32px 28px 24px 28px;
     position: relative;
     animation: fadeInScale 0.25s;
+    color: #00264d;
 }
 
 @keyframes fadeInScale {
@@ -749,7 +871,7 @@ body {
     display: block;
     margin: 18px 0 6px 0;
     font-weight: 600;
-    color: #2d8cf0;
+    color: #00264d;
     font-size: 15.5px;
     letter-spacing: 0.01em;
 }
@@ -768,6 +890,7 @@ body {
     background: #f7faff;
     transition: border 0.2s;
     outline: none;
+    color: #00264d;
 }
 
 .add-project-form input[type="text"]:focus,
@@ -801,8 +924,8 @@ body {
 }
 
 .add-project-form .edit-popup-save {
-    background: linear-gradient(90deg, #2d8cf0 60%, #4eafff 100%);
-    color: #fff;
+    background: #00264d;
+    color: #FFD700;
     margin-right: 12px;
     font-weight: 600;
     transition: background 0.2s;
@@ -813,8 +936,8 @@ body {
 }
 
 .add-project-form .edit-popup-cancel {
-    background: #f6f8fa;
-    color: #2d8cf0;
+    background: #00264d;
+    color: #FFD700;
     border: 1.5px solid #e3e8ee;
     font-weight: 500;
     transition: background 0.2s, color 0.2s;
@@ -855,7 +978,7 @@ body {
     background: #f0f7ff;
     border: 1px solid #e3e8ee;
     border-radius: 5px;
-    color: #2d8cf0;
+    color: #00264d;
     padding: 6px 16px;
     font-size: 14px;
     cursor: pointer;
@@ -875,3 +998,4 @@ body {
         border-radius: 0.5rem;
     }
 }
+

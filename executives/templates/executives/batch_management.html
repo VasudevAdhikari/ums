@@ -3,13 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UMS Project</title>
+    <title>Batch Creation and Management</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta name="csrf-token" content="{{ csrf_token }}">
     {% load static %}
     <link rel="stylesheet" href="{% static 'executives/css/batch_management.css' %}">
+        <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins&display=swap');
+
+        :root {
+            /* Primary Colors (University Branding) */
+            --primary: #003366; /* Deep Blue - main brand color */
+            --primary-light: #1a4d80; /* Lighter shade for hover states */
+            --primary-dark: #00264d; /* Darker shade for active states */
+            
+            /* Secondary Colors */
+            --secondary: #FFD700; /* Gold - for accents and highlights */
+            --secondary-light: #ffe44d;
+  
+            /* Background Colors */
+            --bg-light: #FFFFFF;
+            --bg-gray: #F5F5F5;
+            
+            /* Text Colors */
+            --text-dark: #333333;
+            --text-black: #000000;
+            --text-light: #FFFFFF;
+            
+            /* Status Colors */
+            --success: #4CAF50;
+            --error: #F44336;
+            --warning: #FFC107;
+            --info: #17A2B8;
+        }
+        section {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+            scroll-margin-top: 70px; /* Account for fixed navbar */
+        }
+        body {
+            font-family: "Poppins", sans-serif;
+             font-style: normal;
+            background-color: #F5F5F5;
+            color: #333333;
+            scroll-behavior: smooth;
+            box-sizing: border-box;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: #003366;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 0 !important; /* Remove curve at edges */
+        }
+
+        .navbar-brand, .nav-link {
+            color: #FFFFFF !important;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: #FFD700 !important;
+            border-bottom: 2px solid #FFD700;
+        }
+
+        .dropdown-menu {
+            background-color: #1a4d80;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .dropdown-item {
+            color: #FFFFFF;
+            padding: 10px 20px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #FFD700 !important;
+            color: #333333 !important;
+            border-radius: 8px;
+        }
+        /* Remove Bootstrap's default active background */
+.dropdown-item.active {
+    background: transparent !important;
+}
+
+/* Ensure hover works in all states */
+.dropdown-item:hover {
+    background-color: #FFD700 !important;
+    color: #333333 !important;
+    border-radius: 8px;
+}
+        
+       
+        .uni-logo {
+            height: 50px;
+            width: 50px;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .custom-nav-spacing .nav-item {
+            margin-right: 2rem;
+        }
+
+        @media (max-width: 991.98px) {
+            .custom-nav-spacing .nav-item {
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        .logout-button {
+            border-radius: 10px;
+            width: 70px;
+            height: 50px;
+            background-color: #F44336;
+        }
+
+        .logout-icon {
+            font-size: 1.7rem;
+            width: 20px;
+        }
+
+        .logout-icon:hover {
+            color: #FFD700 !important;
+        }
+        /* Add gap below navbar */
+        .navbar + .main-gap {
+            height: 40px;
+            width: 100%;
+            display: block;
+        }
+    </style>
 </head>
-<body>
+<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="180" tabindex="0">
+    <div id="sidebar" class="sidebar app-sidebar">
+        <button id="sidebarClose" class="btn btn-link" style="position:relative;top:12px;right:12px;font-size:2rem;color:#003366;">&times;</button>
+        <div style="padding:64px 24px 24px 24px;">
+            
+        </div>
+        <div class="col-auto d-flex align-items-start pr-0">
+                <button id="toggleSidebar" class="btn btn-primary" style="border-radius:8px; width:48px; height:48px;">
+                    <span style="font-size:1.5rem;">&#9776;</span>
+                </button>
+            </div>
+    </div>
+    <!-- Navbar -->
+    {% include "executives/navbar.html" %}
+    <div class="main-gap"></div>
+       
     <script>
         window.getCsrfToken = () => {
             return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -23,57 +171,30 @@
         window.ALL_INSTRUCTORS = JSON.parse(all_instructors);
         console.log(window.ALL_INSTRUCTORS);
     </script>
-    <!-- Top Navbar -->
-    <nav class="navbar navbar-light bg-white shadow-sm px-4 py-3 d-flex justify-content-between align-items-center" style="border-radius: 16px 16px 0 0;">
-        <div class="d-flex align-items-center">
-            <span class="h3 mb-0 font-weight-bold text-primary" style="font-size:1.5rem;">UMS Project</span>
-        </div>
-        <div class="d-flex align-items-center">
-            <img src="https://via.placeholder.com/40" alt="Logo" style="height:30px; width:30px; object-fit:contain; margin-right:8px; margin-left: 15px;">
-            <form class="form-inline">
-                <input class="form-control mr-sm-2 search-bar" type="search" placeholder="Search..." aria-label="Search" style="border-radius: 20px; width:140px;">
-            </form>
-        </div>
-    </nav>
-
-    <!-- Sidebar -->
-    <div id="sidebar" class="sidebar app-sidebar">
-        <button id="sidebarClose" class="btn btn-link" style="position:absolute;top:12px;right:12px;font-size:2rem;color:#007bff;">&times;</button>
-        <div style="padding:64px 24px 24px 24px;">
-            <button class="sidebar-btn btn btn-outline-primary btn-block mb-3" style="border-radius:10px;">Sidebar Button 1</button>
-            <button class="sidebar-btn btn btn-outline-primary btn-block mb-3" style="border-radius:10px;">Sidebar Button 2</button>
-            <button class="sidebar-btn btn btn-outline-primary btn-block" style="border-radius:10px;">Sidebar Button 3</button>
-        </div>
-    </div>
+    
 
     <!-- Modal Overlay -->
     <div id="modalOverlay" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);z-index:1500;"></div>
 
     <!-- Main Content Area -->
-    <div class="container-fluid" style="background:#f5f5f7; min-height:calc(100vh - 80px); padding-top:32px; padding-bottom:32px;">
+    <div class="container-fluid" style="background:#F5F5F5; min-height:calc(100vh - 80px); padding-top:50px; padding-bottom:32px;">
         <div class="row">
             <!-- Sidebar Toggle Button -->
-            <div class="col-auto d-flex align-items-start pr-0">
-                <button id="toggleSidebar" class="btn btn-primary" style="border-radius:8px; width:48px; height:48px;">
-                    <span style="font-size:1.5rem;">&#9776;</span>
-                </button>
-            </div>
             <!-- Centered Card -->
-            <div class="col d-flex justify-content-center align-items-start">
-                <div class="card shadow" style="min-width:340px; max-width:500px; width:100%; border-radius:20px; margin-top:24px;">
+            <div class="col d-flex justify-content-center align-items-center">
+                <div class="card shadow" style="min-width:340px; width:100%; border-radius:20px; margin-top:24px;">
                     <div class="card-body position-relative">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <h2 class="card-title mb-2" style="font-weight:700; font-size:2rem; color:#222;">Major Tabs</h2>
-                                <p class="card-text" style="font-size:1.2rem;">Each batch are created here.</p>
+                                <h2 class="card-title mb-2" style="font-weight:700; text-align: center;font-size:2rem; color:#003366;">{{term_name}}</h2>
                             </div>
-                            <div class="d-flex flex-column align-items-end">
-                                <button id="editTabsBtn" class="btn btn-outline-primary mb-2" style="border-radius:12px; width:44px; height:44px;" title="Edit Tabs">
+                            <div class="d-flex flex-column">
+                                <button id="editTabsBtn" class="btn btn-outline-primary mb-2" style="border-radius:12px; width:44px; height:44px;"  title="Edit Tabs">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
                                         <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-4 1.5a.5.5 0 0 1-.65-.65l1.5-4a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 3 10.707V13h2.293l7.5-7.5z"/>
                                     </svg>
                                 </button>
-                                <button id="addBtn" class="btn btn-primary" style="border-radius:12px; width:44px; height:44px;" title="Add Major">
+                                <button id="addBtn" class="btn btn-primary" style="border-radius:12px; width:44px; height:44px; " title="Add Major">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="white" viewBox="0 0 16 16">
                                         <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
                                     </svg>
@@ -81,7 +202,9 @@
                             </div>
                         </div>
                         <div id="tabContainerBox" style="margin-top:32px;">
-                            <div id="tabContentMsg" style="color:#888;text-align:center;font-size:1.1rem;">No major tabs created yet.</div>
+                            <div id="tabContentMsg" style="color:#666666;text-align:center;font-size:1.1rem;">
+                                <div id="loadingSpinner" class="spinner"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -93,9 +216,9 @@
 
     <!-- Add Major Modal -->
     <div id="majorModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:2001;align-items:center;justify-content:center;">
-        <div style="background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(44,106,156,0.13);padding:32px 28px 24px 28px;min-width:320px;max-width:90vw;position:relative;">
-            <button id="closeMajorModal" style="position:absolute;top:12px;right:18px;font-size:2rem;color:#4da6ff;background:none;border:none;cursor:pointer;">&times;</button>
-            <h3 style="color:#3498db;text-align:center;margin-bottom:18px;">Add Major Batch</h3>
+        <div style="background:#FFFFFF;border-radius:16px;box-shadow:0 8px 32px rgba(0,51,102,0.13);padding:32px 28px 24px 28px;min-width:320px;max-width:90vw;position:relative;">
+            <button id="closeMajorModal" style="position:absolute;top:12px;right:18px;font-size:2rem;color:#003366;background:none;border:none;cursor:pointer;">&times;</button>
+            <h3 style="color:#003366;text-align:center;margin-bottom:18px;">Add Major Batch</h3>
             <div class="form-group">
                 <label for="majorSelect">Major:</label>
                 <select id="majorSelect" class="form-control mb-3">
@@ -115,9 +238,9 @@
 
     <!-- Delete Tab Modal -->
     <div id="deleteTabModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:2002;align-items:center;justify-content:center;">
-        <div style="background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(44,106,156,0.13);padding:32px 28px 24px 28px;min-width:320px;max-width:90vw;position:relative;">
-            <button id="closeDeleteTabModal" style="position:absolute;top:12px;right:18px;font-size:2rem;color:#4da6ff;background:none;border:none;cursor:pointer;">&times;</button>
-            <h4 style="color:#d9534f;text-align:center;margin-bottom:18px;">Delete Tab?</h4>
+        <div style="background:#FFFFFF;border-radius:16px;box-shadow:0 8px 32px rgba(0,51,102,0.13);padding:32px 28px 24px 28px;min-width:320px;max-width:90vw;position:relative;">
+            <button id="closeDeleteTabModal" style="position:absolute;top:12px;right:18px;font-size:2rem;color:#003366;background:none;border:none;cursor:pointer;">&times;</button>
+            <h4 style="color:#F44336;text-align:center;margin-bottom:18px;">Delete Tab?</h4>
             <p style="text-align:center;">Are you sure you want to delete this major tab?</p>
             <div class="d-flex justify-content-center mt-4">
                 <button id="confirmDeleteTab" class="btn btn-danger mr-3">Delete</button>
@@ -127,5 +250,51 @@
     </div>
 
     <script src="{% static 'executives/javascripts/batch_management.js' %}"></script>
+    <!-- Bootstrap JS for dropdowns and collapse -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Enable dropdowns for all nav dropdowns
+        var dropdownElements = document.querySelectorAll('.navbar .dropdown-toggle');
+        dropdownElements.forEach(function (dropdownToggle) {
+          new bootstrap.Dropdown(dropdownToggle);
+        });
+
+        // Scroll the whole navbar (deep blue part) into view when toggler is clicked in mobile
+        const navbar = document.getElementById('mainNavbar');
+        const navbarCollapse = document.querySelector('.navbar-collapse');
+        const navbarToggler = document.querySelector('.navbar-toggler');
+
+        function scrollNavbarIntoView() {
+          // Only scroll if collapse is open and viewport is mobile
+          if (navbarCollapse.classList.contains('show') && window.innerWidth < 992) {
+            // Scroll the navbar to the top of the viewport
+            window.scrollTo({
+              top: navbar.offsetTop,
+              behavior: 'smooth'
+            });
+          }
+        }
+
+        if (navbarToggler) {
+          navbarToggler.addEventListener('click', function () {
+            setTimeout(scrollNavbarIntoView, 350); // Wait for collapse animation
+          });
+        }
+
+        // Collapse navbar on mobile after clicking a dropdown item
+        const navLinks = document.querySelectorAll('.dropdown-item');
+        navLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            if (navbarCollapse.classList.contains('show')) {
+              const toggleBtn = document.querySelector('.navbar-toggler');
+              if (toggleBtn) {
+                toggleBtn.click();
+              }
+            }
+          });
+        });
+      });
+    </script>
 </body>
 </html>

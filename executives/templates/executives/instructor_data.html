@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Instructor Details</title>
+
+    <!-- Poppins font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'executives/css/instructor_data.css' %}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="title"><i class="fas fa-chalkboard-teacher"></i> Instructor Data</div>
+
+        <!-- Profile -->
+        <div class="card details-grid">
+            <div class="detail"><i class="fas fa-user"></i> <strong>Name:</strong> {{instructor.user.full_name}}</div>
+            <div class="detail"><i class="fas fa-briefcase"></i> <strong>Employment Status:</strong>
+                {{instructor.get_employment_status_display}}</div>
+            <div class="detail"><i class="fas fa-graduation-cap"></i> <strong>Highest Degree:</strong>
+                {{instructor.degree}}</div>
+            <div class="detail"><i class="fas fa-user-tie"></i> <strong>Position:</strong> {{instructor.position_in_university}}</div>
+            <div class="detail"><i class="fas fa-calendar-check"></i> <strong>Joined Date:</strong>
+                {{instructor.joined_date}}</div>
+            <div class="detail"><i class="fas fa-star"></i> <strong>Specializations:</strong>
+                {{instructor.specialization}}</div>
+            <div class="detail"><i class="fas fa-building"></i> <strong>Department:</strong>
+                {{instructor.department.name}}</div>
+            <div class="details">
+                <button class="btn btn-primary" id="changeDepartmentBtn">Change Department</button>
+            </div>
+        </div>
+
+        <!-- Basic Info -->
+        <div class="card">
+            <h2><i class="fas fa-info-circle"></i> Basic Information</h2>
+            <div class="details-grid">
+                <div class="detail"><i class="fas fa-envelope"></i> <strong>Email:</strong> {{instructor.user.email}}
+                </div>
+                <div class="detail"><i class="fas fa-phone"></i> <strong>Phone:</strong> {{instructor.user.phone}}</div>
+                <div class="detail"><i class="fas fa-city"></i> <strong>City:</strong> {{instructor.user.city}}</div>
+            </div>
+        </div>
+
+        <!-- Emergency Contact -->
+        <div class="card">
+            <h2><i class="fas fa-phone-square-alt"></i> Emergency Contact</h2>
+            <div class="details-grid">
+                <div class="detail"><i class="fas fa-user"></i> <strong>Name:</strong>
+                    {{instructor.user.emergency_contact.contact_name}}</div>
+                <div class="detail"><i class="fas fa-envelope"></i> <strong>Email:</strong>
+                    {{instructor.user.emergency_contact.email}}</div>
+                <div class="detail"><i class="fas fa-phone"></i> <strong>Phone:</strong>
+                    {{instructor.user.emergency_contact.phone}}</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-chart-bar"></i> Instructor Statistics</h2>
+            <div class="details-grid">
+                <div class="detail">
+                    <i class="fas fa-book"></i>
+                    <strong>Total Courses Taught:</strong>
+                    {{total_courses_taught}}
+                </div>
+                <div class="detail">
+                    <i class="fas fa-user-graduate"></i>
+                    <strong>Total Students Taught:</strong>
+                    {{total_students_taught}}
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-bar">
+            <div class="btn-group gap-2 flex-wrap">
+
+                <!-- Make Active -->
+                <form method="post" action="/executives/instructor/{{instructor.user.id}}/active/">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary confirm-action" data-message="Approve this instructor? This action will make the instructor active.">
+                        <i class="fa-solid fa-people-arrows-left-right me-1"></i> Approve
+                    </button>
+                </form>
+
+                <!-- Transfer -->
+                <form method="post" action="/executives/instructor/{{instructor.user.id}}/transfer/">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-transfer confirm-action" data-message="Transfer this instructor?">
+                        <i class="fa-solid fa-people-arrows-left-right me-1"></i> Transfer
+                    </button>
+                </form>
+
+                <!-- Retire -->
+                <form method="post" action="/executives/instructor/{{instructor.user.id}}/retire/">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-retire confirm-action" data-message="Mark this instructor as retired?">
+                        <i class="fa-solid fa-person-cane me-1"></i> Retire
+                    </button>
+                </form>
+
+                <!-- Put on Leave -->
+                <form method="post" action="/executives/instructor/{{instructor.user.id}}/leave/">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-leave confirm-action" data-message="Put this instructor on leave?">
+                        <i class="fa-solid fa-plane-departure me-1"></i> Put on Leave
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Courses by Term -->
+        <h2 class="mb-3"><i class="fas fa-book"></i> Courses Taught</h2>
+        {% if terms %}
+        <p class="text-muted">Found {{ terms|length }} academic term(s) with courses</p>
+        {% else %}
+        <p class="text-muted">No courses found for this instructor</p>
+        {% endif %}
+
+        <!-- Courses by Term Accordion -->
+        <div class="accordion" id="coursesAccordion">
+            {% for term in terms %}
+            <div class="accordion-item mb-2">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#term{{forloop.counter}}">
+                        {{term.name}} ({{term.start_date}} - {{term.end_date}})
+                    </button>
+                </h2>
+                <div id="term{{forloop.counter}}" class="accordion-collapse collapse"
+                    data-bs-parent="#coursesAccordion">
+                    <div class="accordion-body">
+                        <div class="row g-3">
+                            {% for course in term.courses %}
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="course-card">
+                                    <strong>{{course.course_code}} - {{course.course_name}}</strong>
+                                    <span class="batch-info">{{course.batch.degree_name}} -
+                                        {{course.batch.semester_name}}</span>
+                                    <button class="btn btn-sm btn-primary mt-2" onclick="window.location.href='/executives/rating_review/{{course.batch_instructor_id}}'">
+                                        <i class="fas fa-star"></i> Reviews
+                                    </button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".confirm-action").forEach(button => {
+                button.closest("form").addEventListener("submit", async function (e) {
+                    e.preventDefault();
+
+                    const message = button.getAttribute("data-message") || "Are you sure?";
+
+                    if (!await confirm(message)) return;
+                    this.submit();
+                });
+            });
+        });
+
+    const departments = JSON.parse('{{departments|safe|escapejs}}');
+
+    const instructor_id = '{{ instructor.user.id }}'; // Django template variable
+
+    document.getElementById("changeDepartmentBtn").addEventListener("click", async () => {
+        // Build select options
+        const selectOptions = departments.map(dep => 
+            `<option value="${dep.id}">${dep.name}</option>`).join("");
+
+        // Show SweetAlert popup with select box
+        const { value: department_id } = await Swal.fire({
+            title: "Select Department",
+            html: `
+                <select id="swal-department-select" class="swal2-select form-select">
+                    ${selectOptions}
+                </select>
+            `,
+            showCancelButton: true,
+            confirmButtonText: "Change",
+            cancelButtonText: "Cancel",
+            preConfirm: () => {
+                const selected = document.getElementById("swal-department-select").value;
+                if (!selected) Swal.showValidationMessage("Please select a department");
+                return selected;
+            }
+        });
+
+        if (department_id) {
+            // Confirm change
+            const confirmChange = await Swal.fire({
+                icon: "warning",
+                html: `<p>Are you sure you want to change the department?</p>`,
+                showCancelButton: true,
+                confirmButtonText: "Yes, change",
+                cancelButtonText: "Cancel"
+            });
+
+            if (confirmChange.isConfirmed) {
+                // Redirect
+                window.location.href = `/executives/change_instructor_department/${instructor_id}/${department_id}`;
+            }
+        }
+    });
+    </script>
+</body>
+
+</html>

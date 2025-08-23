@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Result Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #003366;
+            --primary-light: #1a4d80;
+            --primary-dark: #00264d;
+            --secondary: #FFD700;
+            --secondary-light: #ffe44d;
+            --bg-light: #FFFFFF;
+            --bg-gray: #F5F5F5;
+            --text-dark: #333333;
+            --text-black: #000000;
+            --text-light: #FFFFFF;
+            --success: #4CAF50;
+            --error: #F44336;
+            --warning: #FFC107;
+            --info: #17A2B8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: var(--text-light);
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2em;
+        }
+
+        .result-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .result-card {
+            background-color: var(--primary-light);
+            border: 2px solid var(--primary-dark);
+            color: var(--text-light);
+            border-radius: 10px;
+            width: 300px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .result-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .result-info {
+            padding: 15px;
+        }
+
+        .result-info h3 {
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .result-info p {
+            margin-bottom: 5px;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📄 Student Result Viewer</h1>
+    </header>
+
+    <section class="result-container" id="resultContainer">
+        <!-- JS will populate result cards here -->
+    </section>
+
+    <footer>
+        &copy; 2025 University Results Portal
+    </footer>
+
+    <script>
+        const results = JSON.parse('{{results|safe|escapejs}}');
+
+
+        const container = document.getElementById("resultContainer");
+
+        results.forEach(result => {
+            const card = document.createElement("div");
+            card.className = "result-card";
+            card.innerHTML = `
+                <img src="${result.image}" alt="Result Image">
+                <div class="result-info">
+                    <h3>${result.term}</h3>
+                    <p><strong>Degree:</strong> ${result.degree}</p>
+                    <p><strong>Semester:</strong> ${result.semester}</p>
+                </div>
+            `;
+            const img = card.querySelector("img");
+            img.style.cursor = "pointer"; // Optional: show pointer cursor
+            img.addEventListener("click", () => {
+                window.open(result.image, '_blank');
+            });
+            container.appendChild(card);
+        });
+    </script>
+
+</body>
+</html>

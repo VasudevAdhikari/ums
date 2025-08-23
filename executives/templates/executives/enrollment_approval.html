@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Student Enrollment Approval</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <!-- Poppins Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'executives/css/unapproved_students.css' %}">
+    <style>
+        /*==========navbar styles================*/
+        /* Navbar Styles */
+        .navbar {
+            background-color: var(--primary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand,
+        .nav-link {
+            color: var(--text-light) !important;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary) !important;
+            border-bottom: 2px solid var(--secondary);
+        }
+
+        .dropdown-menu {
+            background-color: var(--primary-light);
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .dropdown-item {
+            color: var(--text-light);
+            padding: 10px 20px;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--secondary) !important;
+            color: var(--text-dark) !important;
+            border-radius: 8px;
+        }
+
+        /* Remove Bootstrap's default active background */
+        .dropdown-item.active {
+            background: transparent !important;
+        }
+
+        /* Ensure hover works in all states */
+        .dropdown-item:hover {
+            background-color: var(--secondary) !important;
+            color: var(--text-dark) !important;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    {% include "executives/navbar.html" %}
+
+    <script>
+        // console.log('{{unapproved_students | escapejs}}');
+        // console.log('{{rejected_students | escapejs}}');
+        enrollments = '{{enrollments|escapejs}}';
+        console.log(enrollments);
+    </script>
+    <h1 class="text-center my-4" style="margin-top: 90px !important;">Student Enrollments Approve Table</h1>
+    <div class="container my-5">
+        <div class="row mb-3">
+            <div class="col-12 col-md-6 mx-auto">
+                <div class="position-relative">
+                    <input type="text" id="userSearch" class="form-control form-control-lg ps-5"
+                        style="font-family: 'Poppins', sans-serif;">
+                    <span class="position-absolute top-50 start-0 translate-middle-y ms-3 text-primary"
+                        style="pointer-events:none;">
+                        <i class="bi bi-search"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0" id="userTable">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Pic</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enrollment in enrollments %}
+                    <tr class="user-row" data-user="{{ enrollment.id }}" style="cursor:pointer;">
+                        <td data-label="Pic">
+                            <img class="avatar profile-pic" src="{{ enrollment.student.profile_picture.url }}"
+                                alt="User Pic">
+                        </td>
+                        <td data-label="Name">{{ enrollment.student.full_name }}</td>
+                        <td data-label="Email">{{ enrollment.student.email }}</td>
+                        <td class="text-center" data-label="Action">
+                            <div class="d-inline-flex gap-2">
+                                <button class="icon-btn approve" user-id="{{ enrollment.id }}" title="Approve">
+                                    <i class="bi bi-check"></i>
+                                </button>
+                                <button class="icon-btn reject" user-id="{{ enrollment.id }}" title="Reject">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="user-details-row" data-user="{{ enrollment.id }}" style="display:none;">
+                        <td colspan="4">
+                            <div class="row g-4">
+                                <div class="col-12 col-md-6">
+                                    <h5><i class="bi bi-person-circle me-2"></i>Enrolled Term</h5>
+                                    <div class="detail-item mb-2">
+                                        <i class="bi bi-telephone me-2 text-primary"></i> {{ enrollment.enrollment }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+
+                            <div class="row g-4">
+                                <!-- Student Info -->
+                                <div class="col-12 col-md-6">
+                                    <h5><i class="bi bi-person-circle me-2"></i>Student Details</h5>
+                                    <div class="detail-item mb-2">
+                                        <i class="bi bi-telephone me-2 text-primary"></i> Phone: {{ enrollment.student.phone }}
+                                    </div>
+                                    <div class="detail-item mb-2">
+                                        <i class="bi bi-geo-alt me-2 text-danger"></i> City: {{ enrollment.student.city }}
+                                    </div>
+                                    <div class="detail-item mb-2">
+                                        <i class="bi bi-calendar-event me-2 text-success"></i> DOB: {{ enrollment.student.date_of_birth }}
+                                    </div>
+                                    <div class="detail-item mb-2">
+                                        <i class="bi bi-telegram me-2 text-info"></i> Telegram: {{ enrollment.student.telegram_username }}
+                                    </div>
+                                    <div class="detail-item mb-2">
+                                        <i class="bi bi-envelope-at me-2 text-secondary"></i> Outlook: {{ enrollment.student.outlook_email }}
+                                    </div>
+                                    <div class="detail-item mb-2">
+                                        <i class="bi bi-gender-ambiguous me-2 text-primary"></i> Gender: {{ enrollment.student.get_gender_display }}
+                                    </div>
+                                    <hr>
+                                    <h6><i class="bi bi-people-fill me-2 text-warning"></i>Emergency Contact</h6>
+                                    <div class="detail-item mb-2">
+                                        Name: {{ enrollment.emergency_contact.contact_name }}
+                                    </div>
+                                    <div class="detail-item mb-2">
+                                        Email: {{ enrollment.emergency_contact.email }}
+                                    </div>
+                                    <div class="detail-item mb-2">
+                                        Phone: {{ enrollment.emergency_contact.phone }}
+                                    </div>
+                                </div>
+
+                                <!-- SIS Form Info -->
+                                <div class="col-12 col-md-6">
+                                    <h5><i class="bi bi-file-earmark-text me-2"></i>SIS Form Details</h5>
+                                    <div class="detail-item mb-2">
+                                        <i class="bi bi-droplet-half me-2 text-primary"></i> Blood Group: {{ enrollment.sis_form.blood_group }}
+                                    </div>
+                                    <div class="detail-item mb-2">
+                                        <i class="bi bi-people me-2 text-secondary"></i> Ethnicity: {{ enrollment.sis_form.ethnicity }}
+                                    </div>
+                                    <div class="detail-item mb-2">
+                                        <i class="bi bi-building me-2 text-info"></i> Religion: {{ enrollment.sis_form.religion }}
+                                    </div>
+                                    <div class="detail-item mb-2">
+                                        <i class="bi bi-card-text me-2 text-success"></i> NRC: {{ enrollment.sis_form.NRC }}
+                                    </div>
+                                    <div class="detail-item mb-2">
+                                        <i class="bi bi-house-door me-2 text-warning"></i> Birthplace: {{ enrollment.sis_form.birthplace }}
+                                    </div>
+                                    <hr>
+                                    <h6><i class="bi bi-person-badge me-2"></i>Father's Details</h6>
+                                    <div class="detail-item mb-2">Name: {{ enrollment.sis_form.father_name }}</div>
+                                    <div class="detail-item mb-2">NRC: {{ enrollment.sis_form.father_NRC }}</div>
+                                    <div class="detail-item mb-2">Birthplace: {{ enrollment.sis_form.father_birthplace }}</div>
+                                    <div class="detail-item mb-2">City: {{ enrollment.sis_form.father_city }}</div>
+                                    <div class="detail-item mb-2">Phone: {{ enrollment.sis_form.father_phone }}</div>
+                                    <div class="detail-item mb-2">Profession: {{ enrollment.sis_form.father_profession }}</div>
+                                    <div class="detail-item mb-2">Email: {{ enrollment.sis_form.father_gmail }}</div>
+                                    <div class="detail-item mb-2">Ethnicity: {{ enrollment.sis_form.father_ethnicity }}
+                                    </div>
+                                    <div class="detail-item mb-2">Religion: {{ enrollment.sis_form.father_religion }}
+                                    </div>
+                                    <hr>
+                                    <h6><i class="bi bi-person-badge-fill me-2"></i>Mother's Details</h6>
+                                    <div class="detail-item mb-2">Name: {{ enrollment.sis_form.mother_name }}</div>
+                                    <div class="detail-item mb-2">NRC: {{ enrollment.sis_form.mother_NRC }}</div>
+                                    <div class="detail-item mb-2">Birthplace: {{ enrollment.sis_form.mother_birthplace }}</div>
+                                    <div class="detail-item mb-2">City: {{ enrollment.sis_form.mother_city }}</div>
+                                    <div class="detail-item mb-2">Phone: {{ enrollment.sis_form.mother_phone }}</div>
+                                    <div class="detail-item mb-2">Profession: {{ enrollment.sis_form.mother_profession }}</div>
+                                    <div class="detail-item mb-2">Email: {{ enrollment.sis_form.mother_gmail }}</div>
+                                    <div class="detail-item mb-2">Ethnicity: {{ enrollment.sis_form.mother_ethnicity }}
+                                    </div>
+                                    <div class="detail-item mb-2">Religion: {{ enrollment.sis_form.mother_religion }}
+                                    </div>
+                                    <hr>
+                                    <h6><i class="bi bi-journal-text me-2"></i>Additional Info</h6>
+                                    <div class="detail-item mb-2">Matric Roll No: {{ enrollment.sis_form.matric_roll_no }}</div>
+                                    <div class="detail-item mb-2">Exam Dept: {{ enrollment.sis_form.exam_dept }}</div>
+                                    <div class="detail-item mb-2">Passed Year: {{ enrollment.sis_form.passed_year }}
+                                    </div>
+                                    <div class="detail-item mb-2">Total Marks: {{ enrollment.sis_form.total_marks }}
+                                    </div>
+                                    <div class="detail-item mb-2">Has Spouse: {{ enrollment.sis_form.has_spouse|yesno:"Yes,No" }}</div>
+                                    <div class="detail-item mb-2">Spouse Name: {{ enrollment.sis_form.spouse_name|default:"-" }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Courses -->
+                            <div>
+                                <h5><i class="bi bi-journal-bookmark-fill me-2"></i>Selected Courses</h5>
+                                <ul>
+                                    {% for course in enrollment.courses %}
+                                    <li>{{ course.course_code }} - {{ course.course_name }} ({{ course.type }})</li>
+                                    {% empty %}
+                                    <li>No courses selected</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+
+            </table>
+        </div>
+    </div>
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal" style="display:none;">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-content" id="lightboxImg" src="" alt="Profile Picture">
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+    {% for message in messages %}
+    await alert('{{message}}');
+    {% endfor %}
+
+        const rejectButtons = document.querySelectorAll('.reject');
+        rejectButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (!confirm('Are you sure to reject this user')) {
+                    return;
+                }
+                userId = button.getAttribute('user-id');
+                window.location.href = `/executives/enrollment/reject/${userId}`;
+            });
+        });
+
+        const approveButtons = document.querySelectorAll('.approve');
+        approveButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (!confirm('Are you sure to approve this user')) {
+                    return;
+                }
+                userId = button.getAttribute('user-id');
+                window.location.href = `/executives/enrollment/approve/${userId}`;
+            });
+        });
+
+        document.querySelectorAll('.user-row').forEach(row => {
+            row.addEventListener('click', () => {
+                const userId = row.getAttribute('data-user');
+                const detailsRow = document.querySelector(`.user-details-row[data-user="${userId}"]`);
+                if (detailsRow) {
+                    const isVisible = detailsRow.style.display !== 'none';
+                    detailsRow.style.display = isVisible ? 'none' : 'table-row';
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

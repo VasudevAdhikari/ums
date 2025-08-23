@@ -3,7 +3,6 @@ const DEGREE_KEY = 'degrees_data_v1';
 
 // Get degrees from localStorage or use mock data if not present
 function getDegrees() {
-  // const data = localStorage.getItem(DEGREE_KEY);
   const data = window.ALL_DEGREES;
   if (data) return data;
 }
@@ -13,26 +12,58 @@ function renderDegrees(degrees) {
   grid.innerHTML = '';
   if (degrees) degrees.forEach((degree, index) => {
     const card = document.createElement('div');
-    card.className = 'degree-card';
+    card.className = 'degree-card fade-in';
     card.innerHTML = `
-      <div class="degree-img">
-        <img src="${degree.image}" alt="${degree.title}">
+      <div class="degree-card-header">
+        <div class="degree-img">
+          <img src="${degree.image}" alt="${degree.title}">
+        </div>
+        <div class="degree-info">
+          <h3 class="degree-title">${degree.title}</h3>
+          <span class="degree-code">${degree.code}</span>
+          <div class="degree-faculty">
+            <i class="fa-solid fa-graduation-cap"></i>
+            ${degree.faculty.name}
+          </div>
+        </div>
       </div>
-      <h2>${degree.title}</h2>
-      <p>Degree Code: ${degree.code}</p>
-      <p>Duration (Years): ${degree.duration}</p>
-      <p>Total Credit: ${degree.credit}</p>
-      <p>Total Courses: ${degree.courses}</p>
-      <p>Faculty : ${degree.faculty.name}</p>
+      
+      <div class="degree-card-content">
+        <p class="degree-description">${degree.description || 'No description available'}</p>
+        
+        <div class="degree-stats">
+          <div class="degree-stat">
+            <div class="degree-stat-value">${degree.duration}</div>
+            <div class="degree-stat-label">Years</div>
+          </div>
+          <div class="degree-stat">
+            <div class="degree-stat-value">${degree.credit}</div>
+            <div class="degree-stat-label">Credits</div>
+          </div>
+          <div class="degree-stat">
+            <div class="degree-stat-value">${degree.courses}</div>
+            <div class="degree-stat-label">Courses</div>
+          </div>
+        </div>
+      </div>
+      
       <div class="card-actions">
-        <button class="view-btn">View</button>
-        <button class="delete-btn">Delete</button>
+        <button class="view-btn">
+          <i class="fa-solid fa-eye"></i>
+          View
+        </button>
+        <button class="delete-btn">
+          <i class="fa-solid fa-trash-can"></i>
+          Delete
+        </button>
       </div>
     `;
+    
     // View button functionality
     card.querySelector('.view-btn').onclick = function () {
       showDegreeDetailsModal(degree);
     };
+    
     // Delete button functionality
     card.querySelector('.delete-btn').onclick = function () {
       showDeleteConfirm(() => {
@@ -46,6 +77,7 @@ function renderDegrees(degrees) {
         }
       });
     };
+    
     grid.appendChild(card);
   });
 }
@@ -60,18 +92,11 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
   let editing = isAddMode ? true : false;
   let tempDegree = JSON.parse(JSON.stringify(degree));
   let selectedFaculty = degree.faculty || null;
+  let descriptionExpanded = false;
+  
   const modal = document.createElement('div');
   modal.id = 'degreeDetailsModal';
-  modal.style.position = 'fixed';
-  modal.style.top = 0;
-  modal.style.left = 0;
-  modal.style.width = '100vw';
-  modal.style.height = '100vh';
-  modal.style.background = 'rgba(0,0,0,0.25)';
-  modal.style.display = 'flex';
-  modal.style.alignItems = 'center';
-  modal.style.justifyContent = 'center';
-  modal.style.zIndex = 4000;
+  modal.className = 'modal-overlay';
 
   function renderModalContent() {
     // Calculate totals
@@ -90,20 +115,55 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
     // Editable fields or static text
     function field(name, value, type = "text", extra = "") {
       return editing
-        ? `<input type="${type}" id="edit-${name}" value="${value}" style="width:98%;padding:6px 8px;border-radius:6px;border:1px solid #ccc;font-size:1rem;" ${extra}>`
+        ? `<input type="${type}" id="edit-${name}" value="${value}" class="form-input" ${extra}>`
         : `<span>${value}</span>`;
     }
 
-    // Editable image
-    const imageHtml = `
-      <img id="degreeImagePreview" src="${tempDegree.image}" alt="Degree Image" style="width:100px;height:100px;object-fit:cover;border-radius:50%;border:1px solid #ccc;">
-      <br>
-      ${editing ? `
-      <label style="margin-top:10px;display:inline-block;cursor:pointer;">
-        <input type="file" id="degreeImageInput" accept="image/*" style="display:none;">
-        <span style="background:#444;color:#fff;padding:8px 18px;border-radius:8px;border:none;cursor:pointer;display:inline-block;">Upload</span>
-      </label>` : ""}
-    `;
+    // Faculty selection UI and Degree Description textarea
+    let facultyHtml = '';
+    if (editing) {
+      facultyHtml = `
+        <div class="faculty-section">
+          <div class="faculty-label">
+            <i class="fa-solid fa-graduation-cap"></i>
+            Faculty
+          </div>
+          <button id="chooseFacultyBtn" class="choose-faculty-btn">
+            ${selectedFaculty ? `<img src="${window.ALL_FACULTIES.find(faculty => faculty.id === selectedFaculty.id).photo}" alt="Faculty Photo" class="faculty-avatar">${selectedFaculty.name}` : '<i class="fa-solid fa-plus"></i> Choose Faculty'}
+          </button>
+        </div>
+        <div class="description-section">
+          <div class="description-label">
+            <i class="fa-solid fa-align-left"></i>
+            Degree Description
+          </div>
+          <textarea id="edit-description" class="form-input form-textarea" placeholder="Enter degree description...">${tempDegree.description ? tempDegree.description : ''}</textarea>
+        </div>
+      `;
+    } else {
+      facultyHtml = `
+        <div class="faculty-section">
+          <div class="faculty-label">
+            <i class="fa-solid fa-graduation-cap"></i>
+            Faculty
+          </div>
+          ${selectedFaculty ? `<div class="d-flex align-center gap-2"><img src="${window.ALL_FACULTIES.find(faculty => faculty.id === selectedFaculty.id).photo}" alt="Faculty Photo" class="faculty-avatar">${selectedFaculty.name}</div>` : '<span style="color:#888;">Not chosen</span>'}
+        </div>
+        <div class="description-section">
+          <div class="description-label">
+            <i class="fa-solid fa-align-left"></i>
+            Degree Description
+          </div>
+          <div class="description-content">
+            <p class="description-text ${!descriptionExpanded ? 'collapsed' : ''}">${tempDegree.description ? tempDegree.description : 'No description available'}</p>
+            ${tempDegree.description && tempDegree.description.length > 150 ? `<button class="read-more-btn" onclick="toggleDescription()">
+              <i class="fa-solid ${descriptionExpanded ? 'fa-chevron-up' : 'fa-chevron-down'}"></i>
+              ${descriptionExpanded ? 'Read Less' : 'Read More'}
+            </button>` : ''}
+          </div>
+        </div>
+      `;
+    }
 
     // Editable courses table
     let semestersHtml = '';
@@ -124,7 +184,7 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
               <td><span>${course.credit}</span></td>
               <td><span>${course.hours}</span></td>
               <td>
-                <select data-sem="${sIdx}" data-course="${cIdx}" class="edit-course-field" data-field="type" style="width:120px">
+                <select data-sem="${sIdx}" data-course="${cIdx}" class="edit-course-field course-type-select" data-field="type">
                   <option value="Core" ${course.type === "Core" ? "selected" : ""}>Core</option>
                   <option value="Elective" ${course.type === "Elective" ? "selected" : ""}>Elective</option>
                   <option value="Supporting" ${course.type === "Supporting" ? "selected" : ""}>Supporting</option>
@@ -132,152 +192,182 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
                 </select>
               </td>
               <td>
-                <button class="remove-course-btn" data-sem="${sIdx}" data-course="${cIdx}" style="color:#ff3b3b;background:none;border:none;font-size:1.2rem;cursor:pointer;" title="Remove"><i class="fa fa-trash"></i></button>
+                <button class="remove-course-btn course-remove-btn" data-sem="${sIdx}" data-course="${cIdx}" title="Remove">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
               </td>
             </tr>
           ` : `
             <tr>
-              <td style="padding:8px 12px; text-align:left;">${course.code}</td>
-              <td style="padding:8px 12px; text-align:left;">${course.title}</td>
-              <td style="padding:8px 12px; text-align:center;">${course.credit}</td>
-              <td style="padding:8px 12px; text-align:center;">${course.hours}</td>
-              <td style="padding:8px 12px; text-align:center;">${course.type}</td>
+              <td>${course.code}</td>
+              <td>${course.title}</td>
+              <td>${course.credit}</td>
+              <td>${course.hours}</td>
+              <td>${course.type}</td>
             </tr>
           `;
         }).join('');
         return `
-          <details style="margin-bottom:14px; border-radius:8px; border:1px solid #e3f2fd; background:#f9fbfd;" ${editing ? "open" : ""}>
-            <summary style="font-weight:600; font-size:1.1rem; color:#1da1ff; padding:10px 14px; cursor:pointer; outline:none;">
-              Semester ${sem.semester}
-              ${editing ? `<button class="remove-semester-btn" data-sem="${sIdx}" style="margin-left:12px;color:#ff3b3b;background:none;border:none;font-size:1.1rem;cursor:pointer;" title="Remove Semester"><i class="fa fa-trash"></i></button>` : ""}
-            </summary>
-            <div style="padding:12px 18px 8px 18px;">
-              <div style="margin-bottom:8px;">
-                <label style="font-weight:500;">Total Weeks to Study: </label>
-                ${editing ? `<input type='number' min='1' max='52' value='${sem.total_weeks}' data-sem-weeks='${sIdx}' class='edit-semester-weeks' style='width:60px;padding:4px 6px;border-radius:6px;border:1px solid #ccc;font-size:1rem;'>` : `<span>${sem.total_weeks || 16}</span>`}
+          <div class="semester-item">
+            <div class="semester-header">
+              <div class="semester-title">
+                <i class="fa-solid fa-book"></i>
+                Semester ${sem.semester}
               </div>
-              <table style="width:100%;border-collapse:collapse;">
+              ${editing ? `<div class="semester-actions">
+                <button class="semester-action-btn remove-semester-btn" data-sem="${sIdx}" title="Remove Semester">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>` : ""}
+            </div>
+            <div class="semester-content">
+              <div class="semester-weeks">
+                <span class="weeks-label">Total Weeks to Study:</span>
+                ${editing ? `<input type='number' min='1' max='52' value='${sem.total_weeks}' data-sem-weeks='${sIdx}' class='edit-semester-weeks weeks-input'>` : `<span>${sem.total_weeks || 16}</span>`}
+              </div>
+              <table class="courses-table">
                 <thead>
-                  <tr style="background:#e3f2fd;">
-                    <th style="padding:8px 12px; text-align:left;">Code</th>
-                    <th style="padding:8px 12px; text-align:left;">Title</th>
-                    <th style="padding:8px 12px; text-align:center;">Credit</th>
-                    <th style="padding:8px 12px; text-align:center;">Hours</th>
-                    <th style="padding:8px 12px; text-align:center;">Type</th>
+                  <tr>
+                    <th>Code</th>
+                    <th>Title</th>
+                    <th>Credit</th>
+                    <th>Hours</th>
+                    <th>Type</th>
                     ${editing ? `<th></th>` : ""}
                   </tr>
                 </thead>
                 <tbody>${rows}</tbody>
               </table>
-              <div style="text-align:right;font-size:1rem; margin-top:8px;">
-                <b>Total Credits:</b> ${semCredit} &nbsp; | &nbsp; <b>Total Hours:</b> ${semHours}
+              <div class="text-center mb-1">
+                <strong>Total Credits:</strong> ${semCredit} &nbsp; | &nbsp; <strong>Total Hours:</strong> ${semHours}
               </div>
-              ${editing ? `<button type="button" class="add-course-btn" data-sem="${sIdx}" style="margin-top:8px;background:#1da1ff;color:#fff;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;"><i class="fa fa-plus"></i> Add Course</button>` : ""}
+              ${editing ? `<button type="button" class="add-course-btn" data-sem="${sIdx}">
+                <i class="fa-solid fa-plus"></i> Add Course
+              </button>` : ""}
             </div>
-          </details>
+          </div>
         `;
       }).join('');
     } else {
-      semestersHtml = `<div style=\"color:#888;\">No syllabus data available.</div>`;
-    }
-
-    // Faculty selection UI and Degree Description textarea
-    let facultyHtml = '';
-    if (editing) {
-      facultyHtml = `x
-        <div style="margin-bottom:16px;">
-          <label style="font-weight:600;">Faculty</label><br>
-          <button id="chooseFacultyBtn" style="margin-top:6px;background:#1da1ff;color:#fff;border:none;padding:6px 18px;border-radius:8px;cursor:pointer;">
-            ${selectedFaculty ? `<img src="${window.ALL_FACULTIES.find(faculty => faculty.id === selectedFaculty.id).photo}" alt="Faculty Photo" style="width:32px;height:32px;border-radius:50%;vertical-align:middle;margin-right:8px;">${selectedFaculty.name}` : 'Choose Faculty'}
-          </button>
-        </div>
-        <div style="margin-bottom:16px;">
-          <label style="font-weight:600;">Degree Description</label><br>
-          <textarea id="edit-description" style="width:98%;min-height:70px;max-height:180px;padding:8px 10px;border-radius:6px;border:1px solid #ccc;font-size:1rem;resize:vertical;">${tempDegree.description ? tempDegree.description : ''}</textarea>
-        </div>
-      `;
-    } else {
-      facultyHtml = `<div style="margin-bottom:16px;"><label style="font-weight:600;">Faculty</label><br>${selectedFaculty ? `<img src="${window.ALL_FACULTIES.find(faculty => faculty.id === selectedFaculty.id).photo}" alt="Faculty Photo" style="width:32px;height:32px;border-radius:50%;vertical-align:middle;margin-right:8px;">${selectedFaculty.name}` : '<span style="color:#888;">Not chosen</span>'}</div>`;
-      facultyHtml += `<div style=\"margin-bottom:16px;\"><label style=\"font-weight:600;\">Degree Description</label><br><div style=\"white-space:pre-wrap;color:#444;\">${tempDegree.description ? tempDegree.description : '<span style=\"color:#888;\">No description</span>'}</div></div>`;
+      semestersHtml = `<div class="text-center" style="color:#888;padding:2rem;">No syllabus data available.</div>`;
     }
 
     // Modal actions
     let actionsHtml = '';
     if (editing) {
       actionsHtml = `
-        <button id="saveDegreeBtn" title="Save" class="modal-action-btn"><i class="fa-solid fa-floppy-disk"></i> Save</button>:
-        <button id="cancelEditBtn" title="Cancel" class="modal-action-btn"><i class="fa-solid fa-xmark"></i> Cancel</button>
+        <button id="saveDegreeBtn" class="modal-action-btn">
+          <i class="fa-solid fa-save"></i> Save
+        </button>
+        <button id="cancelEditBtn" class="modal-action-btn">
+          <i class="fa-solid fa-times"></i> Cancel
+        </button>
       `;
     } else {
       actionsHtml = `
-        <button id="editDegreeBtn" title="Edit" class="modal-action-btn"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-        <button id="closeDegreeDetailsBtn" title="Close" class="modal-action-btn"><i class="fa-solid fa-xmark"></i></button>
+        <button id="editDegreeBtn" class="modal-action-btn">
+          <i class="fa-solid fa-edit"></i> Edit
+        </button>
+        <button id="closeDegreeDetailsBtn" class="modal-action-btn">
+          <i class="fa-solid fa-times"></i> Close
+        </button>
       `;
     }
 
     modal.innerHTML = `
-      <div style="
-        background: #fff;
-        border-radius: 18px;
-        padding: 32px 28px 24px 28px;
-        box-shadow: 0 8px 32px rgba(44,44,44,0.13), 0 2px 8px rgba(0,0,0,0.08);
-        font-family: 'Poppins', Arial, sans-serif;
-        min-width: 340px;
-        max-width: 98vw;
-        width: 700px;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        height: 90vh;
-        max-height: 90vh;
-        overflow: hidden;
-      ">
-        <div class="modal-actions">
-          ${actionsHtml}
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">
+            <i class="fa-solid fa-graduation-cap"></i>
+            Degree Details
+          </h2>
+          <div class="modal-actions">
+            ${actionsHtml}
+          </div>
         </div>
-        <h2 style="margin-top:0;font-size:1.35rem;color:#1da1ff;letter-spacing:1px;">Degree Details</h2>
-        <div class="degree-details-sticky" style="background:#fff;z-index:2;">
-          <table style="width:100%;margin-bottom:18px;">
-            <tr>
-              <td style="font-weight:600;">Name</td>
-              <td>${field("title", tempDegree.title)}</td>
-              <td rowspan="6" style="text-align:center;vertical-align:middle;">
-                ${imageHtml}
-              </td>
-            </tr>
-            <tr>
-              <td style="font-weight:600;">Degree Code</td>
-              <td>${field("code", tempDegree.code)}</td>
-            </tr>
-            <tr>
-              <td style="font-weight:600;">Duration (Years)</td>
-              <td>${field("duration", tempDegree.duration)}</td>
-            </tr>
-            <tr>
-              <td colspan="2">${facultyHtml}</td>
-            </tr>
-            <tr>
-              <td style="font-weight:600;">Total Credits</td>
-              <td id="totalCreditCell">${totalCredit}</td>
-            </tr>
-            <tr>
-              <td style="font-weight:600;">Total Courses</td>
-              <td id="totalCoursesCell">${totalCourses}</td>
-            </tr>
-            <tr>
-              <td style="font-weight:600;">Total Hours</td>
-              <td id="totalHoursCell">${totalHours}</td>
-            </tr>
-          </table>
-        </div>
-        <div class="syllabus-scrollable" style="flex:1 1 auto;overflow-y:auto;padding-top:0;margin-top:0;">
-          <div style="border-top:1px solid #aaa;padding-top:14px;">
-            <b style="font-size:1.1rem;">Syllabus Structure</b>
-            <div style="margin-top:10px;">
+        
+        <div class="modal-body">
+          <div class="degree-details-section">
+            <div class="degree-details-header">
+              <div class="degree-details-image">
+                <img src="${tempDegree.image}" alt="Degree Image">
+              </div>
+              <div class="degree-details-info">
+                <h1 class="degree-details-title">${tempDegree.title}</h1>
+                <span class="degree-details-code">${tempDegree.code}</span>
+                
+                <div class="degree-details-meta">
+                  <div class="degree-meta-item">
+                    <div class="degree-meta-icon">
+                      <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div class="degree-meta-content">
+                      <h4>Duration</h4>
+                      <p>${tempDegree.duration} Years</p>
+                    </div>
+                  </div>
+                  <div class="degree-meta-item">
+                    <div class="degree-meta-icon">
+                      <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="degree-meta-content">
+                      <h4>Total Credits</h4>
+                      <p>${totalCredit}</p>
+                    </div>
+                  </div>
+                  <div class="degree-meta-item">
+                    <div class="degree-meta-icon">
+                      <i class="fa-solid fa-book"></i>
+                    </div>
+                    <div class="degree-meta-content">
+                      <h4>Total Courses</h4>
+                      <p>${totalCourses}</p>
+                    </div>
+                  </div>
+                  <div class="degree-meta-item">
+                    <div class="degree-meta-icon">
+                      <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div class="degree-meta-content">
+                      <h4>Total Hours</h4>
+                      <p>${totalHours}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            ${editing ? `
+              <div class="edit-form">
+                <div class="form-group">
+                  <label class="form-label">Degree Name</label>
+                  ${field("title", tempDegree.title)}
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Degree Code</label>
+                  ${field("code", tempDegree.code)}
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Duration (Years)</label>
+                  ${field("duration", tempDegree.duration, "number", "min='1' max='10'")}
+                </div>
+                ${facultyHtml}
+              </div>
+            ` : `
+              ${facultyHtml}
+            `}
+          </div>
+          
+          <div class="syllabus-section">
+            <h3 class="syllabus-title">
+              <i class="fa-solid fa-list"></i>
+              Syllabus Structure
+            </h3>
+            <div>
               ${semestersHtml}
               ${editing ? `
-                <button class="add-semester-btn" style="margin-top:18px;background:#1da1ff;color:#fff;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;">
-                  <i class="fa fa-plus"></i> Add Semester
+                <button class="add-semester-btn">
+                  <i class="fa-solid fa-plus"></i> Add Semester
                 </button>
               ` : ""}
             </div>
@@ -286,6 +376,22 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
       </div>
     `;
   }
+
+  // Global function for toggling description
+  window.toggleDescription = function() {
+    descriptionExpanded = !descriptionExpanded;
+    const descText = modal.querySelector('.description-text');
+    const readMoreBtn = modal.querySelector('.read-more-btn');
+    const icon = readMoreBtn.querySelector('i');
+    
+    if (descriptionExpanded) {
+      descText.classList.remove('collapsed');
+      readMoreBtn.innerHTML = '<i class="fa-solid fa-chevron-up"></i> Read Less';
+    } else {
+      descText.classList.add('collapsed');
+      readMoreBtn.innerHTML = '<i class="fa-solid fa-chevron-down"></i> Read More';
+    }
+  };
 
   // Initial render
   renderModalContent();
@@ -364,7 +470,6 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
 
       // Add mode: keep previous logic
       if (isAddMode) {
-        // ...existing code...
         // Compose degreeData for server
         const degreeData = {
           name: tempDegree.title,
@@ -433,25 +538,26 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
         // Show confirm modal
         const confirmModal = document.createElement('div');
         confirmModal.id = 'confirmEditModal';
-        confirmModal.style.position = 'fixed';
-        confirmModal.style.top = '0';
-        confirmModal.style.left = '0';
-        confirmModal.style.width = '100vw';
-        confirmModal.style.height = '100vh';
-        confirmModal.style.background = 'rgba(0,0,0,0.25)';
-        confirmModal.style.display = 'flex';
-        confirmModal.style.alignItems = 'center';
-        confirmModal.style.justifyContent = 'center';
-        confirmModal.style.zIndex = 6000;
+        confirmModal.className = 'modal-overlay';
         confirmModal.innerHTML = `
-          <div style="background:#fff;border-radius:16px;padding:32px 28px;min-width:320px;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(44,44,44,0.13),0 2px 8px rgba(0,0,0,0.08);font-family:'Poppins',Arial,sans-serif;">
-            <h2 style='color:#1da1ff;font-size:1.2rem;margin-bottom:18px;'>Confirm Save</h2>
-            <div style='color:#444;font-size:1.08rem;margin-bottom:22px;'>Are you sure you want to save the changes to this degree?</div>
-            <button id='confirmEditSaveBtn' style='background:#1da1ff;color:#fff;border:none;padding:10px 32px;border-radius:10px;font-size:1.08rem;font-weight:600;margin-right:18px;cursor:pointer;'>Save</button>
-            <button id='cancelEditSaveBtn' style='background:#eee;color:#444;border:none;padding:10px 32px;border-radius:10px;font-size:1.08rem;font-weight:600;cursor:pointer;'>Cancel</button>
+          <div class="faculty-selection-modal">
+            <div class="faculty-modal-header">
+              <h3 class="faculty-modal-title">
+                <i class="fa-solid fa-save"></i>
+                Confirm Save
+              </h3>
+            </div>
+            <div class="text-center mb-3">
+              <p>Are you sure you want to save the changes to this degree?</p>
+            </div>
+            <div class="faculty-modal-actions">
+              <button id="confirmEditSaveBtn" class="faculty-modal-btn primary">Save</button>
+              <button id="cancelEditSaveBtn" class="faculty-modal-btn secondary">Cancel</button>
+            </div>
           </div>
         `;
         document.body.appendChild(confirmModal);
+        
         document.getElementById('confirmEditSaveBtn').onclick = function() {
           confirmModal.remove();
           // Compose degreeData for server
@@ -549,24 +655,6 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
       };
     }
 
-    // Image upload
-    const imageInput = modal.querySelector('#degreeImageInput');
-    const imagePreview = modal.querySelector('#degreeImagePreview');
-    if (imageInput && imagePreview) {
-      imageInput.addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (file && file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = function (evt) {
-            imagePreview.src = evt.target.result;
-          };
-          reader.readAsDataURL(file);
-        } else {
-          alert('Please select a valid image file.');
-        }
-      });
-    }
-
     // Course field edits
     modal.querySelectorAll('.edit-course-field').forEach(input => {
       input.addEventListener('input', function (e) {
@@ -602,7 +690,7 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
         const semIdx = +this.dataset.sem;
         const courseIdx = +this.dataset.course;
         // Save scroll position
-        const scrollable = modal.querySelector('.syllabus-scrollable');
+        const scrollable = modal.querySelector('.modal-body');
         const scrollTop = scrollable ? scrollable.scrollTop : 0;
 
         // Sync degree fields before changing syllabus
@@ -615,7 +703,7 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
         setEditEvents();
 
         // Restore scroll position
-        const newScrollable = modal.querySelector('.syllabus-scrollable');
+        const newScrollable = modal.querySelector('.modal-body');
         if (newScrollable) newScrollable.scrollTop = scrollTop;
       });
     });
@@ -626,7 +714,7 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
         e.preventDefault();
         const semIdx = +this.dataset.sem;
         // Save scroll position
-        const scrollable = modal.querySelector('.syllabus-scrollable');
+        const scrollable = modal.querySelector('.modal-body');
         const scrollTop = scrollable ? scrollable.scrollTop : 0;
 
         // Sync degree fields before changing syllabus
@@ -645,7 +733,7 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
           setModalEvents();
           setEditEvents();
           // Restore scroll position
-          const newScrollable = modal.querySelector('.syllabus-scrollable');
+          const newScrollable = modal.querySelector('.modal-body');
           if (newScrollable) newScrollable.scrollTop = scrollTop;
         });
       });
@@ -679,16 +767,7 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
 
       const modal = document.createElement('div');
       modal.id = 'courseSelectionModal';
-      modal.style.position = 'fixed';
-      modal.style.top = 0;
-      modal.style.left = 0;
-      modal.style.width = '100vw';
-      modal.style.height = '100vh';
-      modal.style.background = 'rgba(0,0,0,0.25)';
-      modal.style.display = 'flex';
-      modal.style.alignItems = 'center';
-      modal.style.justifyContent = 'center';
-      modal.style.zIndex = 5001;
+      modal.className = 'modal-overlay';
 
       function renderCourseList() {
         const rows = filteredCourses.map(course => `
@@ -703,24 +782,31 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
       }
 
       modal.innerHTML = `
-        <div style="background:#fff;border-radius:16px;padding:28px 24px;min-width:340px;max-width:98vw;width:600px;max-height:90vh;overflow:auto;box-shadow:0 8px 32px rgba(44,44,44,0.13),0 2px 8px rgba(0,0,0,0.08);font-family:'Poppins',Arial,sans-serif;">
-          <h2 style="margin-top:0;font-size:1.2rem;color:#1da1ff;">Select a Course</h2>
-          <input id="courseSearchInput" type="text" placeholder="Search by code or name..." style="width:100%;padding:8px 12px;margin-bottom:14px;border-radius:8px;border:1px solid #ccc;font-size:1rem;">
-          <table style="width:100%;border-collapse:collapse;">
-            <thead>
-              <tr style="background:#e3f2fd;">
-                <th style="padding:8px 12px;">Code</th>
-                <th style="padding:8px 12px;">Name</th>
-                <th style="padding:8px 12px;">Credits</th>
-                <th style="padding:8px 12px;">Hours</th>
-              </tr>
-            </thead>
-            <tbody id="courseListBody">
-              ${renderCourseList()}
-            </tbody>
-          </table>
-          <div style="text-align:right;margin-top:18px;">
-            <button id="closeCourseSelectBtn" style="background:#1da1ff;color:#fff;border:none;padding:8px 24px;border-radius:8px;cursor:pointer;">Cancel</button>
+        <div class="faculty-selection-modal">
+          <div class="faculty-modal-header">
+            <h3 class="faculty-modal-title">
+              <i class="fa-solid fa-book"></i>
+              Select a Course
+            </h3>
+          </div>
+          <input id="courseSearchInput" type="text" placeholder="Search by code or name..." class="faculty-search-input">
+          <div class="faculty-list">
+            <table class="courses-table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Name</th>
+                  <th>Credits</th>
+                  <th>Hours</th>
+                </tr>
+              </thead>
+              <tbody id="courseListBody">
+                ${renderCourseList()}
+              </tbody>
+            </table>
+          </div>
+          <div class="faculty-modal-actions">
+            <button id="closeCourseSelectBtn" class="faculty-modal-btn secondary">Cancel</button>
           </div>
         </div>
       `;
@@ -768,35 +854,37 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
       let filtered = faculties;
       const modal = document.createElement('div');
       modal.id = 'facultySelectionModal';
-      modal.style.position = 'fixed';
-      modal.style.top = 0;
-      modal.style.left = 0;
-      modal.style.width = '100vw';
-      modal.style.height = '100vh';
-      modal.style.background = 'rgba(0,0,0,0.25)';
-      modal.style.display = 'flex';
-      modal.style.alignItems = 'center';
-      modal.style.justifyContent = 'center';
-      modal.style.zIndex = 5002;
+      modal.className = 'modal-overlay';
+      
       function renderList() {
         return filtered.map(f => `
-          <div class="faculty-select-row" data-id="${f.id}" style="display:flex;align-items:center;gap:16px;padding:12px 18px;cursor:pointer;border-radius:10px;margin-bottom:8px;background:#f9fbfd;border:1px solid #e3f2fd;transition:background 0.2s;">
-            <img src="${f.photo}" alt="Faculty Photo" style="width:48px;height:48px;border-radius:50%;object-fit:cover;">
-            <span style="font-size:1.1rem;font-weight:500;">${f.name}</span>
+          <div class="faculty-item" data-id="${f.id}">
+            <img src="${f.photo}" alt="Faculty Photo" class="faculty-avatar-large">
+            <span class="faculty-name">${f.name}</span>
           </div>
         `).join('');
       }
+      
       modal.innerHTML = `
-        <div style="background:#fff;border-radius:16px;padding:28px 24px;min-width:340px;max-width:98vw;width:400px;max-height:90vh;overflow:auto;box-shadow:0 8px 32px rgba(44,44,44,0.13),0 2px 8px rgba(0,0,0,0.08);font-family:'Poppins',Arial,sans-serif;">
-          <h2 style="margin-top:0;font-size:1.2rem;color:#1da1ff;">Select a Faculty</h2>
-          <input id="facultySearchInput" type="text" placeholder="Search faculty..." style="width:100%;padding:8px 12px;margin-bottom:14px;border-radius:8px;border:1px solid #ccc;font-size:1rem;">
-          <div id="facultyListBody">${renderList()}</div>
-          <div style="text-align:right;margin-top:18px;">
-            <button id="closeFacultySelectBtn" style="background:#1da1ff;color:#fff;border:none;padding:8px 24px;border-radius:8px;cursor:pointer;">Cancel</button>
+        <div class="faculty-selection-modal">
+          <div class="faculty-modal-header">
+            <h3 class="faculty-modal-title">
+              <i class="fa-solid fa-graduation-cap"></i>
+              Select a Faculty
+            </h3>
+          </div>
+          <input id="facultySearchInput" type="text" placeholder="Search faculty..." class="faculty-search-input">
+          <div class="faculty-list" id="facultyListBody">
+            ${renderList()}
+          </div>
+          <div class="faculty-modal-actions">
+            <button id="closeFacultySelectBtn" class="faculty-modal-btn secondary">Cancel</button>
           </div>
         </div>
       `;
+      
       document.body.appendChild(modal);
+      
       // Search
       modal.querySelector('#facultySearchInput').oninput = function() {
         const q = this.value.trim().toLowerCase();
@@ -804,8 +892,9 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
         modal.querySelector('#facultyListBody').innerHTML = renderList();
         setRowEvents();
       };
+      
       function setRowEvents() {
-        modal.querySelectorAll('.faculty-select-row').forEach(row => {
+        modal.querySelectorAll('.faculty-item').forEach(row => {
           row.onclick = function() {
             const id = this.getAttribute('data-id');
             const faculty = faculties.find(f => String(f.id) === String(id));
@@ -827,7 +916,7 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
         const semIdx = +this.dataset.sem;
         showDeleteSemesterConfirm(() => {
           // Save scroll position
-          const scrollable = modal.querySelector('.syllabus-scrollable');
+          const scrollable = modal.querySelector('.modal-body');
           const scrollTop = scrollable ? scrollable.scrollTop : 0;
 
           // Sync degree fields before changing syllabus
@@ -840,7 +929,7 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
           setEditEvents();
 
           // Restore scroll position
-          const newScrollable = modal.querySelector('.syllabus-scrollable');
+          const newScrollable = modal.querySelector('.modal-body');
           if (newScrollable) newScrollable.scrollTop = scrollTop;
         });
       });
@@ -852,7 +941,7 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
       addSemesterBtn.addEventListener('click', function (e) {
         e.preventDefault();
         // Save scroll position
-        const scrollable = modal.querySelector('.syllabus-scrollable');
+        const scrollable = modal.querySelector('.modal-body');
         const scrollTop = scrollable ? scrollable.scrollTop : 0;
 
         // --- Sync degree fields before changing syllabus ---
@@ -877,7 +966,7 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
         setEditEvents();
 
         // Restore scroll position
-        const newScrollable = modal.querySelector('.syllabus-scrollable');
+        const newScrollable = modal.querySelector('.modal-body');
         if (newScrollable) newScrollable.scrollTop = scrollTop;
       });
     }
@@ -887,66 +976,32 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
   if (editing) setEditEvents();
 }
 
-// Custom confirm modal (unchanged)
+// Custom confirm modal
 function showDeleteConfirm(onConfirm) {
   const oldModal = document.getElementById('deleteConfirmModal');
   if (oldModal) oldModal.remove();
 
   const modal = document.createElement('div');
   modal.id = 'deleteConfirmModal';
-  modal.style.position = 'fixed';
-  modal.style.top = 0;
-  modal.style.left = 0;
-  modal.style.width = '100vw';
-  modal.style.height = '100vh';
-  modal.style.background = 'rgba(0,0,0,0.25)';
-  modal.style.display = 'flex';
-  modal.style.alignItems = 'center';
-  modal.style.justifyContent = 'center';
-  modal.style.zIndex = 3000;
+  modal.className = 'modal-overlay';
 
   modal.innerHTML = `
-    <div style="
-      background: #fff;
-      border-radius: 16px;
-      padding: 32px 28px 24px 28px;
-      box-shadow: 0 8px 32px rgba(44,44,44,0.13), 0 2px 8px rgba(0,0,0,0.08);
-      font-family: 'Poppins', Arial, sans-serif;
-      text-align: center;
-      min-width: 320px;
-      max-width: 90vw;
-    ">
-      <h2 style="color:#1da1ff; font-family:'Poppins', Arial, sans-serif; margin-bottom:18px;">Confirm Delete</h2>
-      <p style="color:#444; font-size:1.1rem; margin-bottom:28px; font-family:'Poppins', Arial, sans-serif;">
-        Are you sure you want to delete this degree?
-      </p>
-      <button id="confirmDeleteBtn" style="
-        background: linear-gradient(90deg,#ff3b3b 60%,#ffb2b2 100%);
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        padding: 12px 32px;
-        font-size: 1.1rem;
-        font-weight: bold;
-        font-family: 'Poppins', Arial, sans-serif;
-        cursor: pointer;
-        margin-right: 18px;
-        transition: background 0.2s, box-shadow 0.2s;
-        box-shadow: 0 2px 8px rgba(29,161,255,0.10);
-      ">Delete</button>
-      <button id="cancelDeleteBtn" style="
-        background: linear-gradient(90deg,#1da1ff 60%,#00bcd4 100%);
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        padding: 12px 32px;
-        font-size: 1.1rem;
-        font-weight: bold;
-        font-family: 'Poppins', Arial, sans-serif;
-        cursor: pointer;
-        transition: background 0.2s, box-shadow 0.2s;
-        box-shadow: 0 2px 8px rgba(29,161,255,0.10);
-      ">Cancel</button>
+    <div class="faculty-selection-modal">
+      <div class="faculty-modal-header">
+        <h3 class="faculty-modal-title">
+          <i class="fa-solid fa-exclamation-triangle"></i>
+          Confirm Delete
+        </h3>
+      </div>
+      <div class="text-center mb-3">
+        <p>Are you sure you want to delete this degree?</p>
+      </div>
+      <div class="faculty-modal-actions">
+        <button id="confirmDeleteBtn" class="faculty-modal-btn primary">
+          <i class="fa-solid fa-trash"></i> Delete
+        </button>
+        <button id="cancelDeleteBtn" class="faculty-modal-btn secondary">Cancel</button>
+      </div>
     </div>
   `;
 
@@ -969,53 +1024,24 @@ function showWarningBox(message, reload=false) {
 
   const warn = document.createElement('div');
   warn.id = 'customWarningBox';
-  warn.style.position = 'fixed';
-  warn.style.top = '0';
-  warn.style.left = '0';
-  warn.style.width = '100vw';
-  warn.style.height = '100vh';
-  warn.style.background = 'rgba(0,0,0,0.15)';
-  warn.style.display = 'flex';
-  warn.style.alignItems = 'center';
-  warn.style.justifyContent = 'center';
-  warn.style.zIndex = 5000;
-
+  warn.className = 'modal-overlay';
   warn.innerHTML = `
-    <div style="
-      background: #fff;
-      border-radius: 16px;
-      padding: 32px 28px 24px 28px;
-      box-shadow: 0 8px 32px rgba(44,44,44,0.13), 0 2px 8px rgba(0,0,0,0.08);
-      font-family: 'Poppins', Arial, sans-serif;
-      text-align: center;
-      min-width: 320px;
-      max-width: 90vw;
-      border: 2px solid #1da1ff;
-    ">
-      <div style="font-size:2.2rem;color:#1da1ff;margin-bottom:10px;">
-        <i class="fa-solid fa-triangle-exclamation"></i>
+    <div class="faculty-selection-modal">
+      <div class="faculty-modal-header">
+        <h3 class="faculty-modal-title">
+          <i class="fa-solid fa-info-circle"></i>
+          Information
+        </h3>
       </div>
-      <div style="color:#1da1ff;font-size:1.2rem;font-weight:600;margin-bottom:12px;">
-        Warning
+      <div class="text-center mb-3">
+        <div>${message}</div>
       </div>
-      <div style="color:#444;font-size:1.08rem;margin-bottom:22px;">
-        ${message}
+      <div class="faculty-modal-actions">
+        <button id="closeWarningBoxBtn" class="faculty-modal-btn primary">OK</button>
       </div>
-      <button id="closeWarningBoxBtn" style="
-        background: linear-gradient(90deg,#1da1ff 60%,#00bcd4 100%);
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 32px;
-        font-size: 1.08rem;
-        font-family: 'Poppins', Arial, sans-serif;
-        cursor: pointer;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(29,161,255,0.10);
-        transition: background 0.2s;
-      ">OK</button>
     </div>
   `;
+  
   document.body.appendChild(warn);
   document.getElementById('closeWarningBoxBtn').onclick = () => {
     warn.remove();
@@ -1028,7 +1054,6 @@ const degrees = getDegrees();
 renderDegrees(degrees);
 
 // sidebar toggle code 
-
 const sidebar = document.getElementById('sidebarMenu');
 const toggleBtn = document.getElementById('sidebarToggle');
 
@@ -1044,7 +1069,9 @@ function handleSidebarToggle() {
   }
 }
 
-toggleBtn.onclick = handleSidebarToggle;
+if (toggleBtn) {
+  toggleBtn.onclick = handleSidebarToggle;
+}
 
 // Optional: Reset sidebar state on resize
 window.addEventListener('resize', () => {
@@ -1064,66 +1091,26 @@ function showDeleteSemesterConfirm(onConfirm) {
 
   const modal = document.createElement('div');
   modal.id = 'deleteSemesterConfirmModal';
-  modal.style.position = 'fixed';
-  modal.style.top = 0;
-  modal.style.left = 0;
-  modal.style.width = '100vw';
-  modal.style.height = '100vh';
-  modal.style.background = 'rgba(0,0,0,0.25)';
-  modal.style.display = 'flex';
-  modal.style.alignItems = 'center';
-  modal.style.justifyContent = 'center';
-  modal.style.zIndex = 5000; // <-- Make sure this is higher than the main modal
+  modal.className = 'modal-overlay';
 
   modal.innerHTML = `
-    <div style="
-      background: #fff;
-      border-radius: 16px;
-      padding: 32px 28px 24px 28px;
-      box-shadow: 0 8px 32px rgba(44,44,44,0.13), 0 2px 8px rgba(0,0,0,0.08);
-      font-family: 'Poppins', Arial, sans-serif;
-      text-align: center;
-      min-width: 320px;
-      max-width: 90vw;
-      border: 2px solid #1da1ff;
-    ">
-      <div style="font-size:2.2rem;color:#1da1ff;margin-bottom:10px;">
-        <i class="fa-solid fa-triangle-exclamation"></i>
+    <div class="faculty-selection-modal">
+      <div class="faculty-modal-header">
+        <h3 class="faculty-modal-title">
+          <i class="fa-solid fa-exclamation-triangle"></i>
+          Delete Semester
+        </h3>
       </div>
-      <div style="color:#1da1ff;font-size:1.2rem;font-weight:600;margin-bottom:12px;">
-        Delete Semester
+      <div class="text-center mb-3">
+        <p>Are you sure you want to delete this entire semester?</p>
+        <p class="text-danger"><strong>All courses in this semester will be removed.</strong></p>
       </div>
-      <div style="color:#444;font-size:1.08rem;margin-bottom:22px;">
-        Are you sure you want to delete this entire semester?<br>
-        <span style="color:#ff3b3b;">All courses in this semester will be removed.</span>
+      <div class="faculty-modal-actions">
+        <button id="confirmDeleteSemesterBtn" class="faculty-modal-btn primary">
+          <i class="fa-solid fa-trash"></i> Delete
+        </button>
+        <button id="cancelDeleteSemesterBtn" class="faculty-modal-btn secondary">Cancel</button>
       </div>
-      <button id="confirmDeleteSemesterBtn" style="
-        background: linear-gradient(90deg,#ff3b3b 60%,#ffb2b2 100%);
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 32px;
-        font-size: 1.08rem;
-        font-family: 'Poppins', Arial, sans-serif;
-        cursor: pointer;
-        font-weight: 600;
-        margin-right: 18px;
-        box-shadow: 0 2px 8px rgba(29,161,255,0.10);
-        transition: background 0.2s;
-      ">Delete</button>
-      <button id="cancelDeleteSemesterBtn" style="
-        background: linear-gradient(90deg,#eee 60%,#ccc 100%);
-        color: #444;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 32px;
-        font-size: 1.08rem;
-        font-family: 'Poppins', Arial, sans-serif;
-        cursor: pointer;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(29,161,255,0.10);
-        transition: background 0.2s;
-      ">Cancel</button>
     </div>
   `;
 

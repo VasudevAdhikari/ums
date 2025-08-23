@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enrollment</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/students/personal/styles/enrollment.css">
+    <style>body { font-family: 'Poppins', sans-serif; }</style>
+</head>
+<body class="bg-light">
+<div class="container py-5">
+    <div class="mb-4 text-center">
+        <h2 class="fw-bold mb-2" style="color: var(--primary);"><i class="fa-solid fa-user-graduate me-2"></i>Course Enrollment</h2>
+        <p class="text-muted">Select your term, batch, and courses to enroll.</p>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm p-4 ">
+                <div class="mb-3 ">
+                    <label for="term-select" class="form-label fw-semibold">Term</label>
+                    <select id="term-select" class="form-select">
+                        <option value="">Select Term</option>
+                        {% for term in terms %}
+                        <option value="{{ term.id }}">{{ term.term_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="batch-select" class="form-label fw-semibold">Batch</label>
+                    <select id="batch-select" class="form-select" disabled>
+                        <option value="">Select Batch</option>
+                    </select>
+                </div>
+                <div id="courses-section" class="mb-3" style="display:none;">
+                    <!-- Courses will be rendered here by JS -->
+                </div>
+                <button id="submit-enrollment" class="btn btn-primary w-100 mt-3" disabled>
+                    <i class="fa-solid fa-paper-plane me-2"></i>Submit Enrollment
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="mobile-footer">
+    <a href="#" class="back-button">
+        <span class="back-arrow">‹ </span>
+        <span class="back-text">Back to previous page</span>
+    </a>
+</footer>
+
+<script type="module" src="/static/students/personal/javascripts/enrollment.js"></script>
+</body>
+</html>

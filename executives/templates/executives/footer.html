@@ -34,3 +34,21 @@
         </div>
     </div>
 </footer>
+<script>
+window.confirm = async function(message) {
+    const res = await Swal.fire({
+        html: '<i class="fas fa-question-circle fa-3x" style="color:#003366;"></i><p>' + message + '</p>',
+        showCancelButton: true,
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        allowOutsideClick: false,
+        allowEscapeKey: false
+    });
+    // return res.isConfirmed; // true if OK, false if Cancel
+    function getConfirmation() {
+        return res.isConfirmed;
+    }
+    confirmation = await getConfirmation();
+    return confirmation;
+};
+</script>

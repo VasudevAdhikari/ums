@@ -1,554 +1,1135 @@
+/* CSS Variables for consistent color scheme */
+:root {
+  --primary: #003366;
+  --primary-light: #1a4d80;
+  --primary-dark: #00264d;
+  --secondary: #FFD700;
+  --secondary-light: #ffe44d;
+  --bg-light: #FFFFFF;
+  --bg-gray: #F5F5F5;
+  --text-dark: #333333;
+  --text-black: #000000;
+  --text-light: #FFFFFF;
+  --success: #4CAF50;
+  --error: #F44336;
+  --warning: #FFC107;
+  --info: #17A2B8;
+}
+
 /* Reset and base styles */
-body {
-  background: linear-gradient(135deg,#e3f2fd 60%,#fff 100%);
-  font-family: 'Poppins', Arial, sans-serif;
+* {
   margin: 0;
   padding: 0;
-  min-height: 100vh;
   box-sizing: border-box;
-  display: flex;
 }
 
-/* Navbar styles */
-.navbar {
-  width: 100%;
-  height: 64px;
-  background: #decd6b;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 0 24px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 2000;
-}
-.nav-hamburger {
-  display: block;
-  background: #e6e9d8;
-  border: none;
-  border-radius: 8px;
-  font-size: 2rem;
-  padding: 6px 14px;
-  cursor: pointer;
-  margin-right: 10px;
-}
-.nav-logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
-  background: #fff;
-  object-fit: contain;
-  margin-right: 16px;
-}
-.nav-title {
-  font-size: 1.45rem;
-  font-weight: bold;
-  color: #222;
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.nav-bell {
-  margin-left: auto;
-  font-size: 1.5rem;
-  color: #fff;
-}
-
-/* Sidebar styles */
-.sidebar {
-  width: 260px;
-  background: #546bd4;
-  color: #fff;
+body {
+  background: linear-gradient(135deg, var(--bg-gray) 0%, var(--bg-light) 100%);
+  font-family: 'Poppins', Arial, sans-serif;
   min-height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 64px;
-  z-index: 1001;
-  transition: transform 0.3s;
-  transform: translateX(0); /* VISIBLE BY DEFAULT ON DESKTOP */
-  overflow-y: auto; /* Make sidebar scrollable */
-}
-.sidebar.show {
-  transform: translateX(0);
-}
-.sidebar-header {
-  padding: 24px 0 12px 0;
-  text-align: center;
-  font-size: 1.3rem;
-  font-weight: bold;
-  letter-spacing: 1px;
-  background: #4256a3;
-}
-.sidebar-header img,
-.sidebar-logo {
-  max-width: 90%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-}
-.sidebar-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.sidebar-list li {
-  border-bottom: 1px solid #6d84e6;
-}
-.sidebar-list li:last-child {
-  border-bottom: none;
-}
-.sidebar-list a {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  color: #fff;
-  text-decoration: none;
-  font-size: 1.13rem;
-  padding: 18px 28px;
-  transition: background 0.15s, color 0.15s;
-}
-.sidebar-list a:hover {
-  background: #4256a3;
-  color: #e3f2fd;
-}
-.sidebar-list i {
-  font-size: 1.2rem;
+  color: var(--text-dark);
+  line-height: 1.6;
 }
 
-/* Hide sidebar on desktop when .sidebar-closed is on body */
-body.sidebar-closed .sidebar {
-  transform: translateX(-100%);
-}
-
-/* Main content shifts when sidebar is visible (desktop) */
+/* Main Content Layout */
 .main-content {
   margin-left: 260px;
   width: calc(100% - 260px);
   transition: margin-left 0.3s, width 0.3s;
+  min-height: 100vh;
+  padding: 2rem;
+  background: transparent;
 }
+
+/* Admin Header */
+.admin-header {
+  width: 100%;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+}
+
+/* Modern Search Box */
+.search-box {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: var(--bg-light);
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-dark);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 51, 102, 0.1);
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 4px 20px rgba(0, 51, 102, 0.15);
+}
+
+.search-box input::placeholder {
+  color: #999;
+  font-weight: 400;
+}
+
+.search-box button {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--primary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.search-box button:hover {
+  color: var(--primary-light);
+}
+
+/* Modern Add Button */
+.add-btn {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: var(--text-light);
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 51, 102, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 51, 102, 0.3);
+}
+
+.add-btn:active {
+  transform: translateY(0);
+}
+
+/* Degree Grid */
+.degree-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+/* Modern Degree Card */
+.degree-card {
+  background: var(--bg-light);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 30px rgba(0, 51, 102, 0.1);
+  transition: all 0.3s ease;
+  border-top: 4px solid #FFD700;
+  position: relative;
+  overflow: hidden;
+}
+
+.degree-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(0, 51, 102, 0.15);
+}
+
+
+
+/* Degree Card Header */
+.degree-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.degree-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--primary);
+  box-shadow: 0 4px 15px rgba(0, 51, 102, 0.2);
+  flex-shrink: 0;
+}
+
+.degree-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.degree-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.degree-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.degree-code {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: var(--text-light);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.degree-faculty {
+  font-size: 0.95rem;
+  color: var(--primary);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.degree-faculty i {
+  font-size: 0.9rem;
+}
+
+/* Degree Card Content */
+.degree-card-content {
+  margin-bottom: 1.5rem;
+}
+
+.degree-description {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.degree-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.degree-stat {
+  text-align: center;
+  padding: 1rem;
+  background: var(--bg-gray);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 51, 102, 0.1);
+}
+
+.degree-stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.25rem;
+}
+
+.degree-stat-label {
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.view-btn, .delete-btn {
+  flex: 1;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.view-btn {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: var(--text-light);
+  box-shadow: 0 4px 15px rgba(0, 51, 102, 0.2);
+}
+
+.view-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 51, 102, 0.3);
+}
+
+.delete-btn {
+  background: linear-gradient(135deg, var(--error) 0%, #ff6b6b 100%);
+  color: var(--text-light);
+  box-shadow: 0 4px 15px rgba(244, 67, 54, 0.2);
+}
+
+.delete-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(244, 67, 54, 0.3);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: var(--bg-light);
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modal Header */
+.modal-header {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  color: var(--text-light);
+  padding: 2rem !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 51, 102, 0.2);
+}
+
+.modal-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.modal-title i {
+  font-size: 1.8rem;
+  color: var(--secondary);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.modal-action-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: var(--text-light);
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.modal-action-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+#editDegreeBtn {
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+  color: var(--text-dark);
+  border: none;
+}
+
+#editDegreeBtn:hover {
+  background: linear-gradient(135deg, var(--secondary-light) 0%, var(--secondary) 100%);
+}
+
+/* Modal Body */
+.modal-body {
+  flex: 1;
+  padding: 1.5rem !important;
+  overflow-y: auto;
+  background: var(--bg-gray);
+}
+
+/* Degree Details Section */
+.degree-details-section {
+  background: var(--bg-light);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 51, 102, 0.1);
+}
+
+.degree-details-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--bg-gray);
+}
+
+.degree-details-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid var(--primary);
+  box-shadow: 0 8px 25px rgba(0, 51, 102, 0.2);
+  flex-shrink: 0;
+}
+
+.degree-details-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.degree-details-info {
+  flex: 1;
+}
+
+.degree-details-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.degree-details-code {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: var(--text-light);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.degree-details-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.degree-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-gray);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 51, 102, 0.1);
+}
+
+.degree-meta-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.degree-meta-content h4 {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.degree-meta-content p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* Faculty Section */
+.faculty-section {
+  margin-bottom: 2rem;
+}
+
+.faculty-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.choose-faculty-btn {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: var(--text-light);
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 4px 15px rgba(0, 51, 102, 0.2);
+}
+
+.choose-faculty-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 51, 102, 0.3);
+}
+
+.faculty-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Description Section */
+.description-section {
+  margin-bottom: 2rem;
+}
+
+.description-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.description-content {
+  background: var(--bg-gray);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(0, 51, 102, 0.1);
+  position: relative;
+}
+
+.description-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-dark);
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.description-text.collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.read-more-btn {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: var(--text-light);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.read-more-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 51, 102, 0.2);
+}
+
+/* Edit Form Styles */
+.edit-form {
+  background: var(--bg-light);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 51, 102, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 0.75rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--bg-gray);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-dark);
+  background: var(--bg-light);
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+}
+
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* Syllabus Section */
+.syllabus-section {
+  background: var(--bg-light);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 51, 102, 0.1);
+}
+
+.syllabus-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.semester-item {
+  border: 2px solid var(--bg-gray);
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.semester-item:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 15px rgba(0, 51, 102, 0.1);
+}
+
+.semester-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: var(--text-light);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.semester-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.semester-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.semester-action-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: var(--text-light);
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.semester-action-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.semester-content {
+  padding: 1.5rem;
+  background: var(--bg-light);
+}
+
+.semester-weeks {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.weeks-label {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.weeks-input {
+  width: 80px;
+  padding: 0.5rem;
+  border: 2px solid var(--bg-gray);
+  border-radius: 8px;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.courses-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.courses-table th {
+  background: var(--bg-gray);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-dark);
+  border-bottom: 2px solid var(--primary);
+}
+
+.courses-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--bg-gray);
+  vertical-align: middle;
+}
+
+.course-type-select {
+  padding: 0.5rem;
+  border: 2px solid var(--bg-gray);
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg-light);
+}
+
+.course-remove-btn {
+  background: linear-gradient(135deg, var(--error) 0%, #ff6b6b 100%);
+  color: var(--text-light);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.course-remove-btn:hover {
+  transform: scale(1.1);
+}
+
+.add-course-btn {
+  background: linear-gradient(135deg, var(--success) 0%, #66bb6a 100%);
+  color: var(--text-light);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-course-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.add-semester-btn {
+  background: var(--primary);
+  color: var(--text-light);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.add-semester-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(23, 162, 184, 0.3);
+}
+
+/* Faculty Selection Modal */
+.faculty-selection-modal {
+  background: var(--bg-light);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90vw;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 51, 102, 0.3);
+}
+
+.faculty-modal-header {
+  margin-bottom: 1.5rem;
+}
+
+.faculty-modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.faculty-search-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid var(--bg-gray);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-dark);
+  background: var(--bg-light);
+  transition: all 0.3s ease;
+}
+
+.faculty-search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+}
+
+.faculty-list {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 1.5rem;
+}
+
+.faculty-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  margin-bottom: 0.5rem;
+}
+
+.faculty-item:hover {
+  background: var(--bg-gray);
+  border-color: var(--primary);
+  transform: translateX(5px);
+}
+
+.faculty-item.selected {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: var(--text-light);
+  border-color: var(--primary);
+}
+
+.faculty-avatar-large {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary);
+  flex-shrink: 0;
+}
+
+.faculty-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  flex: 1;
+}
+
+.faculty-modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.faculty-modal-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.faculty-modal-btn.primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: var(--text-light);
+}
+
+.faculty-modal-btn.secondary {
+  background: var(--bg-gray);
+  color: var(--text-dark);
+  border: 2px solid var(--bg-gray);
+}
+
+.faculty-modal-btn:hover {
+  transform: translateY(-2px);
+}
+
+.upload-image-btn {
+  background-color: var(--primary) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .degree-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+  
+  .admin-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .search-box {
+    max-width: none;
+  }
+  
+  .degree-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .degree-card {
+    padding: 1.5rem;
+  }
+  
+  .degree-details-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .degree-details-meta {
+    grid-template-columns: 1fr;
+  }
+  
+
+  
+  .modal-title {
+    font-size: 1.5rem;
+  }
+  
+  
+  .degree-details-section,
+  .syllabus-section {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-actions {
+    flex-direction: column;
+  }
+  
+  .view-btn, .delete-btn {
+    width: 100%;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .modal-action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Sidebar responsive adjustments */
 body.sidebar-closed .main-content {
   margin-left: 0;
   width: 100%;
 }
 
-/* Degree grid: 3 cards with reduced gap when sidebar is visible */
-.degree-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px; /* Reduced gap */
-  width: 96%;
-  margin: 40px auto;
-  padding: 40px 0;
-  min-height: 400px;
-  transition: grid-template-columns 0.3s, gap 0.3s;
-}
 body.sidebar-closed .degree-grid {
-  grid-template-columns: repeat(4, 1fr);
-  gap: 32px; /* Normal gap */
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 }
 
-/* Hamburger styles */
-.hamburger {
-  display: none;
-  position: fixed;
-  left: 18px;
-  top: 18px;
-  font-size: 2rem;
-  background: #fff;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(44,44,44,0.10);
-  padding: 8px 14px;
-  z-index: 1100;
-  cursor: pointer;
+/* Animation classes */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Main content styles */
-.main-content {
-  margin-left: 260px;
-  width: calc(100% - 260px);
-  transition: margin-left 0.3s, width 0.3s;
-  min-height: 100vh;
-  padding-top: 84px;
-  padding-bottom: 40px;
-}
-.admin-header {
-  width: 96%;
-  margin: 40px auto 0 auto;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 10px; /* Reduce gap between search and add button */
-}
-.add-btn {
-  background: #444;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 28px;
-  font-size: 1.3rem;
-  font-weight: bold;
-  cursor: pointer;
-  margin-left: 0; /* Remove auto margin so it stays close to search box */
-  transition: background 0.2s;
-}
-.add-btn:hover {
-  background: #222;
-}
-
-/* Degree grid and card styles */
-.degree-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  width: 96%;
-  margin: 40px auto;
-  padding: 40px 0;
-  min-height: 400px;
-  transition: grid-template-columns 0.3s, gap 0.3s;
-}
-
-/* 4 cards with normal gap when sidebar is hidden */
-body.sidebar-closed .degree-grid {
-  grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
-}
-body.sidebar-hidden .main-content {
-  margin-left: 0;
-  width: 100%;
-}
-body.sidebar-hidden .degree-grid {
-  grid-template-columns: repeat(4, 1fr); /* 4 cards when sidebar is hidden */
-}
-/* Degree Card Modernized */
-.degree-card {
-  background: #fff;
-  border-radius: 18px;
-  width: 100%;
-  min-width: 0;
-  max-width: 370px;
-  margin: 0 auto;
-  min-height: 420px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  box-shadow: 0 8px 32px rgba(44,44,44,0.13), 0 2px 8px rgba(0,0,0,0.08);
-  padding-bottom: 0;
-  transition: transform 0.18s, box-shadow 0.18s;
-  overflow: hidden;
-}
-.degree-card:hover {
-  transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 16px 48px rgba(44,44,44,0.18), 0 4px 16px rgba(0,0,0,0.10);
-}
-/* Card Image Modern */
-.degree-img {
-  width: 100%;
-  height: 140px;
-  border-radius: 0 0 18px 18px;
-  margin: 0;
-  background: linear-gradient(135deg,#e0f7fa 60%,#b2ebf2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(29,161,255,0.13);
-  border-bottom: 4px solid #1da1ff22;
-  position: relative;
-}
-.degree-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 0 0 18px 18px;
-  z-index: 1;
-  position: relative;
-}
-/* Card Content Modern */
-.degree-card-content {
-  padding: 18px 22px 12px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.degree-title-row {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 2px;
-}
-.degree-title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #1a232f;
-  flex: 1;
-  margin: 0;
-  letter-spacing: 0.5px;
-}
-.degree-code {
-  font-size: 1.05rem;
-  color: #1da1ff;
-  font-weight: 500;
-  background: #e3f2fd;
-  border-radius: 6px;
-  padding: 2px 10px;
-  margin-left: 4px;
-}
-.degree-faculty {
-  font-size: 1.08rem;
-  color: #2d3a4a;
-  font-weight: 500;
-  margin-bottom: 2px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.degree-desc {
-  font-size: 1.01rem;
-  color: #444;
-  margin-bottom: 2px;
-  min-height: 28px;
-  max-height: 48px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.4;
-}
-.degree-meta-row {
-  font-size: 1.01rem;
-  color: #888;
-  margin-bottom: 2px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.degree-stats-row {
-  display: flex;
-  gap: 12px;
-  margin: 8px 0 0 0;
-  font-size: 1.08rem;
-  color: #222;
-  font-weight: 500;
-  align-items: center;
-}
-.degree-credit {
-  color: #1da1ff;
-}
-.degree-courses {
-  color: #444;
-}
-.degree-hours {
-  color: #888;
-}
-.card-actions {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  margin-top: 28px;
-}
-.view-btn, .delete-btn {
-  background: linear-gradient(90deg,#1da1ff 60%,#00bcd4 100%);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 12px 32px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(29,161,255,0.10);
-}
-.delete-btn {
-  background: linear-gradient(90deg,#ff3b3b 60%,#ffb2b2 100%);
-}
-.view-btn:hover, .delete-btn:hover {
-  background: #222;
-  box-shadow: 0 4px 16px rgba(29,161,255,0.13);
-}
-
-/* Modal action buttons (edit & close) container */
-.modal-actions {
-  position: absolute;
-  top: 12px;
-  right: 18px;
-  display: flex;
-  gap: 18px; /* More space between buttons */
-  z-index: 10;
-}
-
-/* Edit button: smaller font, square hover */
-#editDegreeBtn.modal-action-btn {
-  background: none;
-  border: none;
-  color: #1da1ff;
-  font-size: 1.1rem; /* Reduced font size */
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s, background 0.2s, color 0.2s, border-radius 0.2s;
-  padding: 4px 10px;
-  border-radius: 6px;
-  outline: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-#editDegreeBtn.modal-action-btn:hover {
-  background: #e3f2fd;
-  color: #0077cc;
-  border-radius: 6px; /* Square */
-}
-
-/* Close button: circle hover */
-#closeDegreeDetailsBtn.modal-action-btn {
-  background: none;
-  border: none;
-  color: #1da1ff;
-  font-size: 1.5rem;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s, background 0.2s, color 0.2s, border-radius 0.2s;
-  padding: 4px;
-  border-radius: 50%;
-  outline: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#closeDegreeDetailsBtn.modal-action-btn:hover {
-  background: #e3f2fd;
-  color: #0077cc;
-  border-radius: 50%; /* Circle */
-}
-
-/* Show buttons on modal hover/focus */
-#degreeDetailsModal:hover .modal-action-btn,
-#degreeDetailsModal:focus-within .modal-action-btn {
-  opacity: 1;
-}
-
-/* Sticky details section */
-.degree-details-sticky {
-  position: sticky;
-  top: 0;
-  background: #fff;
-  z-index: 2;
-  /* Optional: add a subtle shadow or border-bottom for separation */
-  box-shadow: 0 2px 8px rgba(44,44,44,0.04);
-}
-.syllabus-scrollable {
-  overflow-y: auto;
-  max-height: 100%;
-}
-
-
-/* Search box styles */
-.search-box {
-  display: flex;
-  align-items: center;
-  gap: 6px; /* Reduce gap between input and search button */
-  margin-left: 0; /* Remove extra left margin */
-}
-.search-box input {
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid #bfc6e0;
-  font-size: 1rem;
-}
-.search-box button {
-  background: #1da1ff;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 10px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-/* Responsive styles */
-@media (max-width: 1400px) {
-  .degree-grid,
-  .sidebar.show ~ .main-content .degree-grid {
-    grid-template-columns: repeat(2, 1fr);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
-@media (max-width: 900px) {
-  .sidebar {
-    width: 280px;
-    top: 56px;
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
     transform: translateX(-100%);
-    position: fixed;
-    z-index: 2001;
   }
-  body.sidebar-open .sidebar {
+  to {
     transform: translateX(0);
   }
-
-  .main-content,
-  body.sidebar-open .main-content,
-  body.sidebar-closed .main-content {
-    margin-left: 0;
-    width: 100%;
-  }
-
-  /* Default: 1 card per row for safety */
-  .degree-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  /* 2 cards per row if sidebar is open */
-  body.sidebar-open .degree-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-  }
-
-  /* 3 cards per row if sidebar is closed */
-  body.sidebar-closed .degree-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-  }
-
-  /* .modal-action-btn {
-    opacity: 0 !important;
-    pointer-events: none;
-  }
-  .active-semester .modal-action-btn {
-    opacity: 1 !important;
-    pointer-events: auto;
-  } */
-}
-@media (max-width: 600px) {
-  .sidebar {
-    width: 220px;
-    top: 56px;
-  }
-  .sidebar.show ~ .main-content {
-    margin-left: 180px;
-    width: calc(100% - 180px);
-  }
-}
-/* Desktop: 4 cards per row when sidebar is closed */
-@media (min-width: 901px) {
-  body.sidebar-closed .degree-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 32px;
-  }
-}
-@media (min-width: 901px) and (max-width: 1200px) {
-  .sidebar-list a {
-    padding: 10px 18px; /* Reduce vertical and horizontal padding */
-    font-size: 1rem;    /* Optionally reduce font size a bit */
-    gap: 10px;          /* Reduce icon/text gap if needed */
-  }
 }
 
-.modal-action-btn {
-  opacity: 1 !important;
-  pointer-events: auto;
+/* Utility classes */
+.text-center {
+  text-align: center;
 }
-@media (max-width: 1200px) {
-  .sidebar {
-    max-height: 100vh;
-  }
+
+.mb-0 {
+  margin-bottom: 0;
+}
+
+.mt-1 {
+  margin-top: 0.5rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.5rem;
+}
+
+.p-0 {
+  padding: 0;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-1 {
+  gap: 0.5rem;
+}
+
+.gap-2 {
+  gap: 1rem;
+}
+
+#courseDegreeDeailsBtn {
+  background: var(--primary-light) !important;
 }

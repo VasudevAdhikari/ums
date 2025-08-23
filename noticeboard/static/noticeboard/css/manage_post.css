@@ -1,0 +1,226 @@
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background: #f0f2f5;
+}
+.card {
+    border-radius: 12px;
+}
+#post-input {
+    resize: none;
+    border-radius: 20px;
+    background: #f5f6fa;
+}
+#media-preview img, #media-preview video {
+    max-width: 100px;
+    max-height: 100px;
+    margin-right: 8px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+#posts-feed .card {
+    margin-bottom: 1.5rem;
+}
+.post-author {
+    font-weight: 600;
+}
+.post-time {
+    font-size: 0.9em;
+    color: #888;
+}
+/* Single image in post: original aspect ratio, fill width, max height */
+.post-media-row-single {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.post-image-single-wrapper {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.post-image-single {
+    width: 100%;
+    height: auto;
+    max-height: 350px;
+    object-fit: contain;
+    border-radius: 12px;
+    display: block;
+    margin: 0 auto;
+    background: #f5f6fa;
+}
+/* Flex row for images (2 or 3 images) */
+.post-image-original {
+    opacity: 1;
+    transition: opacity 0.2s;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+}
+.post-media-row-flex {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+.post-image-wrapper-flex {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 33.33%;
+    aspect-ratio: 1/1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.post-image-wrapper-flex img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+/* Overlay for +N images, flex-based */
+.post-image-overlay-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    font-size: 2rem;
+    border-radius: 12px;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: auto;
+    user-select: none;
+}
+/* Modal styles */
+#image-modal {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+#image-modal img {
+    box-shadow: 0 4px 32px #0008;
+    border-radius: 12px;
+    background: #fff;
+    max-width: 80vw;
+    max-height: 80vh;
+}
+#image-modal button {
+    transition: background 0.15s;
+    border: none;
+    background: none;
+    outline: none;
+}
+#image-modal button:focus {
+    outline: none;
+}
+#image-modal button.modal-arrow-btn span {
+    transition: background 0.15s;
+}
+#image-modal button.modal-arrow-btn:hover span {
+    background: rgba(255,255,255,0.35);
+}
+#image-modal button#modal-close:hover {
+    background: #f8d7da;
+}
+/* Hide scroll on modal open */
+body:has(#image-modal[style*="display: flex"]) {
+    overflow: hidden;
+}
+/* Single video in post: original aspect ratio, fill width, max height */
+.post-video-single-wrapper {
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.post-video-single {
+    width: 100%;
+    height: auto;
+    max-height: 350px;
+    object-fit: contain;
+    border-radius: 12px;
+    display: block;
+    margin: 0 auto;
+    background: #f5f6fa;
+}
+/* Flex row for videos (2 or 3 videos) */
+.post-video-original {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+    background: #f5f6fa;
+}
+.post-video-wrapper-flex {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 33.33%;
+    aspect-ratio: 1/1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.post-video-wrapper-flex video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+/* Overlay for +N videos, flex-based (reuse .post-image-overlay-flex) */
+/* Responsive image grid in posts */
+@media (max-width: 991.98px) {
+    aside {
+        display: none !important;
+    }
+    .post-image-wrapper-flex {
+        max-width: 33.33%;
+    }
+    .post-image-single {
+        max-height: 250px;
+    }
+    .post-video-single {
+        max-height: 250px;
+    }
+}
+@media (max-width: 767.98px) {
+    .post-image-wrapper-flex {
+        max-width: 33.33%;
+    }
+    .post-image-single {
+        max-height: 180px;
+    }
+    .post-video-single {
+        max-height: 180px;
+    }
+}
+@media (max-width: 575.98px) {
+    .card {
+        border-radius: 0;
+    }
+    #media-preview img, #media-preview video {
+        max-width: 70px;
+        max-height: 70px;
+    }
+    .post-image-wrapper-flex {
+        max-width: 33.33%;
+    }
+    .post-image-single {
+        max-height: 120px;
+    }
+    .post-video-single {
+        max-height: 120px;
+    }
+}

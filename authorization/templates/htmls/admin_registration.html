@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Poppins Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Primary Colors (University Branding) */
+            --primary: #003366; /* Deep Blue - main brand color */
+            --primary-light: #1a4d80; /* Lighter shade for hover states */
+            --primary-dark: #00264d; /* Darker shade for active states */
+            
+            /* Secondary Colors */
+            --secondary: #FFD700; /* Gold - for accents and highlights */
+            --secondary-light: #ffe44d;
+  
+            /* Background Colors */
+            --bg-light: #FFFFFF;
+            --bg-gray: #F5F5F5;
+            
+            /* Text Colors */
+            --text-dark: #333333;
+            --text-black: #000000;
+            --text-light: #FFFFFF;
+            
+            /* Status Colors */
+            --success: #4CAF50;
+            --error: #F44336;
+            --warning: #FFC107;
+            --info: #17A2B8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: --bg-light;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .registration-container {
+            background: var(--bg-light);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 51, 102, 0.15);
+            overflow: hidden;
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 40px 30px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        }
+
+        .header-icon {
+            background: var(--secondary);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .header-icon i {
+            font-size: 32px;
+            color: var(--primary);
+        }
+
+        .header-title {
+            color: var(--text-light);
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            font-weight: 300;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-section {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label i {
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .form-control {
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0, 51, 102, 0.1);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+
+        .permissions-group {
+            background: var(--bg-gray);
+            border-radius: 12px;
+            padding: 30px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .permissions-group:hover {
+            border-color: var(--primary);
+            background: rgba(0, 51, 102, 0.02);
+        }
+
+        .permissions-title {
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .permissions-title i {
+            color: var(--primary);
+        }
+
+        .permissions-options {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .form-check {
+            flex: 1;
+            margin-bottom: 0;
+            padding-left: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+        }
+
+        .form-check-input:focus {
+            box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+        }
+
+        .form-check-label {
+            color: var(--text-dark);
+            font-weight: 400;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        .form-check-label i {
+            color: var(--secondary);
+            font-size: 16px;
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 16px 24px;
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--text-light);
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-register::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-register:hover::before {
+            left: 100%;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 51, 102, 0.3);
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+        }
+
+        .btn-register i {
+            margin-right: 8px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .registration-container {
+                margin: 10px;
+                border-radius: 16px;
+            }
+
+            .header-section {
+                padding: 30px 20px 25px;
+            }
+
+            .form-section {
+                padding: 30px 20px;
+            }
+
+            .header-icon {
+                width: 60px;
+                height: 60px;
+            }
+
+            .header-icon i {
+                font-size: 24px;
+            }
+
+            .header-title {
+                font-size: 20px;
+            }
+        }
+
+        /* Loading animation for button */
+        .btn-register.loading {
+            pointer-events: none;
+        }
+
+        .btn-register.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--text-light);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'faculty/css/navbar.css' %}">
+</head>
+<body>
+    {% include "executives/navbar.html" %}
+    <div class="registration-container" style="margin-top: 80px;">
+        <div class="header-section">
+            <div class="header-icon">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h1 class="header-title">Executive Registration</h1>
+            <p class="header-subtitle">Add new executive to the university</p>
+        </div>
+        
+        <div class="form-section">
+            <form id="adminRegistrationForm">
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope"></i>
+                        Email Address
+                    </label>
+                    <input type="email" class="form-control" id="email" name="email" required 
+                           autocomplete="username" placeholder="Enter the email address">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i>
+                        Password
+                    </label>
+                    <input type="password" class="form-control" id="password" name="password" required 
+                           autocomplete="new-password" placeholder="Enter a one time password">
+                </div>
+
+                <div class="form-group">
+                    <label for="degree" class="form-label">
+                        <i class="fas fa-graduation-cap"></i>
+                        Achieved Degree
+                    </label>
+                    <input type="text" class="form-control" id="degree" name="degree" required 
+                           placeholder="Enter highest or latest achieved degree">
+                </div>
+
+                <div class="form-group">
+                    <label for="role" class="form-label">
+                        <i class="fas fa-building"></i>
+                        Role (Position in University)
+                    </label>
+                    <input type="text" class="form-control" id="role" name="role" required 
+                          placeholder="Enter position in the university">
+                </div>
+                
+                <div class="permissions-group">
+                    <div class="permissions-title">
+                        <i class="fas fa-shield-alt"></i>
+                        Access Permissions
+                    </div>
+                    <div class="permissions-options">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" value="R" id="permRead" name="permission" required>
+                            <label class="form-check-label" for="permRead">
+                                Read Only Access
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" value="W" id="permWrite" name="permission">
+                            <label class="form-check-label" for="permWrite">
+                                Full Access (Read & Write)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-register">
+                    <i class="fas fa-user-plus"></i>
+                    Register Executive
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Form submission handling
+        document.getElementById('adminRegistrationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const submitBtn = document.querySelector('.btn-register');
+            const originalText = submitBtn.innerHTML;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const permission = document.querySelector('input[name="permission"]:checked')?.value;
+            const degree = document.getElementById('degree').value;
+            const role = document.getElementById('role').value;
+
+            // Add loading state
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+
+            try {
+                const response = await fetch('/auth/register_admin/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{csrf_token}}'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        permission: permission,
+                        role: role,
+                        degree: degree,
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    await alert('Admin registered successfully!');
+                } else {
+                    await alert('Failed to register: ' + (result.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Request failed:', error);
+                await alert('Something went wrong: ' + error.message);
+            } finally {
+                // Reset button state
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+
+        // Password strength indicator (optional enhancement)
+        document.getElementById('password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const strength = calculatePasswordStrength(password);
+            
+            // You can add visual feedback here based on strength
+            console.log('Password strength:', strength);
+        });
+
+        function calculatePasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            return strength;
+        }
+    </script>
+</body>
+</html>

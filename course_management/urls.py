@@ -27,4 +27,23 @@ urlpatterns = [
     path('executives/', include('executives.urls')),
     path('students/', include('students.urls')),
     path('faculty/', include('faculty.urls')),
+    path('noticeboard/', include('noticeboard.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+from django.shortcuts import render
+
+def custom_error(request, exception):
+    return render(request, "htmls/access_denied.html", {'message': 'An error occurred. Please contact the development team.'})
+
+def custom_error_without_exception(request):
+    return render(
+        request, "htmls/access_denied.html", 
+        {'message': 'An error occurred. Please contact the development team.'}
+    )
+
+# Register global error handlers
+handler404 = "course_management.urls.custom_error"
+handler500 = "course_management.urls.custom_error_without_exception"
+handler403 = "course_management.urls.custom_error"
+handler400 = "course_management.urls.custom_error"

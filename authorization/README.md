@@ -1,91 +1,80 @@
 # Authorization App
 
-## Description
-The Authorization App is a Django-based authentication and authorization system that provides secure user management, registration, and login functionality. It includes features like email verification, OTP-based authentication, and password recovery mechanisms.
+## Overview
+Authorization App is a Django-based authentication and authorization system designed for secure user management. It supports robust registration, login, password recovery, and account protection features, making it suitable for modern web applications requiring strong security.
 
 ## Features
-- User Registration with Email Verification
-- Secure Login System
-- Password Recovery with Multiple Methods:
-  - OTP-based Recovery
-  - Credential-based Recovery
-  - Emergency Contact-based Recovery
-- Profile Management
-- Session Management
-- Password Strength Validation
-- Account Security Features:
-  - Login Attempt Tracking
-  - Account Suspension for Failed Attempts
-  - Secure Password Hashing
+- User registration with email and OTP verification
+- Secure login with password strength validation
+- Multiple password recovery methods (OTP, security questions, emergency contact)
+- Profile and session management
+- Login attempt tracking and account suspension
+- Secure password hashing and CSRF protection
+- Rate limiting for authentication endpoints
 
 ## Installation
-1. Ensure you have Python 3.8+ installed
-2. Install required packages:
+
+1. **Prerequisites:**  
+   - Python 3.8+
+   - MySQL server
+
+2. **Install dependencies:**
    ```bash
-   pip install django
-   pip install mysqlclient  # For MySQL database
+   pip install django mysqlclient
    ```
 
-## Configuration
-1. Database Configuration:
-   - Update settings.py with your MySQL credentials
-   - Set up the database connection parameters
-
-2. Email Configuration:
-   - Configure SMTP settings in settings.py
-   - Set up email templates for verification and recovery
-
-3. Environment Variables:
-   ```python
-   DEBUG=True
-   SECRET_KEY='your-secret-key'
-   DB_PASSWORD='your-database-password'
-   EMAIL_HOST_USER='your-email@example.com'
-   EMAIL_HOST_PASSWORD='your-email-password'
-   ```
+3. **Configure the project:**
+   - Update `settings.py` with your MySQL and SMTP credentials.
+   - Set environment variables as needed:
+     ```python
+     DEBUG=True
+     SECRET_KEY='your-secret-key'
+     DB_PASSWORD='your-database-password'
+     EMAIL_HOST_USER='your-email@example.com'
+     EMAIL_HOST_PASSWORD='your-email-password'
+     ```
 
 ## Usage
-### Registration Process
-1. User enters email
-2. System sends OTP for verification
-3. After OTP verification, user completes profile
-4. Account is created upon successful registration
 
-### Login Process
-1. User enters email and password
-2. System validates credentials
-3. On successful login, user is redirected to dashboard
-4. Failed attempts are tracked and may lead to account suspension
+### Registration
+1. User submits email.
+2. System sends OTP for verification.
+3. After OTP verification, user completes profile.
+4. Account is created.
+
+### Login
+1. User enters email and password.
+2. Credentials are validated.
+3. On success, user is redirected to dashboard.
+4. Failed attempts are tracked and may result in suspension.
 
 ### Password Recovery
-1. User selects recovery method:
-   - OTP via email
-   - Security questions
-2. System verifies identity
-3. User sets new password
-4. Account is unlocked
-5. Failed recovery attempts are also tracked and may lead to account suspension
+1. User selects a recovery method (OTP or security questions).
+2. Identity is verified.
+3. User sets a new password.
+4. Account is unlocked if previously suspended.
 
 ## API Endpoints
-- `/auth/register/` - User registration
-- `/auth/login/` - User login
-- `/auth/verify_mail/` - Email verification
-- `/auth/otp_verification/` - OTP verification
-- `/auth/recovery/` - Password recovery
-- `/auth/profile/` - Profile management
 
-## Security Features
-- Password hashing using Django's default hasher
-- CSRF protection
-- Session management
-- Rate limiting for login attempts
-- Secure password requirements:
+- `POST /auth/register/` — Register a new user
+- `POST /auth/login/` — User login
+- `POST /auth/verify_mail/` — Email verification
+- `POST /auth/otp_verification/` — OTP verification
+- `POST /auth/recovery/` — Password recovery
+- `GET/POST /auth/profile/` — Profile management
+
+## Security
+
+- Passwords hashed using Django's default hasher
+- CSRF and session protection enabled
+- Rate limiting on authentication endpoints
+- Password requirements:
   - Minimum 8 characters
   - Uppercase and lowercase letters
-  - Numbers
-  - Special characters
+  - Numbers and special characters
 
-## File Structure
+## Project Structure
+
 ```
 authorization/
 ├── migrations/
@@ -102,37 +91,26 @@ authorization/
 └── views.py
 ```
 
-## Dependencies
-- Django 5.1.1+
-- MySQL
-- Bootstrap 5.3.0
-- JavaScript (ES6+)
-
 ## Testing
-To run tests:
+
+Run the test suite with:
 ```bash
 python manage.py test authorization
 ```
 
 ## Contributing
+
 1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+2. Create a feature branch
+3. Commit and push your changes
+4. Open a Pull Request
 
 ## License
+
 This project is licensed under the MIT License.
 
-## Contact
-For support or questions, please contact the project maintainer.
-- **Name**              : Moe Thiha
-- **Phone**             : +959 989377380
-- **Telegram username** : @moethihaAdk
-- **Facebook**          : Vasudev Adhikari
-- **Youtube**           : MM Logic Gallery
-
 ## Acknowledgments
+
 - Django Documentation
 - Bootstrap Documentation
 - MySQL Documentation

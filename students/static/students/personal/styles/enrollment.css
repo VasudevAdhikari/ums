@@ -1,0 +1,126 @@
+:root {
+    --primary: #003366;
+    --primary-light: #1a4d80;
+    --primary-dark: #00264d;
+    --secondary: #FFD700;
+    --secondary-light: #ffe44d;
+    --bg-light: #FFFFFF;
+    --bg-gray: #F5F5F5;
+    --text-dark: #333333;
+    --text-black: #000000;
+    --text-light: #FFFFFF;
+    --success: #4CAF50;
+    --error: #F44336;
+    --warning: #FFC107;
+    --info: #17A2B8;
+}
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-gray);
+    color: var(--text-dark);
+}
+.card {
+    border-radius: 1rem;
+    background: var(--bg-light);
+    border-top: 7px solid var(--secondary);
+}
+.form-label {
+    color: var(--primary-dark);
+}
+.form-select:disabled {
+    background: #e9ecef;
+    color: #aaa;
+}
+#courses-section .course-group {
+    margin-bottom: 2rem;
+}
+#courses-section .group-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+}
+.course-cart {
+    background: var(--bg-gray);
+    border-radius: 0.75rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border-top:var(--secondary);
+}
+.course-cart:hover {
+        transform: translateY(-1px);
+
+}
+.course-cart.readonly {
+    opacity: 0.7;
+}
+.course-cart .fa-book {
+    color: var(--secondary);
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+.course-info {
+    flex: 1;
+}
+.course-title {
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: 0.2rem;
+}
+.course-meta {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+}
+input[type="checkbox"].course-select {
+    accent-color: var(--primary);
+    width: 1.2rem;
+    height: 1.2rem;
+}
+.btn-primary {
+    background: var(--primary);
+    border: none;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    
+}
+.btn-primary:disabled {
+    background: var(--primary-light);
+    opacity: 0.7;
+}
+.bg-secondary {
+    background: var(--primary) !important;
+    color: var(--text-light) !important;
+}
+/* Styling for the back button link itself */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    background-color: var(--primary);
+    color:var(--text-light); /* iOS-style blue */
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--primary);
+    border-radius: 999px; /* For a pill-shaped button */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+
+.back-button:hover {
+    background-color:var(--primary);
+    color: var(--text-light);
+    transform: translateY(-1px);  
+}
+
+/* Styling for the arrow icon */
+.back-arrow {
+    font-size: 1.5rem;
+    line-height: 1;
+    margin-right: 0.5rem;
+}

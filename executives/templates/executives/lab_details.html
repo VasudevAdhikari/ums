@@ -8,17 +8,121 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'executives/css/lab_details.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <style>
+        /*===========navbar styles==================*/
+        .navbar {
+            font-family: 'Poppins', sans-serif !important;
+            background-color: var(--primary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 8px !important;
+        }
+
+        .navbar-brand, .nav-link {
+            color: var(--text-light) !important;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary) !important;
+            border-bottom: 2px solid var(--secondary);
+            font-size: var(--bs-nav-link-font-size) !important;
+        }
+
+        .dropdown-menu {
+            background-color: var(--primary-light);
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .dropdown-item {
+            color: var(--text-light);
+            padding: 10px 20px;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--secondary) !important;
+            color: var(--text-dark) !important;
+            border-radius: 8px;
+        }
+        /* Remove Bootstrap's default active background */
+        .dropdown-item.active {
+            background: transparent !important;
+        }
+
+        /* Ensure hover works in all states */
+        .dropdown-item:hover {
+            background-color: var(--secondary) !important;
+            color: var(--text-dark) !important;
+            border-radius: 8px;
+        }
+        
+        .uni-logo {
+            height: 50px;
+            width: 50px;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .custom-nav-spacing .nav-item {
+            margin-right: 2rem;
+        }
+
+        @media (max-width: 991.98px) {
+            .custom-nav-spacing .nav-item {
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        .logout-button {
+            border-radius: 10px;
+            width: 70px;
+            height: 50px;
+            background-color: var(--error);
+        }
+
+        .logout-icon {
+            font-size: 1.7rem;
+            width: 20px;
+        }
+
+        .logout-icon:hover {
+            color: var(--secondary) !important;
+        }
+
+        .hero {
+            margin-top: 30px;
+        }
+    </style>
 </head>
 
 <body>
     <script>
-        window.editor = true;
-        window.allProjectLeaders = {{all_project_leaders | safe}};
-        window.allProjectMembers = {{all_project_members | safe}};
-        window.allLabHeads = {{all_lab_heads | safe}};
-        window.currentLabKey = '{{lab_key | safe}}';
+        window.lagjagale = true;
     </script>
+    {% include "executives/navbar.html" %}
+
+    <script>window.editor = true;</script>
+    
+    <!-- Debug output -->
+    <div style="display:none;">
+        <p>DEBUG: all_project_leaders count: {{ all_project_leaders|length }}</p>
+        <p>DEBUG: all_project_members count: {{ all_project_members|length }}</p>
+        <p>DEBUG: all_lab_heads count: {{ all_lab_heads|length }}</p>
+        <p>DEBUG: departments count: {{ departments|length }}</p>
+        <p>DEBUG: current_lab_dept: {{ current_lab_dept }}</p>
+    </div>
+    
+    {{ all_project_leaders|json_script:"allProjectLeaders" }}
+    {{ all_project_members|json_script:"allProjectMembers" }}
+    {{ all_lab_heads|json_script:"allLabHeads" }}
+    {{ departments|json_script:"departments" }}
+    {{ current_lab_dept|json_script:"currentLabDept" }}
+    <script>window.currentLabKey = '{{ lab_key|escapejs }}';</script>
     <section class="hero">
         <div class="toggle-group">
             <button class="toggle-btn active" id="labBtn" onclick="showSection('lab')">Lab Details</button>
@@ -34,6 +138,22 @@
                     <span class="lab-location-icon"></span> {{lab_data.location | default:"Location: Not Known"}}
                     <span class="edit-icon" title="Edit">&#9998;</span>
                 </div>
+                
+                <!-- Department Selection Section -->
+                <div class="lab-department-block">
+                    <div class="lab-department-title">
+                        Lab Department
+                    </div>
+                    <div class="lab-department-info editable-group">
+                        {% if current_lab_dept.name %}
+                            <span class="lab-department-name">{{ current_lab_dept.name }}</span>
+                        {% else %}
+                            <span class="lab-department-name">No Department Selected</span>
+                        {% endif %}
+                        <span class="edit-icon" title="Edit Department">&#9998;</span>
+                    </div>
+                </div>
+                
                 <div class="lab-head-info">
                     <div>
                         <img src="
@@ -52,9 +172,6 @@
                         <div class="lab-head-title editable-group">
                             {{head_of_lab.full_name | default:'Name: Not Known'}}
                             <span class="edit-icon" title="Edit">&#9998;</span>
-                        </div>
-                        <div class="lab-head-dept">
-                            {{ lab_head_dept | default:'Department: Not Known'}}
                         </div>
                     </div>
                 </div>
@@ -97,7 +214,7 @@
             <div id="projectsSection" style="display:none;">
                 <h1>Projects</h1>
                 {% for key, project in projects.items %}
-                <div class="project-card">
+                <div class="project-card" data-project-id="{{ key }}">
                     <div class="project-header">
                         <div class="project-title editable-group">
                             {{project.title}}
@@ -118,29 +235,65 @@
                         {% endif %}
                     </div>
                     <div class="project-desc-block">
-                        <span class="project-desc-text editable-group" id="projectDescText1" data-full="{{project.description}}">{{project.description}}
+                        <span class="project-desc-text editable-group" id="projectDescText{{ forloop.counter }}" data-full="{{project.description}}">{{project.description}}
                             <span class="edit-icon" title="Edit">&#9998;</span>
                         </span>
-                        <span class="project-desc-toggle" data-target="1">&#x25BC;</span>
+                        <span class="project-desc-toggle" data-target="{{ forloop.counter }}">&#x25BC;</span>
                     </div>
                     <div class="project-leader-block">
-                        <img src="media/{{project.project_lead.profile_picture}}" alt="{{project.project_lead.name}}" class="project-leader-photo">
-                        <span class="project-leader-name editable-group">{{project.project_lead.name | default:'Add Project Leader'}}
-                            <span class="edit-icon" title="Edit">&#9998;</span>
-                        </span>
+                        {% if project.leader %}
+                            <img src="{{project.leader.img}}" alt="{{project.leader.name}}" class="project-leader-photo">
+                            <span class="project-leader-name editable-group">{{project.leader.name | default:'Add Project Leader'}}
+                                <span class="edit-icon" title="Edit">&#9998;</span>
+                            </span>
+                        {% elif project.project_lead %}
+                            <img src="/media/{{project.project_lead.profile_picture}}" alt="{{project.project_lead.name}}" class="project-leader-photo">
+                            <span class="project-leader-name editable-group">{{project.project_lead.name | default:'Add Project Leader'}}
+                                <span class="edit-icon" title="Edit">&#9998;</span>
+                            </span>
+                        {% else %}
+                            <img src="https://thumbs.dreamstime.com/b/anonymous-user-flat-icon-vector-illustration-long-shadow-anonymous-user-flat-icon-105446565.jpg" alt="No Leader" class="project-leader-photo">
+                            <span class="project-leader-name editable-group">Add Project Leader
+                                <span class="edit-icon" title="Edit">&#9998;</span>
+                            </span>
+                        {% endif %}
                     </div>
                     <div class="project-members-block">
                         <div class="project-members-title">Members:
                             <span class="edit-icon" title="Edit">&#9998;</span>
                         </div>
                         <div class="project-members-list editable-group">
-                            {% for member in project.members %}
-                            <div class="project-member">
-                                <img src="member.profile_picture" alt="Priya Singh" class="project-member-photo">
-                                <span class="project-member-name">{{member.name}}</span>
-                                <span class="fa fa-trash"></span>
-                            </div>
-                            {% endfor %}
+                            {% if project.members %}
+                                {% if project.members|length > 0 %}
+                                    {% for member in project.members %}
+                                        {% if member.name %}
+                                            <div class="project-member">
+                                                <img src="{{member.img}}" alt="{{member.name}}" class="project-member-photo">
+                                                <span class="project-member-name">{{member.name}}</span>
+                                                <span class="fa fa-trash"></span>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <!-- Handle case where members is a dictionary -->
+                                    {% for member_key, member_data in project.members.items %}
+                                        {% if member_data.name %}
+                                            <div class="project-member">
+                                                <img src="/media/{{member_data.profile_picture}}" alt="{{member_data.name}}" class="project-member-photo">
+                                                <span class="project-member-name">{{member_data.name}}</span>
+                                                <span class="fa fa-trash"></span>
+                                            </div>
+                                        {% elif member_data.id %}
+                                            <!-- Handle case where member_data is just an ID -->
+                                            <div class="project-member">
+                                                <img src="https://thumbs.dreamstime.com/b/anonymous-user-flat-icon-vector-illustration-long-shadow-anonymous-user-flat-icon-105446565.jpg" alt="Member {{member_data.id}}" class="project-member-photo">
+                                                <span class="project-member-name">Member {{member_data.id}}</span>
+                                                <span class="fa fa-trash"></span>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endif %}
                             <div>
                                 Add new member <span class="fa fa-plus" style="margin-top: 15px;"></span>
                             </div>

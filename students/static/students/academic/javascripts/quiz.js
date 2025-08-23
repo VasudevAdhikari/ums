@@ -162,8 +162,8 @@ function resetTextAndFileInputs() {
   
 console.log("clearFormButton", document.getElementById('clearFormButton'));
 // Clear form function
-document.getElementById('clearFormButton').addEventListener('click', function() {
-    if (confirm("Are you sure you want to clear the form?")) {
+document.getElementById('clearFormButton').addEventListener('click', async function() {
+    if (await confirm("Are you sure you want to clear the form?")) {
         console.log("clearForm");
         const form = document.querySelector('form');
         form.reset();
@@ -171,6 +171,109 @@ document.getElementById('clearFormButton').addEventListener('click', function() 
         resetTextAndFileInputs();
     }
 });
+
+async function submitQuiz(e, toconfirm=true) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (toconfirm) { 
+        if (!await confirm('Are you sure to submit this quiz?')) return;
+    } else {
+        alert('You broke the rules more than 3 times. Now your quiz will automatically be submitted');
+    }
+
+    // Ensure globals exist
+    if (typeof quizAttemptStart === 'undefined') {
+        console.error('quizAttemptStart is not defined.');
+        return;
+    }
+
+    const quiz = window.QUIZ_DATA;
+    const attemptTime = quizAttemptStart.toISOString();
+    const submitTime = new Date().toISOString();
+
+    // Calculate time taken
+    const diffMs = new Date(submitTime) - quizAttemptStart;
+    const hours = Math.floor(diffMs / 3600000);
+    const minutes = Math.floor((diffMs % 3600000) / 60000);
+    const seconds = Math.floor((diffMs % 60000) / 1000);
+    const timeTaken = `${hours}h ${minutes}m ${seconds}s`;
+
+    let totalScore = 0;
+    const questions = [];
+
+    (quiz.questions || []).forEach((q, idx) => {
+        const qObj = {
+            question: q.question,
+            question_image: q.question_image,
+            points: q.points,
+            correct: false,
+            got_points: 0,
+            options: []
+        };
+
+        let answeredCorrect = false;
+        const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+        const answeredIdx = selected ? parseInt(selected.value) : -1;
+
+        (q.options || []).forEach((opt, oidx) => {
+            const answered = (oidx === answeredIdx);
+            const isCorrect = !!opt.correct;
+
+            qObj.options.push({
+                option: opt.option,
+                option_image: opt.option_image,
+                correct: isCorrect,
+                answered: answered
+            });
+
+            if (answered && isCorrect) answeredCorrect = true;
+        });
+
+        if (answeredCorrect) {
+            qObj.correct = true;
+            qObj.got_points = q.points;
+            totalScore += q.points;
+        }
+
+        questions.push(qObj);
+    });
+
+    const answer = {
+        title: quiz.title,
+        attempt_time: attemptTime,
+        submit_time: submitTime,
+        time_taken: timeTaken,
+        total_score: totalScore,
+        copied_times: window.copyCount || 0,
+        window_switch_times: window.windowChange || 0,
+        questions: questions
+    };
+
+    try {
+        const response = await fetch('/students/academics/quiz/submit/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': window.CSRF_TOKEN || ''
+            },
+            body: JSON.stringify({
+                assessment_id: window.assessment_id,
+                answer: answer
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+        }
+
+        // Redirect only if success
+        window.location.href = '/students/academics/home/';
+    } catch (err) {
+        alert("Failed to submit quiz. Please try again.");
+        console.error(err);
+    }
+}
 
 // Initialize the quiz
 document.addEventListener('DOMContentLoaded', function() {
@@ -187,86 +290,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Prevent form submission and show answers
     const form = document.querySelector('form');
     if (form) {
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            // Gather quiz answer data
-            const quiz = window.QUIZ_DATA;
-            const attemptTime = quizAttemptStart.toISOString();
-            const submitTime = new Date().toISOString();
-            // Calculate time taken
-            const diffMs = new Date(submitTime) - quizAttemptStart;
-            const hours = Math.floor(diffMs / 3600000);
-            const minutes = Math.floor((diffMs % 3600000) / 60000);
-            const seconds = Math.floor((diffMs % 60000) / 1000);
-            const timeTaken = `${hours}h ${minutes}m ${seconds}s`;
-            let totalScore = 0;
-            const questions = [];
-            (quiz.questions || []).forEach((q, idx) => {
-                const qObj = {
-                    question: q.question,
-                    question_image: q.question_image,
-                    points: q.points,
-                    correct: false,
-                    got_points: 0,
-                    options: []
-                };
-                let answeredCorrect = false;
-                let answeredIdx = -1;
-                // Find selected option
-                const selected = document.querySelector(`input[name="q${idx}"]:checked`);
-                if (selected) {
-                    answeredIdx = parseInt(selected.value);
-                }
-                (q.options || []).forEach((opt, oidx) => {
-                    const answered = (oidx === answeredIdx);
-                    const isCorrect = !!opt.correct;
-                    qObj.options.push({
-                        option: opt.option,
-                        option_image: opt.option_image,
-                        correct: isCorrect,
-                        answered: answered
-                    });
-                    if (answered && isCorrect) {
-                        answeredCorrect = true;
-                    }
-                });
-                if (answeredCorrect) {
-                    qObj.correct = true;
-                    qObj.got_points = q.points;
-                    totalScore += q.points;
-                }
-                questions.push(qObj);
-            });
-            const answer = {
-                title: quiz.title,
-                attempt_time: attemptTime,
-                submit_time: submitTime,
-                time_taken: timeTaken,
-                total_score: totalScore,
-                copied_times: copyCount,
-                window_switch_times: windowChange,
-                questions: questions
-            };
-            // Send to backend
-            await fetch('/students/academics/quiz/submit/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': window.CSRF_TOKEN || ''
-                },
-                body: JSON.stringify({
-                    assessment_id: window.assessment_id,
-                    answer: answer
-                })
-            });
-            window.location.href = '/students/mailbox/';
-        });
+        form.addEventListener('submit', submitQuiz);
     }
 });
 
 // Timer functionality
-let timeLeft = 10*60; // 30 minutes in seconds
+let timeLeft = QUIZ_DATA.time_limit;
 let timerInterval;
 
 function startTimer() {
@@ -422,132 +451,6 @@ timerStyle.textContent = `
 `;
 document.head.appendChild(timerStyle);
 
-function checkAnswers() {
-    console.log('Checking answers...');
-    
-    // Check radio buttons
-    const radioGroups = document.querySelectorAll('input[type="radio"]');
-    const processedSections = new Set(); // Track processed sections
-
-    radioGroups.forEach(radio => {
-        const section = radio.closest('.form-section');
-        if (!section) return;
-        
-        // Skip if we've already processed this section
-        if (processedSections.has(section)) return;
-        processedSections.add(section);
-
-        console.log('Processing section:', section);
-
-        // Find the selected radio in this section
-        const selectedRadio = section.querySelector('input[type="radio"]:checked');
-        const isCorrect = selectedRadio && selectedRadio.getAttribute('status') === 'true';
-        
-        // Set section background color
-        section.style.backgroundColor = isCorrect ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)';
-        
-        // Remove any existing icons and points display in this section
-        section.querySelectorAll('.answer-icon, .points-display').forEach(el => el.remove());
-        
-        // If user selected an option
-        if (selectedRadio) {
-            // Handle both regular and image-based MCQs
-            const optionContent = selectedRadio.closest('.option-with-image')?.querySelector('.option-content') || selectedRadio.parentElement;
-            if (optionContent) {
-                const icon = document.createElement('span');
-                icon.className = 'answer-icon';
-                icon.innerHTML = isCorrect ? '✓' : '✗';
-                icon.style.color = isCorrect ? '#22c55e' : '#ef4444';
-                icon.style.marginLeft = '8px';
-                icon.style.fontWeight = 'bold';
-                optionContent.appendChild(icon);
-                console.log('Added icon to selected option');
-            }
-        }
-        
-        // If wrong or no answer selected, show the correct answer
-        if (!isCorrect) {
-            const correctOption = section.querySelector('input[status="true"]');
-            if (correctOption) {
-                // Handle both regular and image-based MCQs
-                const correctOptionContent = correctOption.closest('.option-with-image')?.querySelector('.option-content') || correctOption.parentElement;
-                if (correctOptionContent) {
-                    const correctIcon = document.createElement('span');
-                    correctIcon.className = 'answer-icon';
-                    correctIcon.innerHTML = '✓';
-                    correctIcon.style.color = '#22c55e';
-                    correctIcon.style.marginLeft = '8px';
-                    correctIcon.style.fontWeight = 'bold';
-                    correctOptionContent.appendChild(correctIcon);
-                    console.log('Added check icon to correct option');
-                }
-            }
-        }
-
-        // Add points display
-        const pointsDisplay = document.createElement('div');
-        pointsDisplay.className = 'points-display';
-        pointsDisplay.innerHTML = `
-            <span class="marks">${isCorrect ? '1' : '0'} out of 1</span>
-        `;
-        section.appendChild(pointsDisplay);
-    });
-
-    // Check textboxes
-    const textboxes = document.querySelectorAll('input[type="text"], textarea');
-    textboxes.forEach(textbox => {
-        const section = textbox.closest('.form-section');
-        if (!section) return;
-
-        const correctAnswer = textbox.getAttribute('answer');
-        if (correctAnswer) {
-            const userAnswer = textbox.value.trim().toLowerCase();
-            const isCorrect = userAnswer === correctAnswer.toLowerCase();
-            
-            section.style.backgroundColor = isCorrect ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)';
-            
-            // Remove any existing feedback and points display
-            section.querySelectorAll('.answer-feedback, .points-display').forEach(el => el.remove());
-            
-            // If wrong or empty, show the correct answer
-            if (!isCorrect) {
-                const feedbackDiv = document.createElement('div');
-                feedbackDiv.className = 'answer-feedback';
-                feedbackDiv.innerHTML = `
-                    <p class="correct-answer">Correct Answer: ${correctAnswer}</p>
-                `;
-                section.appendChild(feedbackDiv);
-            }
-
-            // Add points display
-            const pointsDisplay = document.createElement('div');
-            pointsDisplay.className = 'points-display';
-            pointsDisplay.innerHTML = `
-                <span class="marks">${isCorrect ? '1' : '0'} out of 1</span>
-            `;
-            section.appendChild(pointsDisplay);
-        }
-    });
-
-    // Calculate and display total score
-    const totalQuestions = document.querySelectorAll('.form-section').length - 1; // Subtract 1 for the main section
-    const correctAnswers = document.querySelectorAll('.form-section[style*="rgba(34, 197, 94, 0.1)"]').length;
-    
-    const totalScoreDisplay = document.createElement('div');
-    totalScoreDisplay.className = 'total-score';
-    totalScoreDisplay.innerHTML = `
-        <h3>Total Score: ${correctAnswers} out of ${totalQuestions}</h3>
-    `;
-    
-    // Remove existing total score if any
-    const existingTotalScore = document.querySelector('.total-score');
-    if (existingTotalScore) {
-        existingTotalScore.remove();
-    }
-    
-    document.querySelector('form').appendChild(totalScoreDisplay);
-}
-
 // Add styles for answer icons and points display
 const style = document.createElement('style');
 style.textContent = `
@@ -625,8 +528,26 @@ let quizAttemptStart = new Date();
 let copyCount = 0;
 let windowChange = 0;
 
+function warnUser(type, count) {
+    if (count==4) {
+        submitQuiz(new Event('submit'), false);
+    } else {
+        if (type=='copy') {
+            alert(`Copying is not allowed in quiz. If you do it ${4-count} more times, quiz will be submitted automatically.`);
+            return;
+        } else {
+            alert(`You cannot switch to another window. You are in quiz mode. If you do this ${4-count} more times, your quiz will be submitted automatically`);
+            return;
+        }
+    }
+}
+
+
 // Listen for copy and window switch events (already present in your code)
-document.addEventListener('copy', ()=> { copyCount += 1; });
+document.addEventListener('copy', ()=> { 
+    copyCount += 1; 
+    warnUser('copy', copyCount);
+});
 var visibilityChange;
 if (typeof document.hidden !== "undefined") {
   visibilityChange = "visibilitychange";
@@ -640,5 +561,6 @@ if (typeof document.hidden !== "undefined") {
 document.addEventListener(visibilityChange, function() {
   if (document.visibilityState !== 'visible') {
     windowChange += 1;
+    warnUser('window', windowChange);
   }
 });

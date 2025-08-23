@@ -1,4 +1,1 @@
-quiz_manager.py -> show_quiz_creation() -> students query
-
-assignment_manager.py -> show_assignment_creation() -> students query
-
+Nothing left to fix

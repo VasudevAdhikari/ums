@@ -1,0 +1,657 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Noticeboard</title>
+    <!-- Bootstrap 5 CSS CDN (responsive) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN (for icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'noticeboard/css/manage_post.css' %}">
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins&display=swap');
+
+        :root {
+            /* Primary Colors (University Branding) */
+            --primary: #003366; /* Deep Blue - main brand color */
+            --primary-light: #1a4d80; /* Lighter shade for hover states */
+            --primary-dark: #00264d; /* Darker shade for active states */
+            
+            /* Secondary Colors */
+            --secondary: #FFD700; /* Gold - for accents and highlights */
+            --secondary-light: #ffe44d;
+  
+            /* Background Colors */
+            --bg-light: #FFFFFF;
+            --bg-gray: #F5F5F5;
+            
+            /* Text Colors */
+            --text-dark: #333333;
+            --text-black: #000000;
+            --text-light: #FFFFFF;
+            
+            /* Status Colors */
+            --success: #4CAF50;
+            --error: #F44336;
+            --warning: #FFC107;
+            --info: #17A2B8;
+        }
+        section {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+            scroll-margin-top: 70px; /* Account for fixed navbar */
+        }
+        body {
+            font-family: "Poppins", sans-serif;
+             font-style: normal;
+            background-color: var(--bg-gray);
+            color: var(--text-dark);
+            scroll-behavior: smooth;
+            box-sizing: border-box;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: var(--primary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand, .nav-link {
+            color: var(--text-light) !important;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary) !important;
+            border-bottom: 2px solid var(--secondary);
+        }
+
+        .dropdown-menu {
+            background-color: var(--primary-light);
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .dropdown-item {
+            color: var(--text-light);
+            padding: 10px 20px;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--secondary) !important;
+            color: var(--text-dark) !important;
+            border-radius: 8px;
+        }
+        /* Remove Bootstrap's default active background */
+.dropdown-item.active {
+    background: transparent !important;
+}
+
+/* Ensure hover works in all states */
+.dropdown-item:hover {
+    background-color: var(--secondary) !important;
+    color: var(--text-dark) !important;
+    border-radius: 8px;
+}
+        
+        
+       
+        .uni-logo {
+            height: 50px;
+            width: 50px;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .custom-nav-spacing .nav-item {
+            margin-right: 2rem;
+        }
+
+        @media (max-width: 991.98px) {
+            .custom-nav-spacing .nav-item {
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        .logout-button {
+            border-radius: 10px;
+            width: 70px;
+            height: 50px;
+            background-color: var(--error);
+        }
+
+        .logout-icon {
+            font-size: 1.7rem;
+            width: 20px;
+        }
+
+        .logout-icon:hover {
+            color: var(--secondary) !important;
+        }
+
+        /* Noticeboard Info Banner Styles */
+        .noticeboard-info-banner {
+            position: relative;
+            width: calc(100% - 40px);
+            height: 300px;
+            overflow: hidden;
+            margin: 20px auto;
+            margin-top: 50px;
+            background: url('https://images.unsplash.com/photo-1523050854058-8df90110c9e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            border-radius: 12px;
+            box-shadow: 
+                0 4px 8px rgba(0, 0, 0, 0.1),
+                0 2px 4px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .noticeboard-info-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgb(247, 244, 244);
+            border-radius: 12px;
+        }
+
+        .noticeboard-info-banner::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--secondary);
+            border-radius: 0 0 12px 12px;
+        }
+
+        .noticeboard-info-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 0 2rem;
+        }
+
+        .noticeboard-info-text {
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .noticeboard-info-text h4 {
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #003366;
+            font-size: 2.5rem;
+            
+        }
+
+        .noticeboard-info-text p {
+            color: #003366;
+            margin-bottom: 0;
+            opacity: 0.95;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            
+        }
+
+        .noticeboard-info-icon {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .noticeboard-info-banner {
+                height: 300px;
+                width: calc(100% - 20px);
+                margin: 15px auto;
+                margin-top: 80px;
+            }
+            
+            .noticeboard-info-text h4 {
+                font-size: 2rem;
+            }
+            
+            .noticeboard-info-text p {
+                font-size: 1rem;
+            }
+            
+            .noticeboard-info-icon {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .noticeboard-info-banner {
+                height: 250px;
+                width: calc(100% - 16px);
+                margin: 12px auto;
+                margin-top: 70px;
+            }
+            
+            .noticeboard-info-text h4 {
+                font-size: 1.5rem;
+            }
+            
+            .noticeboard-info-text p {
+                font-size: 0.9rem;
+            }
+            
+            .noticeboard-info-icon {
+                font-size: 2rem;
+            }
+        }
+
+        /* Notification Modal Styles */
+        .notification-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .notification-modal-content {
+            background: white;
+            max-width: 600px;
+            width: 95vw;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 16px;
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            padding: 24px;
+        }
+
+        .notification-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .notification-modal-header h5 {
+            margin: 0;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .notification-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .notification-modal-close:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .pending-post-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background: #fafafa;
+            transition: all 0.2s ease;
+        }
+
+        .pending-post-item:hover {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .pending-post-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            justify-content: flex-end;
+        }
+
+        .approve-btn {
+            background: #28a745;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .approve-btn:hover {
+            background: #218838;
+        }
+
+        .reject-btn {
+            background: #dc3545;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .reject-btn:hover {
+            background: #c82333;
+        }
+
+        .no-pending-message {
+            text-align: center;
+            color: #666;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .floating-notification-btn {
+                top: 70px;
+                right: 15px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+
+            .notification-dot {
+                width: 10px;
+                height: 10px;
+                top: 6px;
+                right: 6px;
+            }
+        }
+
+        /* Back Button Styles */
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 51, 102, 0.3);
+        }
+
+        .btn-lg {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 10px;
+            min-width: 200px;
+        }
+
+        @media (max-width: 576px) {
+            .btn-lg {
+                padding: 10px 20px;
+                font-size: 1rem;
+                min-width: 180px;
+            }
+        }
+
+    </style>
+</head>
+<body style="font-family: 'Poppins', Arial, sans-serif;" data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="180" tabindex="0">
+    <!-- Header -->
+{% if request.user_role == 'instructor' %}
+    {% include "faculty/navbar.html" %}
+{% elif request.user_role == 'student' %}
+    {% include "students/academic/navbar.html" %}
+{% elif request.user_role == 'executive' %}
+    {% include "executives/navbar.html" %}
+{% else %}
+    {% include "public/navbar.html" %}
+{% endif %}
+
+    <!-- Notification Modal -->
+    <div class="notification-modal" id="notification-modal">
+        <div class="notification-modal-content">
+            <div class="notification-modal-header">
+                <h5><i class="fas fa-clock me-2"></i>Pending Posts</h5>
+                <button class="notification-modal-close" id="notification-modal-close">&times;</button>
+            </div>
+            <div id="pending-posts-container">
+                <!-- Pending posts will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Noticeboard Info Banner -->
+    <div class="noticeboard-info-banner" style="margin-top: 80px;">
+        <div class="noticeboard-info-content">
+            <div class="noticeboard-info-text">
+                <div class="noticeboard-info-icon">
+                    <i class="fa-solid fa-bullhorn"></i>
+                </div>
+                <h4>Student Noticeboard</h4>
+                <p>
+                    
+                        Welcome to the Noticeboard! View important notices and updates from your instructors and administrators. Stay informed about campus activities and academic announcements.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                <div class="d-flex justify-content-start">
+                    <a href="{% url 'noticeboard:home' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Noticeboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container" style="margin-top: 2rem;">
+        <div class="row justify-content-center">
+            <main class="col-12 col-lg-8">
+                <!-- Post Form - Only for Instructors and Admins -->
+                
+
+                <!-- My Posts -->
+                <div class="card mt-4">
+                    <div class="card-header"><strong>My Posts</strong></div>
+                    <div class="card-body" id="my-posts"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center py-3 mt-4">
+        <small>&copy; 2025 Student Noticeboard. All rights reserved.</small>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Expose current user to JS -->
+    <script>
+        window.currentUser = {
+            fullName: "{{ user.user.full_name|default:user.user.username|escapejs }}",
+            role: "{{ user_type|escapejs }}"
+        };
+    </script>
+    
+    <!-- Main JS -->
+    <script type="module" src="{% static 'noticeboard/javascripts/manage_post.js' %}"></script>
+    <script>
+function createImageGrid(imgs, containerWidth) {
+    if (imgs.length === 1) {
+        return `<img src="${imgs[0]}" class="img-fluid rounded mb-2 w-100 post-img-single" style="max-height:400px;object-fit:cover;cursor:pointer;" data-img-idx="0">`;
+    }
+    let html = '<div class="row g-2">';
+    let maxShow = Math.min(4, imgs.length);
+    for (let i = 0; i < maxShow; ++i) {
+        html += `<div class="col-3"><div class="position-relative">
+            <img src="${imgs[i]}" class="img-fluid rounded post-img-multi" style="height:120px;object-fit:cover;cursor:pointer;" data-img-idx="${i}">
+            ${i === 3 && imgs.length > 4 ? `<div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50 text-white fs-3 fw-bold" style="border-radius:.5rem;cursor:pointer;">+${imgs.length-4}</div>` : ''}
+        </div></div>`;
+    }
+    html += '</div>';
+    return html;
+}
+function createVideoGrid(vids) {
+    if (!vids.length) return '';
+    return vids.map((u, i) =>
+        `<video src="${u}" class="img-fluid rounded mb-2 w-100" style="max-height:320px;object-fit:cover;" controls></video>`
+    ).join('');
+}
+async function fetchMyPosts() {
+    const container = document.getElementById('my-posts');
+    if (!container) return;
+    container.innerHTML = 'Loading...';
+    try {
+        const res = await fetch('/noticeboard/api/posts/my/', { credentials: 'same-origin' });
+        const data = await res.json();
+        const items = (data.results || []);
+        if (!items.length) { container.innerHTML = '<em>No posts yet.</em>'; return; }
+        container.innerHTML = '';
+        items.forEach(p => {
+            const notice = p.notice || {};
+            const files = notice.files || [];
+            const imgs = files.filter(u => !u.match(/\.(mp4|webm|ogg)$/i));
+            const vids = files.filter(u => u.match(/\.(mp4|webm|ogg)$/i));
+            const role = window.currentUser && window.currentUser.role ? `<span class="badge bg-secondary ms-2">${window.currentUser.role.charAt(0).toUpperCase() + window.currentUser.role.slice(1)}</span>` : '';
+            const div = document.createElement('div');
+            div.className = 'd-flex justify-content-between border rounded p-2 mb-2 align-items-center';
+            div.innerHTML = `<div>
+                <strong>${window.currentUser.fullName || ''}</strong>${role}<br>
+                <small class="text-muted">${p.status === 'U' ? 'Approved' : p.status === 'P' ? 'Pending' : 'Rejected'}${p.created_at ? ' • ' + new Date(p.created_at).toLocaleString() : ''}</small>
+                <div>${createImageGrid(imgs)}${createVideoGrid(vids)}</div>
+            </div>
+            <div>
+                <button class="btn btn-sm btn-outline-danger" data-id="${p.id}">Delete</button>
+            </div>`;
+            // Modal logic
+            const imgEls = div.querySelectorAll('.post-img-single, .post-img-multi');
+            imgEls.forEach(imgEl => {
+                imgEl.onclick = (e) => openImageModal(imgs, parseInt(imgEl.dataset.imgIdx));
+            });
+            // Overlay click for "+N"
+            const overlay = div.querySelector('.position-absolute');
+            if (overlay) {
+                overlay.onclick = () => openImageModal(imgs, 3);
+            }
+            div.querySelector('button').onclick = () => deleteMyPost(p.id, div);
+            container.appendChild(div);
+        });
+    } catch (_) {
+        container.innerHTML = '<em>Failed to load.</em>';
+    }
+}
+async function deleteMyPost(id, rowEl) {
+    if (!await confirm('Are you sure you want to delete this post?')) return;
+    try {
+        const res = await fetch(`/noticeboard/api/posts/${id}/delete/`, { method: 'DELETE', credentials: 'same-origin' });
+        if (!res.ok) throw new Error();
+        if (rowEl) rowEl.remove();
+        fetchMyPosts();
+        showNotificationMessage('Post deleted!', 'success');
+    } catch (_) {}
+}
+// Modal logic (shared for all pages)
+let imageModal;
+function openImageModal(images, idx) {
+    if (!imageModal) {
+        imageModal = document.createElement('div');
+        imageModal.id = 'image-modal';
+        imageModal.style.display = 'none';
+        imageModal.style.position = 'fixed';
+        imageModal.style.top = '0';
+        imageModal.style.left = '0';
+        imageModal.style.width = '100vw';
+        imageModal.style.height = '100vh';
+        imageModal.style.background = 'rgba(0,0,0,0.8)';
+        imageModal.style.zIndex = '9999';
+        imageModal.style.justifyContent = 'center';
+        imageModal.style.alignItems = 'center';
+        imageModal.style.transition = 'opacity 0.2s';
+        imageModal.innerHTML = `
+            <div id="modal-content" style="position:relative;max-width:90vw;max-height:90vh;display:flex;align-items:center;justify-content:center;">
+                <button id="modal-prev" class="modal-arrow-btn btn btn-light" style="position:absolute;left:-60px;top:50%;transform:translateY(-50%);z-index:2;display:none;">
+                    <i class="fa-solid fa-chevron-left fs-2"></i>
+                </button>
+                <img id="modal-img" src="" style="max-width:80vw;max-height:80vh;border-radius:12px;box-shadow:0 4px 32px #0008;">
+                <button id="modal-next" class="modal-arrow-btn btn btn-light" style="position:absolute;right:-60px;top:50%;transform:translateY(-50%);z-index:2;display:none;">
+                    <i class="fa-solid fa-chevron-right fs-2"></i>
+                </button>
+                <button id="modal-close" class="btn btn-light" style="position:absolute;top:-40px;right:-40px;border-radius:50%;width:36px;height:36px;font-size:1.5rem;z-index:3;">&times;</button>
+            </div>
+        `;
+        document.body.appendChild(imageModal);
+        document.getElementById('modal-prev').onclick = () => modalState.current > 0 && showModalImg(modalState.images, --modalState.current);
+        document.getElementById('modal-next').onclick = () => modalState.current < modalState.images.length-1 && showModalImg(modalState.images, ++modalState.current);
+        document.getElementById('modal-close').onclick = closeImageModal;
+        imageModal.onclick = (e) => { if (e.target === imageModal) closeImageModal(); };
+        document.addEventListener('keydown', (e) => {
+            if (imageModal.style.display === 'flex') {
+                if (e.key === 'ArrowLeft') document.getElementById('modal-prev').click();
+                if (e.key === 'ArrowRight') document.getElementById('modal-next').click();
+                if (e.key === 'Escape') closeImageModal();
+            }
+        });
+    }
+    modalState.images = images;
+    modalState.current = idx;
+    showModalImg(images, idx);
+    imageModal.style.display = 'flex';
+    setTimeout(() => { imageModal.style.opacity = '1'; }, 10);
+}
+function closeImageModal() {
+    imageModal.style.opacity = '0';
+    setTimeout(() => { imageModal.style.display = 'none'; }, 200);
+}
+function showModalImg(images, idx) {
+    const img = document.getElementById('modal-img');
+    img.src = images[idx];
+    document.getElementById('modal-prev').style.display = idx > 0 ? 'block' : 'none';
+    document.getElementById('modal-next').style.display = idx < images.length - 1 ? 'block' : 'none';
+}
+let modalState = { images: [], current: 0 };
+</script>
+</body>
+</html>

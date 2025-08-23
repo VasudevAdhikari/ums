@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,14 +9,28 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'login_register.css' %}">
     <link rel="stylesheet" href="{% static 'register.css' %}">
+    <style>
+        #typewriter {
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+            border-right: 2px solid var(--primary-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+        }
+    </style>
 </head>
+
 <body>
     <div class="auth-container">
         <div class="auth-header">
             <h1>Create Account</h1>
-            <p>Join MM Logic Gallery</p>
+            <!-- <p>Explore your academic journey</p>
+            <p>Discover endless possibilities</p>
+            <p>At our esteemed university</p> -->
+            <p id="typewriter"></p>
         </div>
-        
+
         <form method="POST" enctype="multipart/form-data" id="registerForm">
             {% csrf_token %}
 
@@ -23,7 +38,7 @@
                 <label for="email">Gmail</label>
                 <div class="input-group">
                     <input type="email" class="form-control" id="email" name="email" required
-                           oninput="validateEmail(this)">
+                        oninput="validateEmail(this)">
                     <div class="input-group-append">
                         <button type="button" class="btn btn-primary" id="verifyButton" disabled>OK</button>
                     </div>
@@ -34,8 +49,7 @@
             <div class="form-group" id="otp-group">
                 <label for="otp">OTP</label>
                 <div class="input-group">
-                    <input type="number" class="form-control" id="otp" required
-                           oninput="validateOTP(this)">
+                    <input type="number" class="form-control" id="otp" required oninput="validateOTP(this)">
                     <div class="input-group-append">
                         <button type="button" class="btn btn-primary" id="verifyButton1" disabled>OK</button>
                     </div>
@@ -49,8 +63,8 @@
 
             <div class="form-group">
                 <label for="phone">Phone</label>
-                <input type="tel" class="form-control" id="phone" name="phone" required
-                       oninput="validatePhone(this)" disabled>
+                <input type="tel" class="form-control" id="phone" name="phone" required oninput="validatePhone(this)"
+                    disabled>
                 <div class="error-message" id="phoneError">Please enter a valid phone number</div>
             </div>
 
@@ -63,7 +77,8 @@
                 <label>Gender</label>
                 <div class="gender-options">
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="gender" id="genderMale" value="M" required disabled>
+                        <input class="form-check-input" type="radio" name="gender" id="genderMale" value="M" required
+                            disabled>
                         <label class="form-check-label" for="genderMale">Male</label>
                     </div>
                     <div class="form-check form-check-inline">
@@ -80,7 +95,7 @@
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" class="form-control" id="password" name="password" required
-                       oninput="validatePassword(this)" disabled>
+                    oninput="validatePassword(this)" disabled>
                 <div class="error-message" id="passwordError">Password must be at least 8 characters long</div>
                 <div class="password-strength" id="passwordStrength"></div>
             </div>
@@ -92,22 +107,23 @@
 
             <div class="form-group">
                 <label for="telegram_username">Telegram Username</label>
-                <input type="text" class="form-control" id="telegram_username" name="telegram_username" maxlength="50" required
-                       oninput="validateTelegramUsername(this)" disabled>
-                <div class="error-message" id="telegramError">Telegram username must start with @ and contain only letters, numbers, and underscores</div>
+                <input type="text" class="form-control" id="telegram_username" name="telegram_username" maxlength="50"
+                    required oninput="validateTelegramUsername(this)" disabled>
+                <div class="error-message" id="telegramError">Telegram username must start with @ and contain only
+                    letters, numbers, and underscores</div>
             </div>
 
             <div class="form-group">
                 <label for="outlook_email">Outlook Email (Optional)</label>
                 <input type="email" class="form-control" id="outlook_email" name="outlook_email"
-                       oninput="validateOutlookEmail(this)" disabled>
+                    oninput="validateOutlookEmail(this)" disabled>
                 <div class="error-message" id="outlookError">Please enter a valid Outlook email address</div>
             </div>
 
             <div class="form-group">
                 <label for="profile_picture">Profile Picture</label>
-                <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*" required
-                       onchange="previewImage(this)" disabled>
+                <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*"
+                    required onchange="previewImage(this)" disabled>
                 <img id="preview" class="profile-picture-preview" style="display: none;">
             </div>
 
@@ -122,12 +138,13 @@
             <div class="form-group" id="degree-input">
                 <label for="degree">Highest Degree</label>
                 <input type="text" class="form-control" maxlength='60' id="degree" name="degree" disabled
-                placeholder="e.g. BcSc Knowledge Engineering">
+                    placeholder="e.g. BcSc Knowledge Engineering">
             </div>
 
             <div class="form-group" id="specialization-input">
                 <label for="specialization">Specializations (separated by commas)</label>
-                <input type="text" class="form-control" maxlength='60' id="specialization" name="specialization" disabled placeholder="e.g. Natural Language Processing, LLM, AR/VR, ....">
+                <input type="text" class="form-control" maxlength='60' id="specialization" name="specialization"
+                    disabled placeholder="e.g. Natural Language Processing, LLM, AR/VR, ....">
             </div>
 
             <div class="emergency-contact">
@@ -135,21 +152,21 @@
                 <div class="form-group">
                     <label for="emergency_name">Contact Name</label>
                     <input type="text" class="form-control" id="emergency_name" name="emergency_name" required
-                           oninput="validateContactName(this)" disabled>
+                        oninput="validateContactName(this)" disabled>
                     <div class="error-message" id="contactNameError">Please enter a valid name</div>
                 </div>
 
                 <div class="form-group">
                     <label for="emergency_phone">Contact Phone</label>
                     <input type="tel" class="form-control" id="emergency_phone" name="emergency_phone" required
-                           oninput="validateContactPhone(this)" disabled>
+                        oninput="validateContactPhone(this)" disabled>
                     <div class="error-message" id="contactPhoneError">Please enter a valid phone number</div>
                 </div>
 
                 <div class="form-group">
                     <label for="emergency_email">Contact Email</label>
                     <input type="email" class="form-control" id="emergency_email" name="emergency_email" required
-                           oninput="validateContactEmail(this)" disabled>
+                        oninput="validateContactEmail(this)" disabled>
                     <div class="error-message" id="contactEmailError">Please enter a valid email address</div>
                 </div>
             </div>
@@ -176,38 +193,89 @@
                 <div class="modal-body">
                     <h4>MM Logic Gallery Terms and Conditions</h4>
                     <p>Last updated: [Current Date]</p>
-                    
+
                     <h5>1. Acceptance of Terms</h5>
-                    <p>By accessing and using MM Logic Gallery's services, you agree to be bound by these Terms and Conditions.</p>
-                    
+                    <p>By accessing and using MM Logic Gallery's services, you agree to be bound by these Terms and
+                        Conditions.</p>
+
                     <h5>2. User Responsibilities</h5>
-                    <p>Users are responsible for maintaining the confidentiality of their account information and for all activities that occur under their account.</p>
-                    
+                    <p>Users are responsible for maintaining the confidentiality of their account information and for
+                        all activities that occur under their account.</p>
+
                     <h5>3. Privacy Policy</h5>
-                    <p>Your use of our services is also governed by our Privacy Policy. Please review our Privacy Policy to understand our practices.</p>
-                    
+                    <p>Your use of our services is also governed by our Privacy Policy. Please review our Privacy Policy
+                        to understand our practices.</p>
+
                     <h5>4. Intellectual Property</h5>
-                    <p>All content and materials available on MM Logic Gallery are protected by intellectual property rights.</p>
-                    
+                    <p>All content and materials available on MM Logic Gallery are protected by intellectual property
+                        rights.</p>
+
                     <h5>5. Code of Conduct</h5>
                     <p>Users must adhere to our community guidelines and maintain respectful behavior at all times.</p>
-                    
+
                     <h5>6. Service Modifications</h5>
-                    <p>MM Logic Gallery reserves the right to modify or discontinue any service at any time without notice.</p>
-                    
+                    <p>MM Logic Gallery reserves the right to modify or discontinue any service at any time without
+                        notice.</p>
+
                     <h5>7. Limitation of Liability</h5>
-                    <p>MM Logic Gallery shall not be liable for any indirect, incidental, special, consequential, or punitive damages.</p>
-                    
+                    <p>MM Logic Gallery shall not be liable for any indirect, incidental, special, consequential, or
+                        punitive damages.</p>
+
                     <div class="timer-container">
                         <p>Please wait <span id="countdown">10</span> seconds before agreeing to the terms.</p>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="cancelButton" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" id="cancelButton"
+                        data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" id="agreeButton" disabled>Agree and Register</button>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const texts = [
+                "Explore your academic journey",
+                "Discover endless possibilities",
+                "At our esteemed university"
+            ];
+
+            const typewriterElement = document.getElementById("typewriter");
+            let textIndex = 0;
+            let charIndex = 0;
+            let typing = true;
+
+            function typeEffect() {
+                let currentText = texts[textIndex];
+
+                if (typing) {
+                    // typing in
+                    if (charIndex < currentText.length) {
+                        typewriterElement.textContent += currentText.charAt(charIndex);
+                        charIndex++;
+                        setTimeout(typeEffect, 100);
+                    } else {
+                        typing = false;
+                        setTimeout(typeEffect, 1500); // pause before deleting
+                    }
+                } else {
+                    // deleting
+                    if (charIndex > 0) {
+                        typewriterElement.textContent = currentText.substring(0, charIndex - 1);
+                        charIndex--;
+                        setTimeout(typeEffect, 50);
+                    } else {
+                        typing = true;
+                        textIndex = (textIndex + 1) % texts.length; // go to next text
+                        setTimeout(typeEffect, 500);
+                    }
+                }
+            }
+
+            typeEffect();
+        });
+    </script>
 </body>
-</html> 
+
+</html>

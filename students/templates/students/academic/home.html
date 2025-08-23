@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Home Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Bootstrap & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #003366;
+            --primary-light: #1a4d80;
+            --primary-dark: #00264d;
+            --secondary: #FFD700;
+            --secondary-light: #ffe44d;
+            --bg-light: #FFFFFF;
+            --bg-gray: #F5F5F5;
+            --text-dark: #333333;
+            --text-black: #000000;
+            --text-light: #FFFFFF;
+            --success: #4CAF50;
+            --error: #F44336;
+            --warning: #FFC107;
+            --info: #17A2B8;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-gray);
+            color: var(--text-dark);
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        .enroll-btn {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+        }
+
+        .enroll-btn:hover {
+            background-color: var(--primary);
+            color: var(--text-light);
+            transform: translateY(-1px);  
+        }
+
+        .course-card {
+            cursor: pointer;
+            background-color: white;
+            border-left: 5px solid var(--primary);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+
+        .subject-type {
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 5px;
+            color: white;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .Core { background-color: var(--primary); }
+        .Supportive { background-color: var(--info); }
+        .Elective { background-color: var(--warning); }
+        .Extracurricular { background-color: var(--success); }
+
+        .accordion-button {
+            border: 1px solid var(--primary);
+            border-radius: 6px;
+
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: var(--primary-light);
+            color: white;
+        }
+        /* .accordion-header {
+            border-top: 7px solid var(--secondary);
+        } */
+        
+    </style>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'faculty/css/navbar.css' %}">
+</head>
+<body>
+    {% include "students/academic/navbar.html" %}
+    <script>
+        console.log('{{pending_enrollments|escapejs}}');
+    </script>
+
+    <div class="container"  style="margin-top: 80px !important;">
+
+        <button class="btn enroll-btn mb-4" onclick="window.location.href='/students/personal/enrollment/'">
+            <i class="fas fa-plus-circle me-2"></i>Enroll for a New Term
+        </button>
+
+        <!-- Enrolled Terms Section -->
+        <h2><i class="fas fa-graduation-cap me-2"></i>Enrolled Terms</h2>
+        <div class="accordion " id="enrolledTermsAccordion">
+            <!-- Term 1 -->
+             {% for term in approved_enrollments %}
+            <div class="accordion-item mb-2">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#term{{forloop.counter}}">
+                        {{term.name}}
+                    </button>
+                </h2>
+                <div id="term{{forloop.counter}}" class="accordion-collapse collapse" data-bs-parent="#enrolledTermsAccordion">
+                    <div class="accordion-body">
+                        <p><strong>Enrollment Date:</strong> {{term.enrolled_date}}</p>
+                        <div class="row g-3 mt-2">
+                            {% for details in term.details %}
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="course-card shadow-sm p-4 " onclick="window.location.href='/students/academics/batch_instructor/{{details.batch_instructor.id}}';">
+                                    <i class="fas fa-graduation-cap me-2 text-primary"></i>
+                                    <strong>{{details.batch_instructor.course.course_code}} - {{details.batch_instructor.course.course_name}}</strong><br>
+                                    Instructor: {{details.batch_instructor.instructor.user.full_name|default:"Not decided yet"}}<br>
+                                    {{details.batch_instructor.course.department.name}}<br>
+                                    <span class="subject-type Core">{{details.type}}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Add more terms here similarly (term2, term3) if needed -->
+
+        </div>
+
+        <!-- Pending Enrollments Section -->
+        {% if pending_enrollments %}
+        <h2><i class="fas fa-clock me-2"></i>Pending Enrollments</h2>
+        <div class="accordion" id="pendingEnrollmentsAccordion">
+            {% for enrollment in pending_enrollments %}
+            <div class="accordion-item mb-2">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pending{{enrollment.id}}">
+                        {{enrollment.enrollment_name}}
+                    </button>
+                </h2> 
+                <div id="pending{{enrollment.id}}" class="accordion-collapse collapse" data-bs-parent="#pendingEnrollmentsAccordion">
+                    <div class="accordion-body">
+                        <p><strong>Enrollment Date:</strong> {{enrollment.enrollment_date}}</p>
+                        <p><strong>Student Information Form:</strong> Completed &nbsp;&nbsp;&nbsp; 
+                        <button class="btn btn-primary" onclick="window.location.href='/students/personal/sis_form/'">Check Again</button>
+                        </p>
+                        <h5>Selected Subjects</h5>
+                        <div class="row g-3 mt-2">
+                            {% for course in enrollment.courses%}
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="course-card">
+                                    <strong>{{course.course_name}}</strong><br>
+                                    {{course.department}}<br>
+                                    <span class="subject-type {{course.type}}">{{course.type}}</span>
+                                </div>
+                            </div>
+                            {% endfor %}    
+                            <!-- div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="course-card">
+                                    <strong>PH201 - Logic and Philosophy</strong><br>
+                                    Department: Philosophy<br>
+                                    <span class="subject-type Elective">Elective</span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="course-card">
+                                    <strong>ST202 - Statistics II</strong><br>
+                                    Department: Statistics<br>
+                                    <span class="subject-type Supportive">Supportive</span>
+                                </div>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if rejected_enrollments %}
+        <h2><i class="fas fa-clock me-2"></i>Rejected Enrollments</h2>
+        <div class="accordion" id="pendingEnrollmentsAccordion">
+            {% for enrollment in rejected_enrollments %}
+            <div class="accordion-item mb-2">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#pending{{enrollment.id}}">
+                        {{enrollment.enrollment_name}}
+                    </button>
+                </h2> 
+                <div id="pending{{enrollment.id}}" class="accordion-collapse collapse" data-bs-parent="#pendingEnrollmentsAccordion">
+                    <div class="accordion-body">
+                        <p><strong>Enrollment Date:</strong> {{enrollment.enrollment_date}}</p>
+                        <p><strong>Student Information Form:</strong> Completed</p>
+                        <h5>Selected Subjects</h5>
+                        <div class="row g-3 mt-2">
+                            {% for course in enrollment.courses%}
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="course-card">
+                                    <strong>{{course.course_name}}</strong><br>
+                                    {{course.department}}<br>
+                                    <span class="subject-type {{course.type}}">{{course.type}}</span>
+                                </div>
+                            </div>
+                            {% endfor %}    
+                            <!-- div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="course-card">
+                                    <strong>PH201 - Logic and Philosophy</strong><br>
+                                    Department: Philosophy<br>
+                                    <span class="subject-type Elective">Elective</span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="course-card">
+                                    <strong>ST202 - Statistics II</strong><br>
+                                    Department: Statistics<br>
+                                    <span class="subject-type Supportive">Supportive</span>
+                                </div>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %} 
+        </div>
+        {% endif %}
+    </div>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
