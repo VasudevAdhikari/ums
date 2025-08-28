@@ -11,9 +11,9 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('auth', '0013_user_city_user_phone_alter_user_email'),
-    ]
+    # dependencies = [
+    #     ('auth', '0013_user_city_user_phone_alter_user_email'),
+    # ]
 
     operations = [
         migrations.CreateModel(

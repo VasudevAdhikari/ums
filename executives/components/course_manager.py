@@ -10,6 +10,7 @@ def get_course_page_data(request):
     for department in departments:
         courses[department] = []
         for course in Course.objects.filter(department=department):
+            course.marking_scheme = json.dumps(course.marking_scheme)
             courses[department].append(course)
 
     assessments = [{"id": label, "name": label} for _, label in AssessmentType.choices]

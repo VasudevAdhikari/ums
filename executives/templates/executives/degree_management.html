@@ -115,8 +115,7 @@
     console.log(window.ALL_FACULTIES);
 
 
-    all_degrees = '{{all_degrees|escapejs}}';
-    all_degrees = all_degrees.replaceAll("'", '"');
+    all_degrees = '{{all_degrees|safe|escapejs}}';
     console.log(all_degrees);
     window.ALL_DEGREES = all_degrees != 'None' ? JSON.parse(all_degrees) : null;
     console.log(window.ALL_DEGREES);

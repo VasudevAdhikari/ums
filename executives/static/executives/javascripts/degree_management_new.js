@@ -814,6 +814,7 @@ function showDegreeDetailsModal(degree, degreeIndex = null, isAddMode = false) {
         document.body.appendChild(confirmModal);
         document.getElementById("confirmSaveBtn").onclick = function () {
           confirmModal.remove();
+          document.getElementById('degreeDetailsModal').style.display = 'none';
           console.log(
             degreeData
           );

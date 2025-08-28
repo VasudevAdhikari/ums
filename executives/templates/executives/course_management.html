@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
         /* Custom styles to match original design */
         body {
@@ -354,23 +356,6 @@
 <body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="180" tabindex="0">
     <!--modified Navbar -->
     {% include "executives/navbar.html" %}
-    <!-- modified navbar -->
-
-    <!-- search bar section -->
-    <!-- <div class="search-section bg-white py-3 shadow-sm">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="input-group">
-                    <input id="courseSearch" type="text" class="form-control form-control-lg" placeholder="Search courses...">
-                    <button id="searchButton" class="btn btn-primary" type="button">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
     <main class="container py-4">
         <div class="header-controls">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -464,7 +449,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="courseHours" class="form-label">Hours/Week</label>
-                                <input type="number" id="courseHours" name="hours" min="1" max="10"
+                                <input type="number" id="courseHours" name="hours" min="1"
                                     class="form-control">
                             </div>
                         </div>
@@ -544,7 +529,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="newCourseHours" class="form-label">Hours/Week</label>
-                                <input type="number" id="newCourseHours" name="hours" min="1" max="10"
+                                <input type="number" id="newCourseHours" name="hours" min="1"
                                     class="form-control">
                             </div>
                         </div>
@@ -628,6 +613,7 @@
 
         // Example data from backend
         const assessments = JSON.parse('{{assessments|safe|escapejs}}');
+        console.log(assessments);
 
         // Reusable function for adding assessment rows
         // Modified addAssessmentRow to accept optional params for prefill
@@ -701,7 +687,7 @@
         }
 
         // Validation function remains same
-        function validatePercentages(containerId) {
+        async function validatePercentages(containerId) {
             const container = document.getElementById(containerId);
             const inputs = container.querySelectorAll("input[name='percentages[]']");
             let total = 0;
@@ -712,7 +698,7 @@
             });
 
             if (total > 100) {
-                alert("Total percentage cannot exceed 100%");
+                await alert("Total percentage cannot exceed 100%");
             }
         }
 
@@ -850,7 +836,7 @@
                     document.getElementById('courseCode').value = card.querySelector('h4').textContent.trim();
                     document.getElementById('courseName').value = card.querySelector('h3').textContent.trim();
                     document.getElementById('courseCredits').value = card.querySelector('.fa-star').parentElement.textContent.trim().split(' ')[0];
-                    document.getElementById('courseHours').value = card.querySelector('.fa-clock').parentElement.textContent.trim().split(' ')[0];
+                    document.getElementById('courseHours').value = Number(card.querySelector('.fa-clock').parentElement.textContent.trim().split(' ')[0]);
                     document.getElementById('courseDescription').value = card.querySelector('p').textContent.trim();
                     document.getElementById('courseIconPreview').src = card.querySelector('.course-icon').src;
                     document.getElementById('courseIcon').value = card.querySelector('.course-icon').src;
@@ -892,24 +878,24 @@
             });
 
             // Form submission handlers
-            courseForm.addEventListener('submit', function (e) {
+            courseForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
-                if (!confirm("Are you sure to edit this course?")) return;
+                if (!await confirm("Are you sure to edit this course?")) return;
                 courseForm.action = `/executives/course/edit/${sessionStorage.getItem('courseId')}`;
                 courseForm.submit();
             });
 
-            addCourseForm.addEventListener('submit', function (e) {
+            addCourseForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
-                if (confirm('Are you sure to add this course?')) {
+                if (await confirm('Are you sure to add this course?')) {
                     addCourseForm.submit();
                 }
             });
 
             // Delete button handler
             document.querySelectorAll('.delete-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    if (!confirm("Are you sure you want to delete this course?")) {
+                button.addEventListener('click', async function () {
+                    if (!await confirm("Are you sure you want to delete this course?")) {
                         return;
                     }
 

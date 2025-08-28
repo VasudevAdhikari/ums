@@ -33,7 +33,7 @@ body {
 
 /* Main Content Layout */
 .main-content {
-  margin-left: 260px;
+  margin: 0 auto;
   width: calc(100% - 260px);
   transition: margin-left 0.3s, width 0.3s;
   min-height: 100vh;

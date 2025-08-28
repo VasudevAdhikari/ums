@@ -447,7 +447,7 @@ def login(request):
             cache.set(f"user_role:{user.email}", role, timeout=60*60*24*30*2)
         
         response = JsonResponse({'success': True, 'is_instructor': user.is_staff, 'role': role})
-        response.set_cookie('my_user', user, max_age=60*24*60*60)
+        response.set_cookie('my_user', user.email, max_age=60*24*60*60)
         return response
             
     except json.JSONDecodeError:

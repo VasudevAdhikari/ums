@@ -161,6 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     document.addEventListener('keydown', escListener);
     popup.querySelector('#deleteConfirmBtn').addEventListener('click', () => {
+      document.getElementById('deleteCancelBtn').style.display='none';
       fetch(`/executives/terms/${termId}/delete/`, {
         method: 'POST',
         headers: { 'X-CSRFToken': getCSRFToken() },
@@ -171,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(() => {
           popup.remove();
+          alert('Term Removed Successfully');
           loadTerms();
         })
         .catch(error => console.error('Error deleting term:', error));
@@ -347,9 +349,10 @@ document.addEventListener('DOMContentLoaded', () => {
               if (!res.ok) throw new Error('Network response was not ok');
               return res.json();
             })
-            .then(() => {
+            .then(async () => {
               popup.remove();
-              loadTerms();
+              await alert('Term Data Updated Successfully');
+              window.location.reload();
             })
             .catch(error => console.error('Error updating term dates:', error));
         });
@@ -371,8 +374,9 @@ document.addEventListener('DOMContentLoaded', () => {
     termButtonsContainer.replaceChild(input, button);
     input.focus();
 
-    function finalizeEdit() {
+    async function finalizeEdit() {
       const value = input.value.trim();
+      if (!await confirm("Are you sure to update the data?")) return;
       if (value && value !== currentValue) {
         fetch(`/executives/terms/${term.id}/update/`, {
           method: 'POST',
@@ -433,8 +437,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!res.ok) throw new Error('Network response was not ok');
             return res.json();
           })
-          .then(() => {
-            loadTerms();
+          .then(async () => {
+            await alert('A new Academic Term created successfully with the provided data');
+            window.location.reload();
           })
           .catch(error => console.error('Error creating new term:', error));
       }

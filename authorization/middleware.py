@@ -6,7 +6,7 @@ from authorization.models import UniversityDetails
 from django.http import JsonResponse, HttpResponseForbidden
 import time
 from django.utils.deprecation import MiddlewareMixin
-import geoip2.database
+# import geoip2.database
 
 class UserRoleMiddleware:
     PUBLIC_PATHS = [

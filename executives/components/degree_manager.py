@@ -50,10 +50,7 @@ def get_all_degrees():
             "image": degree.degree_image.url if hasattr(degree.degree_image, 'url') else './img/bachelor.png',
             "syllabus": syllabus
         })
-    return all_degrees  # Moved here
-
-
-
+    return json.dumps(all_degrees)  # Moved here
 
 
 @csrf_exempt
@@ -189,7 +186,7 @@ def edit_degree_api(request, degree_id):
             image_file = None
 
         degree = Degree.objects.get(pk=degree_id)
-        faculty = Faculty.objects.get(id=data['faculty'])
+        faculty = Faculty.objects.get(id=data.get('faculty'))
         print(degree, faculty, sep='\n')
         # Handle image upload
         from django.core.files.storage import default_storage
