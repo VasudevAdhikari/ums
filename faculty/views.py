@@ -15,8 +15,9 @@ def faculty_dashboard(request):
     batch_instructors = (
         BatchInstructor.objects 
         .filter(instructor=instructor)
-        .select_related('batch__term', 'course', 'batch__semester')
+        .select_related('batch__term', 'course', 'batch__semester', 'batch__semester__degree')
         .order_by('batch__term__year', 'batch__term__term_name')  # optional: for nicer grouping
+        .distinct()
     )
 
     return render(request, 'faculty/faculty_home.html', {'batch_instructors': batch_instructors})

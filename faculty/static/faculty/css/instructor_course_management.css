@@ -788,7 +788,7 @@ body,
   color: var(--primary-light);
 }
 
-.refer-btn {
+.refer-btn, .join-btn {
   background: var(--primary-light);
   color: #fff;
   border: none;

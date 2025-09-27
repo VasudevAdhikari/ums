@@ -4,6 +4,7 @@ from . import views, recovery_views, profile_manager
 urlpatterns = [
     path('logout/', profile_manager.logout, name='logout'),
     path('login/', views.login_view, name='login'),
+    path('admin/login/', views.login_view, name='admin_login'),
     path('login_submit/', views.login, name='login_submit'),
     path('register/', views.register_view, name='register'),
     path('check_email/', views.check_email, name='check_email'),
@@ -26,7 +27,7 @@ urlpatterns = [
     path('mail_verification/', views.verify_email, name='mail_verification'),
 
     # Profile Management URLs
-    path('profile/<int:user_id>/', profile_manager.show_profile_management, name='profile'),
+    path('profile/', profile_manager.show_profile_management, name='profile'),
     path('profile/check_pwd/<int:user_id>/<str:password>/', profile_manager.check_password, name='check_password'),
     path('profile/save/<int:user_id>/', profile_manager.save_profile, name='save_profile'),
     path('profile/change_password/<int:user_id>/', profile_manager.change_password, name='change_password'),

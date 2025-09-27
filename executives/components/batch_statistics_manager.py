@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from authorization.models import Student, EnrollmentCourse
+from authorization.models import Batch, Student, EnrollmentCourse
 from collections import defaultdict
 import json
 
@@ -12,10 +12,11 @@ def show_batch_statistics(request, batch_id):
         sisform__enrollment__in=[ec.enrollment for ec in enrollment_courses]
     ).select_related('user').distinct()
     box_plot = get_course_scores_for_batch(batch_id)
-
+    
     data = {
         'students': students,
         'box_plot': json.dumps(box_plot),
+        'batch': Batch.objects.filter(id=batch_id).select_related('semester', 'semester__degree').first()
     }
     return render(request, 'executives/batch_statistics.html', context=data)
 
@@ -35,7 +36,7 @@ def get_course_scores_for_batch(batch_id):
 
     # 3. Iterate over each enrollment course
     for ec in enrollment_courses:
-        course_name = ec.batch_instructor.course.course_name
+        course_name = ec.batch_instructor.course.course_code
         enrollment_result = ec.enrollment.result or {}
 
         # Get the "data" field which contains per-course info
@@ -44,7 +45,7 @@ def get_course_scores_for_batch(batch_id):
         # Find the matching course in enrollment.result by course_code or course_name
         for course_data in course_data_list:
             if course_data.get('course_code') == ec.batch_instructor.course.course_code:
-                grade_point = course_data.get('grade_point', 0.0)
+                grade_point = course_data.get('grade_score', 0.0)
                 course_scores[course_name].append(grade_point)
                 break  # found the course in result, no need to continue
 

@@ -1449,7 +1449,6 @@ function updateProject(labKey, projectId, data, files, cb) {
 async function addLabPhoto(labKey, file, cb) {
     const formData = new FormData();
     formData.append('photo', file);
-    await alert('gonna go to submit photo');
     fetch(`/executives/api/labs/add_photo/${encodeURIComponent(labKey)}/`, {
         method: 'POST',
         headers: { 'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '' },
@@ -1465,10 +1464,10 @@ async function handlePhotoInputChange(e) {
     const fileInput = e.target;
     if (fileInput.files && fileInput.files[0]) {
         if (await confirm('Are you sure you want to add this image?')) {
-            await alert('something');
             addLabPhoto(window.currentLabKey, fileInput.files[0], async function(resp) {
                 if (resp.success) {
                     await alert("successful");
+                    window.location.reload();
                     // location.reload();
                 } else {
                     await alert('Failed to add photo');

@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   let currentStep = 1;
-  const totalSteps = 4;
+  const totalSteps = 6;
   const steps = [];
   for (let i = 1; i <= totalSteps; i++) {
     steps.push(document.getElementById(`step-${i}`));

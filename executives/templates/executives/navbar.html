@@ -12,20 +12,20 @@
 
                 <li class="nav-item dropdown">
                     <a class="nav-link" href="/public/" role="button" aria-expanded="false">
-                        Home
+                        <i class="fas fa-home"></i> Home
                     </a>
                 </li>
 
                 <li class="nav-item dropdown">
                     <a class="nav-link" href="/executives/dashboard/" role="button" aria-expanded="false">
-                        Dashboard
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
                     </a>
                 </li>
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
-                        Academics
+                        <i class="fas fa-book-open"></i> Academics
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/executives/show_faculty_management">
@@ -49,7 +49,7 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
-                        User Management
+                        <i class="fas fa-users-cog"></i> User Management
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/executives/unapproved_students"><i
@@ -68,7 +68,7 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
-                        Profile
+                        <i class="fas fa-user-circle"></i> Profile
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/auth/profile/{{user_id}}"><i class="fas fa-id-badge"></i>
@@ -81,9 +81,46 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link" href="/public/notifications/" role="button" aria-expanded="false">
                         <i class="fas fa-bell"></i> Notifications
+                        {% if request.noti_count > 0 %}
+                            <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle">
+                                {{ request.noti_count }}
+                                <span class="visually-hidden">unread notifications</span>
+                            </span>
+                        {% endif %}
                     </a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
+<script>
+    function normalizePath(path) {
+        // Ensure path always ends with a slash
+        return path.endsWith('/') ? path : path + '/';
+    }
+
+    const navbar = document.querySelector('.navbar');
+    const links = navbar.querySelectorAll('a');
+    const currentPath = normalizePath(window.location.pathname);
+
+    links.forEach(link => {
+        const linkPath = normalizePath(link.getAttribute('href'));
+        if (linkPath === currentPath) {
+            link.style.fontWeight = 'bolder';
+            link.style.textDecoration = 'underline';
+            link.style.textUnderlineOffset = '6px';
+            link.style.textDecorationThickness = '2px';
+
+            const dropdownParent = link.closest('.dropdown-menu');
+            if (dropdownParent) {
+                const toggle = dropdownParent.closest('.nav-item').querySelector('.nav-link.dropdown-toggle');
+                if (toggle) {
+                    toggle.style.fontWeight = 'bolder';
+                    toggle.style.textDecoration = 'underline';
+                    toggle.style.textUnderlineOffset = '6px';
+                    toggle.style.textDecorationThickness = '2px';
+                }
+            }
+        }
+    });
+</script>

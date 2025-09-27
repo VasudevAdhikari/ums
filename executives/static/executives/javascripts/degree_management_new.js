@@ -54,10 +54,6 @@ function renderDegrees(degrees) {
           <i class="fa-solid fa-eye"></i>
           View
         </button>
-        <button class="delete-btn">
-          <i class="fa-solid fa-trash-can"></i>
-          Delete
-        </button>
       </div>
     `;
 
@@ -68,18 +64,18 @@ function renderDegrees(degrees) {
       };
 
       // Delete button functionality
-      card.querySelector(".delete-btn").onclick = function () {
-        showDeleteConfirm(() => {
-          // Redirect to backend delete URL
-          if (degree.id) {
-            window.location.href = `/executives/degree/delete/${degree.id}`;
-          } else if (degree.code) {
-            window.location.href = `/executives/degree/delete/${degree.code}`;
-          } else {
-            showWarningBox("Cannot delete: degree ID or code missing.");
-          }
-        });
-      };
+      // card.querySelector(".delete-btn").onclick = function () {
+      //   showDeleteConfirm(() => {
+      //     // Redirect to backend delete URL
+      //     if (degree.id) {
+      //       window.location.href = `/executives/degree/delete/${degree.id}`;
+      //     } else if (degree.code) {
+      //       window.location.href = `/executives/degree/delete/${degree.code}`;
+      //     } else {
+      //       showWarningBox("Cannot delete: degree ID or code missing.");
+      //     }
+      //   });
+      // };
 
       grid.appendChild(card);
     });
@@ -1406,20 +1402,20 @@ function showDeleteSemesterConfirm(onConfirm) {
 }
 
 // Add Degree Modal
-document.getElementById("showAddModalBtn").onclick = function () {
-  // Create a blank degree object
-  const newDegree = {
-    title: "",
-    code: "",
-    duration: "",
-    credit: 0,
-    courses: 0,
-    image: "./img/bachelor.png",
-    syllabus: [],
-  };
-  // Show the modal in editing mode
-  showDegreeDetailsModal(newDegree, null, true);
-};
+// document.getElementById("showAddModalBtn").onclick = function () {
+//   // Create a blank degree object
+//   const newDegree = {
+//     title: "",
+//     code: "",
+//     duration: "",
+//     credit: 0,
+//     courses: 0,
+//     image: "./img/bachelor.png",
+//     syllabus: [],
+//   };
+//   // Show the modal in editing mode
+//   showDegreeDetailsModal(newDegree, null, true);
+// };
 
 function filterDegrees(query) {
   const degrees = getDegrees();

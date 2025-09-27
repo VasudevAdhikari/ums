@@ -9,8 +9,8 @@ import os
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 
-def show_profile_management(request, user_id):
-    user = User.objects.get(pk=user_id, email=request.COOKIES.get('my_user'))
+def show_profile_management(request):
+    user = User.objects.get(email=request.COOKIES.get('my_user'))
     role = 'Student'
     editable = False
     if Instructor.objects.filter(user=user).exists():

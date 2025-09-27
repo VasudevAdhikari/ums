@@ -51,7 +51,7 @@ var modalState = {
 };
 
 // Create modal HTML once
-const imageModal = document.createElement('div');
+var imageModal = document.createElement('div');
 imageModal.id = 'image-modal';
 imageModal.style.display = 'none';
 imageModal.style.position = 'fixed';
@@ -82,17 +82,17 @@ imageModal.innerHTML = `
 `;
 document.body.appendChild(imageModal);
 
-function openImageModal(images, idx) {
-    modalState.images = images;
-    modalState.current = idx;
-    updateModal();
-    imageModal.style.display = 'flex';
-    setTimeout(() => { imageModal.style.opacity = '1'; }, 10);
-}
-function closeImageModal() {
-    imageModal.style.opacity = '0';
-    setTimeout(() => { imageModal.style.display = 'none'; }, 200);
-}
+// function openImageModal(images, idx) {
+//     modalState.images = images;
+//     modalState.current = idx;
+//     updateModal();
+//     imageModal.style.display = 'flex';
+//     setTimeout(() => { imageModal.style.opacity = '1'; }, 10);
+// }
+// function closeImageModal() {
+//     imageModal.style.opacity = '0';
+//     setTimeout(() => { imageModal.style.display = 'none'; }, 200);
+// }
 function updateModal() {
     const img = document.getElementById('modal-img');
     img.src = modalState.images[modalState.current];
@@ -290,6 +290,7 @@ if (postInput && postBtn) {
 
     postBtn.addEventListener('click', async () => {
         if (postInput.value.trim() === '') return;
+        if (!await confirm('Are you sure to post this notice?')) return;
         // Use FormData to send files
         const formData = new FormData();
         formData.append('caption', postInput.value);
@@ -311,7 +312,8 @@ if (postInput && postBtn) {
             window.selectedMedia = [];
             if (mediaPreview) mediaPreview.innerHTML = '';
             postBtn.disabled = true;
-            fetchPosts();
+            await fetchPosts();
+            window.location.reload();
         } catch (e) {
             showNotificationMessage('Failed to submit post', 'info');
         }
@@ -598,7 +600,7 @@ async function fetchPosts() {
 }
 
 // Modal logic (shared for all pages)
-let imageModal;
+var imageModal;
 function openImageModal(images, idx) {
     if (!imageModal) {
         imageModal = document.createElement('div');

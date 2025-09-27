@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Department Management</title>
-     <!-- Bootstrap CSS CDN -->
+    <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -12,57 +13,64 @@
     <style>
         body {
             font-family: "Poppins", sans-serif;
-             font-style: normal;
+            font-style: normal;
             background-color: var(--bg-light);
             color: var(--text-dark);
             scroll-behavior: smooth;
             box-sizing: border-box;
         }
-         /* modified navbar */
-       :root {
+
+        /* modified navbar */
+        :root {
             /* Primary Colors (University Branding) */
-            --primary: #003366; /* Deep Blue - main brand color */
-            --primary-light: #1a4d80; /* Lighter shade for hover states */
-            --primary-dark: #00264d; /* Darker shade for active states */
-            
+            --primary: #003366;
+            /* Deep Blue - main brand color */
+            --primary-light: #1a4d80;
+            /* Lighter shade for hover states */
+            --primary-dark: #00264d;
+            /* Darker shade for active states */
+
             /* Secondary Colors */
-            --secondary: #FFD700; /* Gold - for accents and highlights */
+            --secondary: #FFD700;
+            /* Gold - for accents and highlights */
             --secondary-light: #ffe44d;
-  
+
             /* Background Colors */
             --bg-light: #FFFFFF;
             --bg-gray: #F5F5F5;
-            
+
             /* Text Colors */
             --text-dark: #333333;
             --text-black: #000000;
             --text-light: #FFFFFF;
-            
+
             /* Status Colors */
             --success: #4CAF50;
             --error: #F44336;
             --warning: #FFC107;
             --info: #17A2B8;
 
-             /* Typography */
+            /* Typography */
             --heading-1: 3rem;
             --heading-2: 1.7rem;
             --body-text: 1.1rem;
             --small-text: 0.85rem;
             --line-height: 1.6;
-            
+
             /* Spacing */
             --space-sm: 0.5rem;
             --space-md: 1rem;
             --space-lg: 1.5rem;
             --space-xl: 2rem;
         }
+
         section {
             padding-top: 3rem;
             padding-bottom: 3rem;
-            scroll-margin-top: 70px; /* Account for fixed navbar */
+            scroll-margin-top: 70px;
+            /* Account for fixed navbar */
         }
-        
+
 
         /* Navbar Styles */
         .navbar {
@@ -70,7 +78,8 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .navbar-brand, .nav-link {
+        .navbar-brand,
+        .nav-link {
             color: var(--text-light) !important;
             font-weight: 500;
         }
@@ -84,7 +93,7 @@
             background-color: var(--primary-light);
             border: none;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .dropdown-item {
@@ -97,18 +106,19 @@
             color: var(--text-dark) !important;
             border-radius: 8px;
         }
-        /* Remove Bootstrap's default active background */
-.dropdown-item.active {
-    background: transparent !important;
-}
 
-/* Ensure hover works in all states */
-.dropdown-item:hover {
-    background-color: var(--secondary) !important;
-    color: var(--text-dark) !important;
-    border-radius: 8px;
-}
-         
+        /* Remove Bootstrap's default active background */
+        .dropdown-item.active {
+            background: transparent !important;
+        }
+
+        /* Ensure hover works in all states */
+        .dropdown-item:hover {
+            background-color: var(--secondary) !important;
+            color: var(--text-dark) !important;
+            border-radius: 8px;
+        }
+
         .uni-logo {
             height: 50px;
             width: 50px;
@@ -142,23 +152,30 @@
         .logout-icon:hover {
             color: var(--secondary) !important;
         }
+
         /* modified navbar */
 
         .title-main {
-           font-size: var(--heading-1); /* modified*/
+            font-size: var(--heading-1);
+            /* modified*/
             font-weight: 700;
             color: var(--primary);
             text-align: center;
-           margin: var(--space-xl) 0 var(--space-lg) 0; /* modified */
+            margin: var(--space-xl) 0 var(--space-lg) 0;
+            /* modified */
             letter-spacing: 1px;
-             margin-top: 8rem; /*modified*/
+            margin-top: 8rem;
+            /*modified*/
         }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 1.2rem 2rem 1.2rem;
-            background: var(--bg-gray); /* modified */
+            background: var(--bg-gray);
+            /* modified */
         }
+
         .faculty-actions-row {
             display: flex;
             align-items: center;
@@ -166,38 +183,50 @@
             gap: 1.2rem;
             flex-wrap: wrap;
         }
+
         .search-box {
             position: relative;
-           width: 240px; /*modified width*/
+            width: 240px;
+            /*modified width*/
             min-width: 0;
             flex-shrink: 1;
         }
+
         .search-box input {
             width: 100%;
-            padding: 11px 20px 11px 38px; /* modified */
+            padding: 11px 20px 11px 38px;
+            /* modified */
             border: 1.5px solid #2563eb;
             border-radius: 2rem;
             font-size: 1.09rem;
-            background: var(--bg-gray); /* modified */
-            color: var(--primary); /* modified */
+            background: var(--bg-gray);
+            /* modified */
+            color: var(--primary);
+            /* modified */
             transition: border 0.2s;
             outline: none;
         }
+
         .search-box input:focus {
-           border-color: var(--primary-dark); /*modified */
+            border-color: var(--primary-dark);
+            /*modified */
             background: #e6eeff;
         }
+
         .search-box .fa-search {
             position: absolute;
             left: 13px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--primary); /* modified */
+            color: var(--primary);
+            /* modified */
             font-size: 1.18rem;
             opacity: 0.8;
         }
+
         .add-faculty-btn {
-            background: linear-gradient(90deg,var(--primary) 60%, var(--primary-light) 100%); /*modified*/
+            background: linear-gradient(90deg, var(--primary) 60%, var(--primary-light) 100%);
+            /*modified*/
             color: #fff;
             border: none;
             border-radius: 50%;
@@ -211,33 +240,44 @@
             box-shadow: 0 2px 8px rgba(37, 99, 235, 0.09);
             transition: background 0.2s, color 0.2s, box-shadow 0.2s;
         }
+
         .add-faculty-btn:hover,
         .add-faculty-btn:focus {
-            background: linear-gradient(90deg, var(--primary-dark) 60%, var(--primary) 100%); /*modified*/
-            color: var(--text-light); /* modified */
+            background: linear-gradient(90deg, var(--primary-dark) 60%, var(--primary) 100%);
+            /*modified*/
+            color: var(--text-light);
+            /* modified */
             box-shadow: 0 4px 16px rgba(37, 99, 235, 0.13);
         }
+
         .faculty-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2.2rem 2.2rem;
         }
+
         @media (max-width: 800px) {
             .faculty-list {
                 grid-template-columns: 1fr;
             }
+
             .container {
                 padding: 0 0.5rem 2rem 0.5rem;
             }
+
             .search-box {
                 width: 100%;
                 margin-top: 1rem;
             }
         }
+
         .faculty-card {
-            background: var(--bg-light); /* modified */
-            border-radius: 1rem;/*modified*/
-            box-shadow: 0 8px 32px rgba(80, 82, 73, 0.13); /*modified*/
+            background: var(--bg-light);
+            /* modified */
+            border-radius: 1rem;
+            /*modified*/
+            box-shadow: 0 8px 32px rgba(80, 82, 73, 0.13);
+            /*modified*/
             padding: 2.2rem 2.2rem 1.6rem 2.2rem;
             display: flex;
             flex-direction: column;
@@ -247,10 +287,12 @@
             min-width: 0;
             font-size: 1.13rem;
         }
+
         .faculty-card:hover {
-            box-shadow: 0 8px 32px rgba(37,99,235,0.13);
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.13);
             transform: translateY(-4px) scale(1.01);
         }
+
         .faculty-card .faculty-actions {
             position: absolute;
             top: 18px;
@@ -261,9 +303,11 @@
             transition: opacity 0.18s;
             z-index: 2;
         }
+
         .faculty-card:hover .faculty-actions {
             opacity: 1;
         }
+
         .faculty-action-icon {
             background: #e6eeff;
             color: #2563eb;
@@ -280,45 +324,70 @@
             outline: none;
             margin-bottom: 5px;
         }
-                /* modified icon color */
-                .faculty-action-icon .edit-btn {
-            background: rgba(13, 110, 253, 0.1);  /* Light blue background */
-            color: #0d6efd;                       /* Bootstrap-style blue */
+
+        /* modified icon color */
+        .faculty-action-icon .edit-btn {
+            background: rgba(13, 110, 253, 0.1);
+            /* Light blue background */
+            color: #0d6efd;
+            /* Bootstrap-style blue */
             border: 1px solid rgba(13, 110, 253, 0.2);
         }
+
         .edit-btn:hover {
-            background: var(--primary-light);                 /* Solid blue */
+            background: var(--primary-light);
+            /* Solid blue */
             color: white;
         }
 
-        /* DELETE BUTTON - Standard Red */
-        .delete-btn {
-            background: rgba(220, 53, 69, 0.1);   /* Light red background */
-            color: #dc3545;                       /* Bootstrap-style red */
-            border: 1px solid rgba(220, 53, 69, 0.2);
+        /* For Deactivate button (faculty.status == 'A') */
+        .deactivate-btn {
+            background: #f8d7da;
+            /* light red */
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.4);
         }
 
-        .delete-btn:hover {
-            background: #dc3545;                  /* Solid red */
-            color: white;
+        .deactivate-btn:hover {
+            background: #dc3545;
+            /* solid red */
+            color: #fff;
         }
-        /* modified icon color */
+
+        /* For Activate button (faculty.status != 'A') */
+        .activate-btn {
+            background: #d4edda;
+            /* light green */
+            color: #28a745;
+            border: 1px solid rgba(40, 167, 69, 0.4);
+        }
+
+        .activate-btn:hover {
+            background: #28a745;
+            /* solid green */
+            color: #fff;
+        }
+
 
         .faculty-header-row {
             display: flex;
             align-items: center;
             gap: 1.2rem;
         }
+
         .faculty-image {
             width: 90px;
             height: 90px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid var(--primary); /* modified */
-            background: var(--bg-gray); /* modified */
+            border: 3px solid var(--primary);
+            /* modified */
+            background: var(--bg-gray);
+            /* modified */
             box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
             flex-shrink: 0;
         }
+
         .faculty-main-info {
             flex: 1;
             display: flex;
@@ -326,61 +395,81 @@
             gap: 0.2rem;
             min-width: 0;
         }
+
         .faculty-name {
-            font-size: var(--heading-2); /* modified */
+            font-size: var(--heading-2);
+            /* modified */
             font-weight: 700;
-            color: var(--primary); /* modified */
+            color: var(--primary);
+            /* modified */
             margin: 0.1rem 0;
             letter-spacing: 0.2px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .faculty-head {
-            font-size: var(--body-text); /* modified */
-            color: var(--primary-dark); /* modified */
+            font-size: var(--body-text);
+            /* modified */
+            color: var(--primary-dark);
+            /* modified */
             font-weight: 500;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
+
         .faculty-head .fa-user-tie {
-            color: var(--secondary); /* modified */
+            color: var(--secondary);
+            /* modified */
             font-size: 1.18rem;
         }
+
         .faculty-contact-row {
             display: flex;
             gap: 1.2rem;
             flex-wrap: wrap;
             margin-top: 0.2rem;
         }
+
         .faculty-contact {
-            font-size: var(--small-text); /* modified */
-            color:  var(--text-dark); /* modified */
+            font-size: var(--small-text);
+            /* modified */
+            color: var(--text-dark);
+            /* modified */
             display: flex;
             align-items: center;
             gap: 0.4rem;
             opacity: 0.95;
         }
+
         /* modified icon color*/
-        .faculty-contact .fa-envelope{ 
+        .faculty-contact .fa-envelope {
             color: var(--info);
             font-size: 1.13rem;
         }
-        .faculty-contact .fa-phone{
+
+        .faculty-contact .fa-phone {
             color: var(--success);
             font-size: 1.13rem;
         }
+
         .faculty-contact .fa-location-dot {
-            color: var(--primary); /* modified */
+            color: var(--primary);
+            /* modified */
             font-size: 1.13rem;
         }
+
         /* modified icon color */
 
         .faculty-description {
-            font-size: var(--body-text); /* modified */
-            color: var(--text-dark); /* modified */
-            background: var(--bg-gray); /* modified */
+            font-size: var(--body-text);
+            /* modified */
+            color: var(--text-dark);
+            /* modified */
+            background: var(--bg-gray);
+            /* modified */
             border-radius: 0.8rem;
             padding: 1.2rem 1.3rem;
             line-height: 1.7;
@@ -392,13 +481,16 @@
             font-family: 'Poppins', sans-serif;
             transition: max-height 0.2s;
         }
+
         .faculty-description.description-full {
             max-height: 600px;
             overflow: auto;
         }
+
         .read-more-btn {
             background: none;
-            color: var(--primary); /* modified */
+            color: var(--primary);
+            /* modified */
             border: none;
             font-size: 1.13rem;
             font-weight: 600;
@@ -408,33 +500,42 @@
             padding: 0;
             transition: color 0.2s;
         }
+
         .read-more-btn:hover {
-            color: var(--primary-dark); /* modified */
+            color: var(--primary-dark);
+            /* modified */
             text-decoration: underline;
         }
 
         /* modified mobile view */
         @media (max-width: 800px) {
-    /* Add click effect for mobile cards */
-    .faculty-card {
-        transition: box-shadow 0.3s ease, transform 0.3s ease;
-        cursor: pointer;
-    }
-    .faculty-card:active {
-    transform: scale(0.98);
-}
-}
-/* modified mobile view */
+
+            /* Add click effect for mobile cards */
+            .faculty-card {
+                transition: box-shadow 0.3s ease, transform 0.3s ease;
+                cursor: pointer;
+            }
+
+            .faculty-card:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* modified mobile view */
         /* Edit Modal Styles */
         .modal {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background: rgba(30, 41, 59, 0.18);
             z-index: 1000;
             align-items: center;
             justify-content: center;
         }
+
         .modal-content {
             background: #fff;
             border-radius: 1.2rem;
@@ -451,24 +552,30 @@
             gap: 1.2rem;
             position: relative;
         }
+
         .modal-content h3 {
-            font-size: var(--heading-2); /* modified*/
+            font-size: var(--heading-2);
+            /* modified*/
             font-weight: 600;
-            color: var(--primary); /* modified */
+            color: var(--primary);
+            /* modified */
             margin-bottom: 0.5rem;
             text-align: center;
         }
+
         .modal-content .profile-input {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 0.7rem;
         }
+
         .modal-content .profile-input .icon {
             font-size: 1.7rem;
             color: #2563eb;
             margin-bottom: 0.2rem;
         }
+
         .modal-content .profile-preview {
             width: 110px;
             height: 110px;
@@ -478,7 +585,10 @@
             border: 2px dashed #2563eb;
             background: #f7faff;
         }
-        .modal-content input, .modal-content select, .modal-content textarea {
+
+        .modal-content input,
+        .modal-content select,
+        .modal-content textarea {
             width: 100%;
             padding: 13px 16px;
             margin: 7px 0;
@@ -491,12 +601,14 @@
             outline: none;
             font-family: 'Poppins', sans-serif;
         }
+
         .modal-content input[type="file"] {
             padding: 0;
             background: #f7faff;
             border: none;
             font-size: 1.13rem;
         }
+
         .modal-content input[type="file"]::-webkit-file-upload-button,
         .modal-content input[type="file"]::file-selector-button {
             background: #2563eb;
@@ -510,26 +622,31 @@
             margin-right: 10px;
             transition: background 0.2s;
         }
+
         .modal-content input[type="file"]:hover::-webkit-file-upload-button,
         .modal-content input[type="file"]:hover::file-selector-button {
             background: #1e40af;
         }
+
         .modal-content textarea {
             min-height: 110px;
             max-height: 350px;
             resize: vertical;
             font-family: 'Poppins', sans-serif;
         }
+
         .modal-content textarea:focus {
             border-color: #1e40af;
             background: #e6eeff;
         }
+
         .modal-content .button-group {
             display: flex;
             justify-content: flex-end;
             gap: 1rem;
             margin-top: 0.5rem;
         }
+
         .modal-content .button-group button {
             background: linear-gradient(90deg, #2563eb 60%, #4eafff 100%);
             color: #fff;
@@ -541,28 +658,36 @@
             font-weight: 600;
             transition: background 0.2s;
         }
+
         .modal-content .button-group button.cancel-btn {
             background: #f7faff;
             color: #2563eb;
             border: 1.5px solid #2563eb;
         }
+
         .modal-content .button-group button.cancel-btn:hover {
             background: #e6eeff;
             color: #1e40af;
         }
+
         .modal-content .button-group button:hover {
             background: linear-gradient(90deg, #1e40af 60%, #2563eb 100%);
         }
+
         /* Head of Faculty Select Popup */
         .head-popup-backdrop {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: rgba(30, 41, 59, 0.18);
             z-index: 2000;
             display: flex;
             align-items: center;
             justify-content: center;
         }
+
         .head-popup {
             background: #fff;
             border-radius: 1.2rem;
@@ -579,6 +704,7 @@
             gap: 1.2rem;
             position: relative;
         }
+
         .head-popup-title {
             font-size: 1.25rem;
             font-weight: 600;
@@ -586,6 +712,7 @@
             margin-bottom: 0.5rem;
             text-align: center;
         }
+
         .head-popup-search {
             width: 100%;
             padding: 10px 16px;
@@ -597,21 +724,25 @@
             margin-bottom: 0.7rem;
             font-family: 'Poppins', sans-serif;
         }
+
         .head-popup-list {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1.1rem 1.1rem;
         }
+
         @media (max-width: 900px) {
             .head-popup-list {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+
         @media (max-width: 600px) {
             .head-popup-list {
                 grid-template-columns: 1fr;
             }
         }
+
         .head-popup-item {
             display: flex;
             align-items: center;
@@ -623,12 +754,14 @@
             transition: background 0.18s, box-shadow 0.18s;
             border: 2px solid transparent;
         }
+
         .head-popup-item:hover,
         .head-popup-item.selected {
             background: #e6eeff;
             border-color: #2563eb;
             box-shadow: 0 2px 8px rgba(37, 99, 235, 0.09);
         }
+
         .head-popup-img {
             width: 54px;
             height: 54px;
@@ -637,11 +770,13 @@
             border: 2px solid #2563eb;
             background: #fff;
         }
+
         .head-popup-name {
             font-size: 1.13rem;
             color: #222;
             font-weight: 500;
         }
+
         .head-popup-nores {
             text-align: center;
             color: #64748b;
@@ -650,15 +785,17 @@
         }
     </style>
 </head>
-<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="180" tabindex="0"> 
-<!--modified Navbar -->
-{% include "executives/navbar.html" %}
+
+<body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="180" tabindex="0">
+    <!--modified Navbar -->
+    {% include "executives/navbar.html" %}
     <!-- modified navbar -->
 
     <div class="title-main">Department Management</div>
     <div class="container py-3">
         <div class="faculty-actions-row mb-3">
-            <button class="add-faculty-btn" onclick="openAddModal()" title="Add New Department"><i class="fa fa-plus"></i></button>
+            <button class="add-faculty-btn" onclick="openAddModal()" title="Add New Department"><i
+                    class="fa fa-plus"></i></button>
             <div class="search-box">
                 <i class="fa fa-search"></i>
                 <input type="text" id="searchInput" placeholder="Search departments..." onkeyup="searchFaculties()">
@@ -669,14 +806,25 @@
             {% for dept in departments %}
             <div class="faculty-card" data-name="{{dept.name}}">
                 <div class="faculty-actions">
-                    <button class="faculty-action-icon edit-btn" onclick="openEditModal('{{dept.name|escapejs}}', '{{dept.email|escapejs}}', '{{dept.phone|escapejs}}', '{{dept.location|escapejs}}', '{{dept.description|escapejs}}', '{{dept.head|escapejs}}', `{{dept.photo|escapejs}}`, '{{dept.id|escapejs}}', '{{dept.faculty_id|escapejs}}')"><i class="fa fa-pen"></i></button>
-                    <button class="faculty-action-icon delete-btn" onclick="confirmDelete('{{dept.name}}', '{{dept.id}}')"><i class="fa fa-trash"></i></button>
+                    <button class="faculty-action-icon edit-btn"
+                        onclick="openEditModal('{{dept.name|escapejs}}', '{{dept.email|escapejs}}', '{{dept.phone|escapejs}}', '{{dept.location|escapejs}}', '{{dept.description|escapejs}}', '{{dept.head|escapejs}}', `{{dept.photo|escapejs}}`, '{{dept.id|escapejs}}', '{{dept.faculty_id|escapejs}}')"><i
+                            class="fa fa-pen"></i></button>
+                    <button
+                        class="faculty-action-icon delete-btn {% if dept.status == 'A' %}deactivate-btn{% else %}activate-btn{% endif %}"
+                        onclick="confirmDelete('{{dept.name}}', '{{dept.id}}')"
+                        title="{% if dept.status == 'A' %}Deactivate{% else %}Activate{% endif %}">
+                        {% if dept.status == 'A' %}
+                        <i class="fas fa-user-slash me-1"></i>
+                        {% else %}
+                        <i class="fas fa-user-check me-1"></i>
+                        {% endif %}
+                    </button>
                 </div>
                 <div class="faculty-name">{{dept.name}}</div> <!--modified name-->
                 <div class="faculty-header-row">
                     <img src="{{dept.photo}}" alt="{{dept.name}}" class="faculty-image">
                     <div class="faculty-main-info">
-                        
+
                         <div class="faculty-head"><i class="fa fa-user-tie"></i> Head: <span>{{dept.head}}</span></div>
                         <div class="faculty-contact-row">
                             <div class="faculty-contact"><i class="fa fa-envelope"></i> {{dept.email}}</div>
@@ -704,8 +852,10 @@
             <h3>Edit Department</h3>
             <div class="profile-input">
                 <span class="icon"><i class="fa fa-user-circle"></i></span>
-                <input type="file" id="departmentImage" accept="image/*" onchange="previewImage(event, 'departmentImagePreview')">
-                <img id="departmentImagePreview" class="profile-preview" src="https://via.placeholder.com/240x180?text=Photo" alt="Department Image">
+                <input type="file" id="departmentImage" accept="image/*"
+                    onchange="previewImage(event, 'departmentImagePreview')">
+                <img id="departmentImagePreview" class="profile-preview"
+                    src="https://via.placeholder.com/240x180?text=Photo" alt="Department Image">
             </div>
             <input type="text" id="departmentName" placeholder="Department Name">
             <input type="email" id="departmentEmail" placeholder="Email">
@@ -713,13 +863,15 @@
             <input type="text" id="departmentLocation" placeholder="Location">
             <textarea id="departmentDescription" placeholder="Description"></textarea>
             <div style="display:flex;align-items:center;gap:0.7rem;">
-                <input type="text" id="headOfDepartmentDisplay" placeholder="Head of Department" readonly style="flex:1;cursor:pointer;background:#f7faff;" onclick="openHeadPopup('edit')">
-                <button type="button" class="faculty-action-icon" style="background:#e6eeff;" onclick="openHeadPopup('edit')" title="Select Head"><i class="fa fa-user-tie"></i></button>
+                <input type="text" id="headOfDepartmentDisplay" placeholder="Head of Department" readonly
+                    style="flex:1;cursor:pointer;background:#f7faff;" onclick="openHeadPopup('edit')">
+                <button type="button" class="faculty-action-icon" style="background:#e6eeff;"
+                    onclick="openHeadPopup('edit')" title="Select Head"><i class="fa fa-user-tie"></i></button>
             </div>
             <select id="departmentFacultySelect" style="margin-top:10px;">
                 <option value="" readonly>Select Faculty</option>
                 {% for fac in faculties %}
-                    <option value="{{fac.id}}">{{fac.name}}</option>
+                <option value="{{fac.id}}">{{fac.name}}</option>
                 {% endfor %}
             </select>
             <div class="button-group">
@@ -731,42 +883,46 @@
 
     <!-- Add Department Modal -->
     <form id="departmentForm" action="" method="POST">
-    {% csrf_token %}
-    <div id="addModal" class="modal">
-        <div class="modal-content">
-            <h3>Add New Department</h3>
-            <div class="profile-input">
-                <span class="icon"><i class="fa fa-user-circle"></i></span>
-                <input type="file" id="newDepartmentImage" accept="image/*" onchange="previewImage(event, 'newDepartmentImagePreview')">
-                <img id="newDepartmentImagePreview" class="profile-preview" src="https://via.placeholder.com/240x180?text=Photo" alt="New Department Image">
-            </div>
-            <input type="text" id="newDepartmentName" placeholder="Department Name">
-            <input type="email" id="newDepartmentEmail" placeholder="Email">
-            <input type="text" id="newDepartmentPhone" placeholder="Phone">
-            <input type="text" id="newDepartmentLocation" placeholder="Location">
-            <textarea id="newDepartmentDescription" placeholder="Description"></textarea>
-            <div style="display:flex;align-items:center;gap:0.7rem;">
-                <input type="text" id="newHeadOfDepartmentDisplay" placeholder="Head of Department" readonly style="flex:1;cursor:pointer;background:#f7faff;" onclick="openHeadPopup('add')">
-                <button type="button" class="faculty-action-icon" style="background:#e6eeff;" onclick="openHeadPopup('add')" title="Select Head"><i class="fa fa-user-tie"></i></button>
-            </div>
-            <select id="newDepartmentFacultySelect" style="margin-top:10px;">
-                <option value="">Select Faculty</option>
-                {% for fac in faculties %}
+        {% csrf_token %}
+        <div id="addModal" class="modal">
+            <div class="modal-content">
+                <h3>Add New Department</h3>
+                <div class="profile-input">
+                    <span class="icon"><i class="fa fa-user-circle"></i></span>
+                    <input type="file" id="newDepartmentImage" accept="image/*"
+                        onchange="previewImage(event, 'newDepartmentImagePreview')">
+                    <img id="newDepartmentImagePreview" class="profile-preview"
+                        src="https://via.placeholder.com/240x180?text=Photo" alt="New Department Image">
+                </div>
+                <input type="text" id="newDepartmentName" placeholder="Department Name">
+                <input type="email" id="newDepartmentEmail" placeholder="Email">
+                <input type="text" id="newDepartmentPhone" placeholder="Phone">
+                <input type="text" id="newDepartmentLocation" placeholder="Location">
+                <textarea id="newDepartmentDescription" placeholder="Description"></textarea>
+                <div style="display:flex;align-items:center;gap:0.7rem;">
+                    <input type="text" id="newHeadOfDepartmentDisplay" placeholder="Head of Department" readonly
+                        style="flex:1;cursor:pointer;background:#f7faff;" onclick="openHeadPopup('add')">
+                    <button type="button" class="faculty-action-icon" style="background:#e6eeff;"
+                        onclick="openHeadPopup('add')" title="Select Head"><i class="fa fa-user-tie"></i></button>
+                </div>
+                <select id="newDepartmentFacultySelect" style="margin-top:10px;">
+                    <option value="">Select Faculty</option>
+                    {% for fac in faculties %}
                     <option value="{{fac.id}}">{{fac.name}}</option>
-                {% endfor %}
-            </select>
-            <div class="button-group">
-                <button class="cancel-btn" onclick="closeModal('addModal')">Cancel</button>
-                <button onclick="addDepartment()">Add</button>
+                    {% endfor %}
+                </select>
+                <div class="button-group">
+                    <button class="cancel-btn" onclick="closeModal('addModal')">Cancel</button>
+                    <button onclick="addDepartment()">Add</button>
+                </div>
             </div>
         </div>
-    </div>
     </form>
 
     <!-- Head of Faculty Select Popup -->
     <div id="headPopup" class="head-popup-backdrop" style="display:none;">
         <div class="head-popup">
-            <div class="head-popup-title">Select Head of Faculty</div>
+            <div class="head-popup-title">Select Head of Department</div>
             <input type="text" class="head-popup-search" id="headPopupSearch" placeholder="Search users...">
             <div class="head-popup-list" id="headPopupList">
                 <!-- User list will be rendered here -->
@@ -774,7 +930,7 @@
         </div>
     </div>
 
-     <!-- Bootstrap Bundle with Popper -->
+    <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Sample users for head of faculty selection
@@ -787,40 +943,56 @@
         //     { name: "David Brown", img: "https://randomuser.me/api/portraits/men/65.jpg" }
         // ];
 
-         //modified navbar js
-         // Function to navigate to lab details page
+        //modified navbar js
+        // Function to navigate to lab details page
         function navigateToLabDetails(labId) {
             window.location.href = `lab-details.html?id=${labId}`;
         }
-        
+
         // Initialize tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         });
 
-       
-document.addEventListener('DOMContentLoaded', function() {
-  // Get all navbar links (including dropdown items)
-  const navLinks = document.querySelectorAll('.dropdown-item');
-  
-  // Get the navbar collapse element
-  const navbarCollapse = document.querySelector('.navbar-collapse');
-  
-  // Add click event to each link
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      // Check if navbar is expanded (mobile view)
-      if (navbarCollapse.classList.contains('show')) {
-        // Trigger the collapse
-        const toggleBtn = document.querySelector('.navbar-toggler');
-        if (toggleBtn) {
-          toggleBtn.click(); // Simulate click on toggle button
-        }
-      }
-    });
-  });
-});
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            document.querySelectorAll(".deactivate-btn").forEach(btn => {
+                const card = btn.closest(".faculty-card");
+                if (card) {
+                    card.style.borderTop = "4px solid #003366"; // Dark Blue
+                }
+            });
+
+            // Handle deactivate buttons
+            document.querySelectorAll(".activate-btn").forEach(btn => {
+                const card = btn.closest(".faculty-card");
+                if (card) {
+                    card.style.borderTop = "4px solid #dc3545"; // Red
+                    card.style.backgroundColor = "rgba(220, 53, 69, 0.05)"; // Very slight red
+                }
+            });
+            // Get all navbar links (including dropdown items)
+            const navLinks = document.querySelectorAll('.dropdown-item');
+
+            // Get the navbar collapse element
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+
+            // Add click event to each link
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    // Check if navbar is expanded (mobile view)
+                    if (navbarCollapse.classList.contains('show')) {
+                        // Trigger the collapse
+                        const toggleBtn = document.querySelector('.navbar-toggler');
+                        if (toggleBtn) {
+                            toggleBtn.click(); // Simulate click on toggle button
+                        }
+                    }
+                });
+            });
+        });
 
         //modified navbar js
 
@@ -830,7 +1002,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(instructors);
         instructors = JSON.parse(instructors);
         let headPopupTarget = null;
-        const  users = instructors;
+        const users = instructors;
 
         function toggleDescription(button) {
             const desc = button.parentElement.querySelector('.faculty-description');
@@ -877,8 +1049,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // --- Faculty CRUD AJAX logic ---
         // --- Add Department ---
-        function addDepartment() {
-            if (confirm('Are you sure to add this')) {
+        async function addDepartment() {
+            if (await confirm('Are you sure to add this')) {
                 const name = document.getElementById('newDepartmentName').value.trim();
                 const email = document.getElementById('newDepartmentEmail').value.trim();
                 const phone = document.getElementById('newDepartmentPhone').value.trim();
@@ -909,14 +1081,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     body: formData
                 })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.href = '/executives/show_department_management';
-                    } else {
-                        alert('Failed to add department: ' + (data.error || 'Unknown error'));
-                    }
-                });
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '/executives/show_department_management';
+                        } else {
+                            alert('Failed to add department: ' + (data.error || 'Unknown error'));
+                        }
+                    });
             }
         }
 
@@ -942,8 +1114,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         }
 
-        function saveDepartment() {
-            if (!confirm("Are you sure to save the edited department data?")) return;
+        async function saveDepartment() {
+            if (!await confirm("Are you sure to save the edited department data?")) return;
             const name = document.getElementById('departmentName').value.trim();
             const email = document.getElementById('departmentEmail').value.trim();
             const phone = document.getElementById('departmentPhone').value.trim();
@@ -975,38 +1147,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: formData
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.reload();
-                } else {
-                    alert('Failed to edit department: ' + (data.error || 'Unknown error'));
-                    window.location.reload();
-                }
-            });
-        }
-
-        // --- Delete Department ---
-        function confirmDelete(name, id) {
-            if (confirm(`Are you sure you want to delete ${name}?`)) {
-                fetch(`/executives/api/department/delete/${id}/`, {
-                    method: 'POST'
-                })
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
                         window.location.reload();
                     } else {
-                        alert('Failed to delete department: ' + (data.error || 'Unknown error'));
+                        alert('Failed to edit department: ' + (data.error || 'Unknown error'));
+                        window.location.reload();
                     }
                 });
+        }
+
+        // --- Delete Department ---
+        async function confirmDelete(name, id) {
+            if (await confirm(`Are you sure you want to change activation status of the selected department?`)) {
+                fetch(`/executives/api/department/delete/${id}/`, {
+                    method: 'POST'
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.reload();
+                        } else {
+                            alert('Failed to delete department: ' + (data.error || 'Unknown error'));
+                        }
+                    });
             }
         }
 
         function previewImage(event, previewId) {
             const file = event.target.files[0];
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 document.getElementById(previewId).src = e.target.result;
             }
             reader.readAsDataURL(file);
@@ -1033,13 +1205,16 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('headPopupSearch').focus();
             headPopupTarget = mode;
         }
-        document.getElementById('headPopupSearch').oninput = function() {
+        document.getElementById('headPopupSearch').oninput = function () {
             renderHeadPopupList(this.value);
         };
         function renderHeadPopupList(filter) {
             const list = document.getElementById('headPopupList');
             list.innerHTML = '';
-            const filtered = users.filter(u => !filter || u.name.toLowerCase().includes(filter.toLowerCase()));
+            const filtered = users.filter(u => 
+                (!filter || u.name.toLowerCase().includes(filter.toLowerCase())) &&
+                (!sessionStorage.getItem('editing-department') || u.department_id == sessionStorage.getItem('editing-department'))
+            );
             if (!filtered.length) {
                 const nores = document.createElement('div');
                 nores.className = 'head-popup-nores';
@@ -1054,7 +1229,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <img src="${user.img}" alt="${user.name}" class="head-popup-img">
                     <span class="head-popup-name">${user.name}</span>
                 `;
-                item.onclick = function() {
+                item.onclick = function () {
                     if (headPopupTarget === 'edit') {
                         sessionStorage.setItem('dept_head', user.id);
                         document.getElementById('headOfDepartmentDisplay').value = user.name;
@@ -1067,9 +1242,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 list.appendChild(item);
             });
         }
-        document.getElementById('headPopup').onclick = function(e) {
+        document.getElementById('headPopup').onclick = function (e) {
             if (e.target === this) this.style.display = 'none';
         };
     </script>
 </body>
+
 </html>

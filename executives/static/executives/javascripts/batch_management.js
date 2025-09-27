@@ -483,6 +483,8 @@ function showSubjectPopup(subjectBtn, semName, majorName) {
                 class_time2: class2TimesToSubmit
             }
             console.log(dataToSubmit);
+            closeBtn.click();
+            // submitBtn.onclick = document.getElementById('subjectPopupModal').style.display='none';
 
             if (!await confirm('Are you sure to edit batch with provided data')) return;
 
@@ -699,6 +701,7 @@ async function renderAllBatches() {
                 rightItem.onclick = () => {
                     window.location.href = `/executives/batch_statistics/${semItem.getAttribute('batch_instructor')}/`;
                 }
+                // rightItem.style.display = 'none';
 
                 leftItem.onclick = function (e) {
                     console.log('left item clicked');
@@ -866,7 +869,7 @@ async function renderAllBatches() {
 
                         ratingBox.addEventListener("click", (ev) => {
                             ev.stopPropagation();
-                            window.location.href = `/executives/rating_review/${course.batch_instructor_id}/`;x
+                            window.location.href = `/executives/rating_review/${course.batch_instructor_id}/`;
                         });
 
                         grid.appendChild(btn);

@@ -177,10 +177,11 @@ def show_all_assessment_results(request, batch_instructor_id):
         'batch__semester',
         'batch__semester__degree'
     ).first()
-
     assessment_results = AssessmentResult.objects.filter(
         assessment__assessment_scheme__batch_instructor_id=batch_instructor_id,
         student__user__email=request.COOKIES.get('my_user'),
+    ).exclude(
+        assessment__assessment_type__in=[AssessmentType.FINAL, AssessmentType.FINAL_ONPAPER]
     ).select_related(
         'assessment'
     )

@@ -212,7 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
     document.addEventListener('keydown', escListener);
-    popup.querySelector('#sendResultConfirmBtn').addEventListener('click', () => {
+    popup.querySelector('#sendResultConfirmBtn').addEventListener('click', async () => {
+      if (!await confirm('Are you sure to send results to all the students from this term?')) return;
       fetch(`/executives/terms/${termId}/send-results/`, {
         method: 'POST',
         headers: { 'X-CSRFToken': getCSRFToken() },
@@ -221,10 +222,10 @@ document.addEventListener('DOMContentLoaded', () => {
           if (!res.ok) throw new Error('Network response was not ok');
           return res.json();
         })
-        .then((data) => {
+        .then(async (data) => {
           popup.remove();
           // Show success message
-          showNotification('Results sent successfully!', 'success');
+          await alert('Results will be calculated and send to all students by the system. This is a long process. You can close the browser in case you have a busy schedule.')
         })
         .catch(error => {
           console.error('Error sending results:', error);

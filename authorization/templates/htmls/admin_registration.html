@@ -456,6 +456,7 @@
 
                 if (response.ok && result.success) {
                     await alert('Admin registered successfully!');
+                    window.history.back();
                 } else {
                     await alert('Failed to register: ' + (result.error || 'Unknown error'));
                 }

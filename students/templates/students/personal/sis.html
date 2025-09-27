@@ -9,7 +9,6 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'students/personal/styles/sis.css' %}">
-    
 </head>
 
 
@@ -30,10 +29,40 @@
     </nav>
     <div class="container">
         <h1 class="text-center my-4" >SIS submitting Form</h1>
-        <form id="multiStepForm" method="post" action="{% if sis_form %}/students/personal/update_sis_form/ {% else %} students/personal/save_sis_form {% endif %}">
+        <form id="multiStepForm" method="post" action="{% if sis_form %}/students/personal/update_sis_form/ {% else %} /students/personal/save_sis_form/ {% endif %}">
             {% csrf_token %}
             <!-- Step 1: Personal & Student Info -->
+
+
             <div class="form-step" id="step-1">
+                <h4 class=" mt-4">Existing Information</h4>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="roll_no">Roll No.</label>
+                        <input type="text" class="form-control" id="roll_no" name="roll_no" maxlength="30" value="STU-{{student.user.id}}" disabled>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="full_name">Full Name</label>
+                        <input type="text" class="form-control" id="full_name" name="full_name" maxlength="60" value="{{student.user.full_name}}" disabled>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="city">City</label>
+                        <input type="text" class="form-control" id="city" name="city" placeholder="Update your city" maxlength="30" value="{{student.user.city}}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" maxlength="30" value="{{student.user.email}}" placeholder="Update your email" required>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="phone">Phone</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" maxlength="30" value="{{student.user.phone}}" placeholder="Update your phone" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-step d-none" id="step-2">
                 <h4 class=" mt-4">Student Information</h4>
                 <div class="form-row">
                     <div class="form-group col-md-4">
@@ -74,7 +103,7 @@
                 </div>
             </div>
             <!-- Step 2: Father Info -->
-            <div class="form-step d-none" id="step-2">
+            <div class="form-step d-none" id="step-3">
                 <h4 class=" mt-4">Father's Information</h4>
                 <div class="form-row">
                     <div class="form-group col-md-4">
@@ -129,7 +158,7 @@
                 </div>
             </div>
             <!-- Step 3: Mother Info -->
-            <div class="form-step d-none" id="step-3">
+            <div class="form-step d-none" id="step-4">
                 <h4 class=" mt-4">Mother's Information</h4>
                 <div class="form-row">
                     <div class="form-group col-md-4">
@@ -184,7 +213,7 @@
                 </div>
             </div>
             <!-- Step 4: Spouse Info -->
-            <div class="form-step d-none" id="step-4">
+            <div class="form-step d-none" id="step-5">
                 <h4 class=" mt-4">Matriculation Information</h4>
                 <div class="form-row">
                     <div class="form-group col-md-3">
@@ -223,6 +252,31 @@
                     </div>
                 </div>
             </div>
+
+            <div class="form-step d-none" id="step-6">
+                <h4 class=" mt-4">Sponsor/ Guarantor Information</h4>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="emergency_contact_name">Guarantor's Name</label>
+                        <input type="text" class="form-control" id="emergency_contact_name" name="emergency_contact_name" maxlength="50" value="{{student.user.emergency_contact.contact_name}}" placeholder="Enter guaranter's name" required>
+                    </div>
+                     <div class="form-group col-md-4">
+                        <label for="emergency_contact_relation">Relation</label>
+                        <input type="text" class="form-control" id="emergency_contact_relation" name="emergency_contact_relation" maxlength="50" value="{{student.user.emergency_contact.relation_to_user}}" required placeholder="Enter relation to you">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="emergency_contact_phone">Guarantor's Phone</label>
+                        <input type="tel" class="form-control" id="emergency_contact_phone" name="emergency_contact_phone" maxlength="50" value="{{student.user.emergency_contact.phone}}" required placeholder="Enter guarantor's phone">
+                    </div>
+                </div>
+                <div class="form-row">
+                    
+                    <div class="form-group col-md-4">
+                        <label for="emergency_contact_email">Guarantor's Email</label>
+                        <input type="email" class="form-control" id="emergency_contact_email" name="emergency_contact_email" maxlength="50" value="{{student.user.emergency_contact.email}}" required placeholder="Enter guarantor's email">
+                    </div>
+                </div>
+            </div>
             <!-- Navigation Buttons (always visible, centered, horizontal) -->
             <div class="d-flex justify-content-center align-items-center mt-4 mb-5 flex-wrap nav-btn-row">
                 <button type="button" class="btn nav-btn btn-secondary mr-2" id="backBtn"
@@ -232,6 +286,8 @@
                     <button type="button" class="step-circle" data-step="2" id="circle-2">2</button>
                     <button type="button" class="step-circle" data-step="3" id="circle-3">3</button>
                     <button type="button" class="step-circle" data-step="4" id="circle-4">4</button>
+                    <button type="button" class="step-circle" data-step="5" id="circle-5">5</button>
+                    <button type="button" class="step-circle" data-step="6" id="circle-6">6</button>
                 </div>
                 <button type="button" class="btn nav-btn btn-primary ml-2" id="nextBtn">Next</button>
                 <button type="submit" class="btn nav-btn btn-primary ml-2" id="submitBtn" disabled>Submit</button>
@@ -242,7 +298,7 @@
     <footer class="mobile-footer">
         <a href="#" class="back-button">
             <span class="back-arrow">‹ </span>
-            <span class="back-text">Back to previous page</span>
+            <span class="back-text" onclick="window.history.back()">Back to previous page</span>
         </a>
     </footer>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -250,6 +306,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="{% static 'students/personal/javascripts/sis.js' %}"></script>
+    <script>
+        {% for message in messages %}
+            alert('{{message|safe|escapejs}}');
+        {% endfor %}
+    </script>
 </body>
 
 </html>

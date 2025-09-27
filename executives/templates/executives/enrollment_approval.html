@@ -253,15 +253,15 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-
-    {% for message in messages %}
-    await alert('{{message}}');
-    {% endfor %}
+    (async function() {
+        {% for message in messages %}
+        await alert('{{message}}');
+        {% endfor %}
 
         const rejectButtons = document.querySelectorAll('.reject');
         rejectButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                if (!confirm('Are you sure to reject this user')) {
+            button.addEventListener('click', async () => {
+                if (!await confirm('Are you sure to reject this user')) {
                     return;
                 }
                 userId = button.getAttribute('user-id');
@@ -271,8 +271,8 @@
 
         const approveButtons = document.querySelectorAll('.approve');
         approveButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                if (!confirm('Are you sure to approve this user')) {
+            button.addEventListener('click', async () => {
+                if (!await confirm('Are you sure to approve this user')) {
                     return;
                 }
                 userId = button.getAttribute('user-id');
@@ -290,6 +290,7 @@
                 }
             });
         });
+    })();
     </script>
 
 </body>

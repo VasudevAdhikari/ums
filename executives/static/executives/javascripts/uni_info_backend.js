@@ -34,7 +34,7 @@ function sendAjaxRequest(url, formData, callback) {
     fetch(url, {
         method: 'POST',
         headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            'X-CSRFToken': window.csrf
         },
         body: formData
     })

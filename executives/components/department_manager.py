@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404, render, redirect
-from authorization.models import Department, Faculty, User
+from authorization.models import AcademicStatus, Department, Faculty, Instructor, User
 import json
 
 def department_to_dict(dept: Department):
@@ -18,14 +18,15 @@ def department_to_dict(dept: Department):
         "photo": dept.department_photo.url if getattr(dept, "department_photo", None) else "",
         "faculty_id": dept.faculty.id if getattr(dept, "faculty", None) else "",
         "faculty_name": dept.faculty.name if getattr(dept, "faculty", None) else "",
+        "status": dept.status.strip().capitalize()
     }
 
 def show_department_management(request):
     faculties = Faculty.objects.all().order_by('id')
-    departments = Department.objects.all().order_by('id')
+    departments = Department.objects.all().order_by('status', 'name')
     departments_data = [department_to_dict(d) for d in departments]
-    users = User.objects.all()
-    instructors = [{'name': u.full_name, 'img': u.profile_picture.url if u.profile_picture else '', 'id': u.pk} for u in users]
+    instructor_data = Instructor.objects.select_related('user', 'department').all()
+    instructors = [{'name': u.user.full_name, 'img': u.user.profile_picture.url if u.user.profile_picture else '', 'id': u.user.pk, 'department_id': u.department.id} for u in instructor_data]
     data = {
         'faculties': faculties,
         'departments': departments_data,
@@ -118,7 +119,11 @@ def department_edit(request, department_id):
 def department_delete(request, department_id):
     try:
         dept = get_object_or_404(Department, pk=department_id)
-        dept.delete()
+        if dept.status == AcademicStatus.ACTIVE:
+            dept.status = AcademicStatus.INACTIVE
+        else:
+            dept.status = AcademicStatus.ACTIVE
+        dept.save()
         return JsonResponse({"success": True})
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})

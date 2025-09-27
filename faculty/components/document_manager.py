@@ -9,21 +9,27 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.shortcuts import render, redirect
+from django.db.models import Q
 
 def documents_api(request, course_id):
     if request.method != 'GET':
         return HttpResponseNotAllowed(['GET'])
     # Get all public documents for this course, grouped by instructor
-    docs = Document.objects.filter(access_status='A', course__id=course_id)
+    docs = Document.objects.filter(
+        Q(course__id=course_id) & (
+            Q(access_status='A') |
+            Q(uploaded_by__email=request.COOKIES.get('my_user'))
+        )
+    )
     print(docs)
     instructors = {}
     by_instructor = {}
     you = None
     for doc in docs:
-        uid = doc.uploaded_by.id
+        uid = doc.uploaded_by.pk
         if not you and doc.uploaded_by.email == request.COOKIES.get('my_user'):
             you = uid
-        instructors[uid] = doc.uploaded_by.get_full_name() or doc.uploaded_by.username
+        instructors[uid] = doc.uploaded_by.full_name or doc.uploaded_by.username
         by_instructor.setdefault(uid, []).append({
             'id': doc.id,
             'name': doc.name,

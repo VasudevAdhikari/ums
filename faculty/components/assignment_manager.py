@@ -142,6 +142,7 @@ def show_assessment_submissions(request, assessment_id):
 
 def update_assessment_mark(request, assessment_id, mark):
     try:
+        print(mark)
         assessment = AssessmentResult.objects.get(pk=assessment_id)
         assessment.mark = mark
         assessment.save()

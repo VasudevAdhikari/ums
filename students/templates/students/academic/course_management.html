@@ -64,6 +64,30 @@
         <!-- Quizzes and Assignments will be dynamically injected here -->
       </div>
 
+
+      <div class="item-section-title-row">
+        <span class="item-section-title">
+          Scheduled Conferences
+        </span>
+      </div>
+      <div class="item-grid">
+        {% for vc in vcs %}
+        <div class="item-card">
+          <div class="item-card-image">
+            <i class="fa-solid fa-user-group card-icon"></i>
+          </div>
+          <div class="item-card-title">
+            {{vc.meeting_name}}<br>
+            from {{vc.start_time}}<br>
+            to {{vc.end_time}}
+          </div>
+            {% if vc.can_join %}
+                <button class="join-btn" data-id="{{ vc.id }}">Join Conference</button>
+            {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
       <!-- Document Sections START -->
       <!-- Referred Documents -->
       <div class="item-section-title-row">
@@ -89,7 +113,7 @@
             <div>{{instructor.instructor.user.email|default:'Unknown'}}</div>
             <div>Department: {{instructor.instructor.department.name|default:'Unknown'}}</div>
             <div>Phone: {{instructor.instructor.user.phone|default:'Unknown'}}</div>
-            <div class="instructor-actions">
+            <div class="instructor-actions" style="display:'none';">
             {% if not has_review %}
               <button class="instructor-btn" type="button" id="reviewBtn">Review</button>
             {% else %}
@@ -145,4 +169,15 @@
 <script type="module" src="{% static 'students/academic/javascripts/course_management.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module" src="{% static 'students/academic/javascripts/rating_review.js' %}"></script>
+<script>
+  document.querySelectorAll(".join-btn").forEach(button => {
+    button.addEventListener("click", async () => {
+        const vcId = button.getAttribute("data-id");
+        const confirmed = await confirm("Do you want to join this conference?");
+        if (confirmed) {
+            window.location.href = `/conference/meeting/${vcId}/`;
+        }
+    });
+});
+</script>
 </html>

@@ -361,7 +361,7 @@
     {% include "executives/navbar.html" %}
 
     <div class="container">
-        <h1 style="text-align: center;">Batch Details</h1>
+        <h1 style="text-align: center;">Batch Details ({{batch.semester.degree.code}} - {{batch.semester.semester_name}})</h1>
         <div class="card">
             <div id="boxplot" class="chart"></div>
         </div>
@@ -461,11 +461,11 @@
         }));
 
         let layout = {
-            title: 'Course-wise Marks Distribution',
+            title: 'Course-wise GPA Distribution For ',
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             font: { family: 'Poppins', size: 14, color: '#333' },
-            yaxis: { title: 'Marks', zeroline: false },
+            yaxis: { title: 'GPA', zeroline: false },
             xaxis: { title: 'Courses' },
             margin: { l: 60, r: 30, t: 60, b: 60 }
         };

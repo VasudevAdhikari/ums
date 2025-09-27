@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
-from authorization.models import BatchInstructor, AssessmentType, AssessmentScheme, Assessment, Instructor, Document, AssessmentResult, Student
+from authorization.models import BatchInstructor, AssessmentType, AssessmentScheme, Assessment, EnrollmentCourse, Instructor, Document, AssessmentResult, Student, VideoConference
 from django.db.models import Q
 from django.db import transaction
 import json
@@ -16,7 +16,7 @@ def show_course_management(request, batch_instructor_id):
         "course__course_code",
         "course__course_name",
         "course__description",
-    ).first() 
+    ).last()
 
     marking_types = [label for _, label in AssessmentType.choices]
     other_instructor_ids = list(
@@ -26,68 +26,83 @@ def show_course_management(request, batch_instructor_id):
         .distinct()
     )
 
+    vcs = VideoConference.objects.filter(
+        batch_instructor_id=batch_instructor_id
+    ).order_by('-created_at')
+
+    from django.utils import timezone
+    now = timezone.now()
+    for vc in vcs:
+        vc.can_join = vc.start_time <= now <= vc.end_time
+
     data = {
         'batch_instructor': batch_instructor,
         'assessment_types': marking_types,
         'instructor': Instructor.objects.filter(user__email=request.COOKIES.get('my_user')).select_related('user').first(),
         'other_instructor_ids': other_instructor_ids,
+        'vcs': vcs
     }
     return render(request, 'faculty/instructor_course_management.html', context=data)
 
 @csrf_exempt
 def marking_scheme_api(request, batch_id):
-    if request.method == 'GET':
+    if request.method == "GET":
         try:
             # Get batch instructor
-            batch_instructor = BatchInstructor.objects.filter(pk=batch_id).first()
-            if not batch_instructor:
-                return JsonResponse({'scheme': {}}, status=404)
+            try:
+                batch_instructor = BatchInstructor.objects.get(pk=batch_id)
+            except BatchInstructor.DoesNotExist:
+                return JsonResponse({"scheme": {}}, status=404)
 
             # Get or create AssessmentScheme
             scheme_obj, created = AssessmentScheme.objects.get_or_create(
                 batch_instructor=batch_instructor,
-                defaults={'scheme': batch_instructor.course.marking_scheme or {}}
+                defaults={"scheme": batch_instructor.course.marking_scheme or {}},
             )
-            if not scheme_obj:
-                scheme_obj = created
 
-            # Return the scheme
-            scheme = scheme_obj.scheme if scheme_obj.scheme else {}
-            return JsonResponse({'scheme': scheme})
+            # If scheme is still empty, populate it from course default
+            if not scheme_obj.scheme:
+                scheme_obj.scheme = batch_instructor.course.marking_scheme or {}
+                scheme_obj.save()
 
-        except Exception as e:
-            return JsonResponse({'scheme': {}}, status=500)
+            return JsonResponse({"scheme": scheme_obj.scheme})
 
-    elif request.method == 'POST':
+        except Exception:
+            return JsonResponse({"scheme": {}}, status=500)
+
+    elif request.method == "POST":
         try:
-            data = json.loads(request.body.decode('utf-8'))
-            scheme = data.get('scheme', {})
+            data = json.loads(request.body.decode("utf-8"))
+            scheme = data.get("scheme", {})
 
             if not isinstance(scheme, dict):
-                return HttpResponseBadRequest('Scheme must be a dictionary')
+                return HttpResponseBadRequest("Scheme must be a dictionary")
+
+            # Ensure batch instructor exists
+            try:
+                batch_instructor = BatchInstructor.objects.get(pk=batch_id)
+            except BatchInstructor.DoesNotExist:
+                return JsonResponse(
+                    {"success": False, "error": "BatchInstructor not found"}, status=404
+                )
 
             # Get or create AssessmentScheme
-            batch_instructor = BatchInstructor.objects.filter(pk=batch_id).first()
-            if not batch_instructor:
-                return JsonResponse({'success': False, 'error': 'BatchInstructor not found'}, status=404)
-
-            scheme_obj, created = AssessmentScheme.objects.get_or_create(
+            scheme_obj, _ = AssessmentScheme.objects.get_or_create(
                 batch_instructor=batch_instructor,
-                defaults={'scheme': {}}
+                defaults={"scheme": {}},
             )
 
             # Update the scheme
             scheme_obj.scheme = scheme
             scheme_obj.save()
 
-            return JsonResponse({'success': True, 'scheme': scheme_obj.scheme})
+            return JsonResponse({"success": True, "scheme": scheme_obj.scheme})
 
         except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+            return JsonResponse({"success": False, "error": str(e)}, status=400)
 
     else:
-        return HttpResponseNotAllowed(['GET', 'POST'])
-    
+        return HttpResponseNotAllowed(["GET", "POST"])  
 
 @csrf_exempt
 def assessments_api(request, batch_id):
@@ -237,5 +252,74 @@ def show_all_results(request, batch_instructor_id):
         "course_title": course_name,
         "term": assessment_results.first().assessment.assessment_scheme.batch_instructor.batch.term.term_name if assessment_results else "",
         "batch": batch_name,
+        "batch_instructor_id": batch_instructor_id,
     }
     return render(request, "faculty/all_results.html", context=data)
+
+from django.db.models import Q
+def get_result_for_a_course(enrollment_course: EnrollmentCourse):
+    try:
+        student = enrollment_course.enrollment.sis_form.student
+        batch_instructor = enrollment_course.batch_instructor
+        assessment_scheme = AssessmentScheme.objects.filter(
+            batch_instructor=batch_instructor
+        ).first()
+
+        assessment_results = AssessmentResult.objects.filter(
+            assessment__assessment_scheme=assessment_scheme,
+            student=student,
+        ).exclude(assessment__assessment_type__in=[AssessmentType.FINAL, AssessmentType.FINAL_ONPAPER])
+
+        if assessment_scheme:
+            exclude_keys = ['Final(On Paper)', 'Final']
+            scheme = assessment_scheme.scheme
+            scheme = {k: v for k, v in scheme.items() if k not in exclude_keys}
+        else:
+            return 0
+
+        types = {}
+        for type, percent in scheme.items():
+            types[type] = {
+                "given_percent": percent,
+                "given_total": 0,
+                "got_marks": 0,
+                "got_percent": 0,
+                "count": 0
+            }
+
+        a_count = {}
+        for assessment_result in assessment_results:
+            assessment = assessment_result.assessment
+            assessment_type = assessment.get_assessment_type_display()
+            if assessment_type in scheme:
+                types[assessment_type]["given_total"] += int(assessment.assessment.get('total_mark', 0))
+                types[assessment_type]["count"] += 1
+                types[assessment_type]["got_marks"] += assessment_result.mark
+
+        for type, details in types.items():
+            if details['given_total']:
+                details['got_percent'] = details['got_marks'] * details['given_percent'] / details['given_total'] if details['given_total'] > 0 else 0
+            elif details["count"]>0:
+                details['got_percent'] = details['got_marks']/details["count"]
+            else:
+                details['got_percent'] = details['got_marks']
+
+        return {
+            "student_name": student.user.full_name,
+            "roll_no": student.roll_no,
+            "assessment_results": types
+        }
+
+    except Exception as e:
+        print(f"{e}")
+ 
+
+
+def get_all_assessment_marks(request, batch_instructor_id):
+    enrollment_courses = EnrollmentCourse.objects.filter(
+        batch_instructor_id=batch_instructor_id
+    )
+    results = []
+    for ec in enrollment_courses:
+        results.append(get_result_for_a_course(ec))
+    return JsonResponse({'success': True, 'results': results})

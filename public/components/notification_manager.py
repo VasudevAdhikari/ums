@@ -11,7 +11,7 @@ def show_notifications(request, user_id=None):
         user = User.objects.filter(email=request.COOKIES.get('my_user')).first()
     notifications = Notification.objects.filter(
         Q(user=user) & ~Q(type='M')
-    )
+    ).order_by("-created_at")
     notification_data = []
     for notification in notifications:
         notification_data.append({

@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
     const inputs = {
-        logo: document.getElementById('inputLogo'),
+        // logo: document.getElementById('inputLogo'),
         name: document.getElementById('inputName'),
         address: document.getElementById('inputAddress'),   
         email: document.getElementById('inputEmail'),
@@ -47,17 +47,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Handle logo upload preview
-    inputs.logo.addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                newLogoBase64 = event.target.result;
-                previews.logos.forEach(img => img.src = newLogoBase64);
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+    // inputs.logo.addEventListener('change', function (e) {
+    //     const file = e.target.files[0];
+    //     if (file) {
+    //         const reader = new FileReader();
+    //         reader.onload = function (event) {
+    //             newLogoBase64 = event.target.result;
+    //             previews.logos.forEach(img => img.src = newLogoBase64);
+    //         };
+    //         reader.readAsDataURL(file);
+    //     }
+    // });
 
     document.getElementById('editModal').addEventListener('show.bs.modal', function () {
         // Set current text to inputs
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (btn.classList.contains('delete-btn')) {
             deleteTargetId = card.id;
-            new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
+            // new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
         }
     });
 
@@ -127,20 +127,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         bootstrap.Modal.getInstance(editModalElement).hide();
         resetEditModal();
-    });
-
-    // Handle delete confirmation
-    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
-        if (!deleteTargetId) return;
-
-        const cardElement = document.getElementById(deleteTargetId);
-        if (cardElement) {
-            const cardCol = cardElement.closest('.col-md-4');
-            if (cardCol) cardCol.remove();
-        }
-
-        deleteTargetId = '';
-        bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
     });
 });
 
@@ -286,9 +272,9 @@ function editPartnership(button) {
 }
 
 async function deletePartnership(button) {
-    const card = button.closest('.col-md-4');
-    const partnerId = card.getAttribute('data-partner-id');
-    const partnerName = card.querySelector('.card-title').textContent;
+    const card = button.closest('.col-lg-4');
+    const partnerId = button.getAttribute('data-partner-id');
+    const partnerName = button.getAttribute('partner-name');
 
     if (await confirm("Are you sure you want to delete this partnership?")) {
         const formData = new FormData();
@@ -297,6 +283,7 @@ async function deletePartnership(button) {
         sendAjaxRequest('/executives/partnerships/delete/', formData, async function (data) {
             if (data.success) {
                 card.remove();
+                alert(`Partnership with ${partnerName} deleted successfully`);
             } else {
                 await alert(data.error || "Failed to delete partnership.");
             }
@@ -419,14 +406,15 @@ function editCertificate(button) {
 }
 
 async function deleteCertificate(button) {
-    const card = button.closest('.certificate-card');
-    const certId = card.getAttribute('data-cert-id');
+    const card = button.closest('.col-lg-4');
+    const certId = button.getAttribute('data-cert-id');
     if (await confirm("Are you sure you want to delete this certificate?")) {
         const formData = new FormData();
         formData.append('id', certId);
         sendAjaxRequest('/executives/certificates/delete/', formData, async function (data) {
             if (data.success) {
                 card.remove();
+                alert('Selected certificate deleted successfully');
             } else {
                 await alert(data.error || "Failed to delete certificate.");
             }

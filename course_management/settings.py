@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
     'https://3664-51-15-79-175.ngrok-free.app',
+    'https://8067bdff3668.ngrok-free.app'
 ]
 # Application definition
 
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'students',
     'faculty',
     'noticeboard',
+    'conference',
 ]
 
 MIDDLEWARE = [
@@ -98,22 +100,33 @@ WSGI_APPLICATION = 'course_management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'course_management',
+#         # 'USER': 'root',
+#         # 'PASSWORD': os.getenv('DB_PASSWORD'),
+#         # 'HOST': 'localhost',
+#         # 'PORT': '3306',
+#         # 'OPTIONS': {
+#         #     'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         #     'charset': 'utf8mb4',
+#         # }
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'course_management',
-        # 'USER': 'root',
-        # 'PASSWORD': os.getenv('DB_PASSWORD'),
-        # 'HOST': 'localhost',
-        # 'PORT': '3306',
-        # 'OPTIONS': {
-        #     'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        #     'charset': 'utf8mb4',
-        # }
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ums',        # your local DB name
+        'USER': 'postgres',         # your PostgreSQL user
+        'PASSWORD': os.getenv('DB_PASSWORD'), # the password you just reset
+        'HOST': '127.0.0.1',        # localhost
+        'PORT': '5432',             # default PostgreSQL port
     }
 }
 
-DATABASES['default'] = dj_database_url.parse("postgresql://vasudevadhikari:c6ErQRjPCq2Cfx0bmCsbyx1YFi13JQdI@dpg-d2eakrc9c44c738ojjag-a.oregon-postgres.render.com/course_management_hhva")
+# DATABASES['default'] = dj_database_url.parse("postgresql://vasudevadhikari:c6ErQRjPCq2Cfx0bmCsbyx1YFi13JQdI@dpg-d2eakrc9c44c738ojjag-a.oregon-postgres.render.com/course_management_hhva")
 
 
 # Password validation

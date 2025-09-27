@@ -81,6 +81,10 @@ class EnrollmentStatus(models.TextChoices):
     PENDING = 'P', 'Pending'
     REJECTED = 'R', 'Rejected'
 
+class AcademicStatus(models.TextChoices):
+    ACTIVE = 'A', 'Active'
+    INACTIVE = 'I', 'Inactive'
+
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -104,7 +108,7 @@ class User(AbstractUser, BaseModel):
     full_name = models.CharField(max_length=100, default='')
     phone = models.CharField(max_length=20, default='')
     city = models.CharField(max_length=100, default='')
-    date_of_birth = models.DateField(default=timezone.now)
+    date_of_birth = models.DateField(default=timezone.now, null=True, blank=True)
     telegram_username = models.CharField(max_length=50, default='')
     outlook_email = models.EmailField(blank=True, null=True, default='')
     profile_picture = models.ImageField(upload_to='profile_pictures/', default='default_profile.png')
@@ -157,6 +161,8 @@ class Faculty(BaseModel):
     location = models.CharField(max_length=30, default='')
     head_of_faculty = models.ForeignKey(User, on_delete=models.CASCADE, default=None, null=True)
     faculty_photo = models.ImageField(upload_to='profile_pictures/', default='default_profile.png')
+    status = models.CharField(max_length=1, choices=AcademicStatus.choices, default=AcademicStatus.ACTIVE)
+
 
 # Department Model
 class Department(BaseModel):
@@ -168,6 +174,7 @@ class Department(BaseModel):
     contact_phone = models.CharField(max_length=20, default='')
     head_of_department = models.ForeignKey(User, on_delete=models.CASCADE, default=None, null=True)
     department_photo = models.ImageField(upload_to='departments/', default='default.jpg')
+    status = models.CharField(max_length=1, choices=AcademicStatus.choices, default=AcademicStatus.ACTIVE)
 
 # Instructor Model
 class Instructor(BaseModel):
@@ -258,32 +265,61 @@ class Batch(BaseModel):
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
 
 # Term Instructor Model
+from django.db import models, transaction
+from django.utils import timezone
+
 class BatchInstructor(BaseModel):
-    batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
-    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE, null=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    batch = models.ForeignKey("Batch", on_delete=models.CASCADE)
+    instructor = models.ForeignKey("Instructor", on_delete=models.CASCADE, null=True)
+    course = models.ForeignKey("Course", on_delete=models.CASCADE)
     room_data = models.JSONField(default=None, null=True, blank=True)
     assigned_date = models.DateField(default=timezone.now)
 
     def save(self, *args, **kwargs):
-        # Call the original save method
         is_new = self.pk is None
-        with transaction.atomic():
-            super().save(*args, **kwargs)
-            # Create AssessmentScheme after saving BatchInstructor
-            if is_new:
-                assessment_scheme = AssessmentScheme(batch_instructor=self, scheme=self.course.marking_scheme)
-                assessment_scheme.save()
-                for i in range(1000):
-                    print('*')
-                    print(assessment_scheme)
 
+        with transaction.atomic():
+            # Duplicate check
+            if is_new:
+                # Prevent duplicates on create
+                if BatchInstructor.objects.filter(
+                    instructor=self.instructor,
+                    course=self.course,
+                    batch=self.batch
+                ).exists():
+                    return
+            else:
+                # Prevent duplicates on update (exclude self)
+                if BatchInstructor.objects.filter(
+                    course=self.course,
+                    batch=self.batch
+                ).exclude(pk=self.pk).exists():
+                    return
+
+            # Save first
+            super().save(*args, **kwargs)
+
+            # Create AssessmentScheme only for new assignment
+            if is_new:
+                assessment_scheme = AssessmentScheme(
+                    batch_instructor=self,
+                    scheme=self.course.marking_scheme
+                )
+                assessment_scheme.save()
+                print("Created scheme", assessment_scheme, flush=True)
+
+            # Always notify instructor if assigned
             if self.instructor:
                 Notification.objects.create(
                     user=self.instructor.user,
                     type=NotificationType.INSTRUCTOR,
                     notification={
-                        "text": f"An admin has assigned you to teach {self.course.course_code} ({self.course.course_name}) for {self.batch.semester.degree.code} ({self.batch.semester.semester_name}) in {self.batch.term.term_name}. Go and check that out!!"
+                        "text": f"An admin has assigned you to teach "
+                                f"{self.course.course_code} ({self.course.course_name}) "
+                                f"for {self.batch.semester.degree.code} "
+                                f"({self.batch.semester.semester_name}) "
+                                f"in {self.batch.term.term_name}. "
+                                f"Go and check that out!!"
                     }
                 )
 
@@ -302,10 +338,11 @@ class Student(BaseModel):
         super().save(*args, **kwargs)
 
         # Generate roll_no based on pk if not already set
-        if is_new and not self.roll_no:
+        if is_new:
             self.roll_no = f'STU-{self.pk}'
+            self.student_number = self.roll_no
             # Save again with roll_no
-            super().save(update_fields=['roll_no'])
+            super().save()
 
 class SISForm(BaseModel):
     # Student's information
@@ -392,11 +429,49 @@ class Enrollment(BaseModel):
 
 
 # Student Term Model
-class EnrollmentCourse(BaseModel): 
-    batch_instructor = models.ForeignKey(BatchInstructor, on_delete=models.CASCADE, default=None, null=True)
+class EnrollmentCourse(BaseModel):
+    batch_instructor = models.ForeignKey(
+        BatchInstructor, on_delete=models.CASCADE, default=None, null=True
+    )
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(default=0, null=False)
-    review = models.TextField(default=None, blank=True, null=True)
+    review = models.TextField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None  # only create results on first save
+
+        with transaction.atomic():
+            super().save(*args, **kwargs)
+
+            if is_new:
+                types = [
+                    AssessmentType.CLASS_PARTICIPATION, 
+                    AssessmentType.FINAL_ONPAPER, 
+                    AssessmentType.MIDTERM, 
+                    AssessmentType.TUTORIAL
+                ]
+
+                assessments = Assessment.objects.filter(
+                    assessment_type__in=types,
+                    assessment_scheme__batch_instructor_id=self.batch_instructor.pk,
+                )
+
+                ars = [
+                    AssessmentResult(
+                        student=self.enrollment.sis_form.student,
+                        mark=0,
+                        assessment=assessment,
+                        answer={}
+                    )
+                    for assessment in assessments
+                    if not AssessmentResult.objects.filter(
+                        student=self.enrollment.sis_form.student,
+                        assessment=assessment
+                    ).exists()  # prevent duplicates
+                ]
+
+                if ars:
+                    AssessmentResult.objects.bulk_create(ars)
 
     
 # Document Model
@@ -438,11 +513,11 @@ class BatchInstructorDocument(BaseModel):
 # Video Conference Model
 class VideoConference(BaseModel):
     meeting_name = models.CharField(max_length=100, default='')
-    meeting_code = models.CharField(max_length=50, unique=True, default='')
+    meeting_code = models.CharField(max_length=50, unique=False, default='')
     start_time = models.DateTimeField(default=timezone.now)
     end_time = models.DateTimeField(default=timezone.now)
     attendees = models.JSONField(default=list)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    batch_instructor = models.ForeignKey(BatchInstructor, on_delete=models.CASCADE, null=True)
 
 # Assessment Scheme Model
 class AssessmentScheme(BaseModel):
@@ -508,6 +583,17 @@ class AssessmentResult(BaseModel):
 
     def save(self, *args, **kwargs):
         with transaction.atomic():
+            if AssessmentResult.objects.filter(student__user__email=self.student.user.email, assessment=self.assessment).exists():
+                if not self.pk:
+                    return
+                if self.assessment.assessment_type in (
+                    AssessmentType.CLASS_PARTICIPATION, 
+                    AssessmentType.FINAL_ONPAPER, 
+                    AssessmentType.MIDTERM, 
+                    AssessmentType.TUTORIAL
+                ):
+                    super().save(*args, **kwargs)
+                    return
             # Check if this instance already exists in DB
             old_instance = None
             if self.pk:
@@ -519,7 +605,7 @@ class AssessmentResult(BaseModel):
             super().save(*args, **kwargs)  # Save current state
 
             # Notification for submission (your existing logic)
-            if self.assessment.assessment_type in (
+            if self.assessment.assessment_type not in (
                 AssessmentType.CLASS_PARTICIPATION, 
                 AssessmentType.FINAL_ONPAPER, 
                 AssessmentType.MIDTERM, 

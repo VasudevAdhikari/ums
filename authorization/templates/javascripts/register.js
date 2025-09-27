@@ -155,15 +155,21 @@ function validateForm() {
     const otpValid = validateOTP(document.getElementById('otp'));
     const phoneValid = validatePhone(document.getElementById('phone'));
     const passwordValid = validatePassword(document.getElementById('password'));
-    const telegramValid = validateTelegramUsername(document.getElementById('telegram_username'));
-    const outlookValid = validateOutlookEmail(document.getElementById('outlook_email'));
-    const contactNameValid = validateContactName(document.getElementById('emergency_name'));
-    const contactPhoneValid = validateContactPhone(document.getElementById('emergency_phone'));
-    const contactEmailValid = validateContactEmail(document.getElementById('emergency_email'));
 
-    const submitButton = document.getElementById('submitButton');
-    submitButton.disabled = !(emailValid && otpValid && phoneValid && passwordValid && telegramValid && 
-                            outlookValid && contactNameValid && contactPhoneValid && contactEmailValid);
+    if (localStorage.getItem('role')=='instructor') {
+        const telegramValid = validateTelegramUsername(document.getElementById('telegram_username'));
+        const outlookValid = validateOutlookEmail(document.getElementById('outlook_email'));
+        const contactNameValid = validateContactName(document.getElementById('emergency_name'));
+        const contactPhoneValid = validateContactPhone(document.getElementById('emergency_phone'));
+        const contactEmailValid = validateContactEmail(document.getElementById('emergency_email'));
+
+        const submitButton = document.getElementById('submitButton');
+        submitButton.disabled = !(emailValid && otpValid && phoneValid && passwordValid && telegramValid && 
+                                outlookValid && contactNameValid && contactPhoneValid && contactEmailValid);
+    } else {
+        const submitButton = document.getElementById('submitButton');
+        submitButton.disabled = !(emailValid && otpValid && phoneValid && passwordValid);
+    }
 }
 
 // Image preview function
@@ -355,24 +361,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             // Save emergency contact
-            const emergencyResponse = await fetch('/auth/save_emergency_contact/', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                },
-                body: JSON.stringify(emergencyData)
-            });
+            if (localStorage.getItem('role')=='instructor') {
+                const emergencyResponse = await fetch('/auth/save_emergency_contact/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify(emergencyData)
+                });
 
-            const emergencyResult = await emergencyResponse.json();
-            console.log('Emergency Response:', emergencyResult);
-            
-            if (!emergencyResult.success) {
-                throw new Error(emergencyResult.error || 'Failed to save emergency contact');
+                const emergencyResult = await emergencyResponse.json();
+                console.log('Emergency Response:', emergencyResult);
+                
+                if (!emergencyResult.success) {
+                    throw new Error(emergencyResult.error || 'Failed to save emergency contact');
+                }
+
+                // Add emergency contact ID to student data
+                formData.append('emergency_contact_id', emergencyResult.emergency_id);
             }
-
-            // Add emergency contact ID to student data
-            formData.append('emergency_contact_id', emergencyResult.emergency_id);
-
+            
             // Now save student data
             const studentResponse = await fetch('/auth/save_student/', {
                 method: 'POST',
@@ -434,11 +442,14 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('otp').addEventListener('input', () => validateForm());
     document.getElementById('phone').addEventListener('input', () => validateForm());
     document.getElementById('password').addEventListener('input', () => validateForm());
-    document.getElementById('telegram_username').addEventListener('input', () => validateForm());
-    document.getElementById('outlook_email').addEventListener('input', () => validateForm());
-    document.getElementById('emergency_name').addEventListener('input', () => validateForm());
-    document.getElementById('emergency_phone').addEventListener('input', () => validateForm());
-    document.getElementById('emergency_email').addEventListener('input', () => validateForm());
+    
+    if (localStorage.getItem('role')=='instructor') {
+        document.getElementById('telegram_username').addEventListener('input', () => validateForm());
+        document.getElementById('outlook_email').addEventListener('input', () => validateForm());
+        document.getElementById('emergency_name').addEventListener('input', () => validateForm());
+        document.getElementById('emergency_phone').addEventListener('input', () => validateForm());
+        document.getElementById('emergency_email').addEventListener('input', () => validateForm());
+    }
     
     // Add click event listener for verify button
     document.getElementById('verifyButton').addEventListener('click', verifyEmail);
@@ -450,6 +461,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('instructor-role').style.display = 'none';
         document.getElementById('degree-input').innerHTML = '';
         document.getElementById('specialization-input').innerHTML = '';
+        document.getElementById('date_of_birth_group').innerHTML = '';
+        document.getElementById('outlook_email_group').innerHTML = '';
+        document.getElementById('emergency_contact_group').innerHTML = '';
+        document.getElementById('emergency_contact_group').style.display = 'none';
+        document.getElementById('telegram_username_group').innerHTML = '';
     } else if (localStorage.getItem('role') == 'instructor') {
         document.getElementById('student-role').style.display = 'none';
         document.getElementById('role').value = 'instructor';

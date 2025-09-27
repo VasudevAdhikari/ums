@@ -130,6 +130,130 @@
     {% include "public/navbar.html" %}
 {% endif %}
 
+<script>
+function printAssessmentSheet(data, courseTitle, term, batch) {
+    if (!Array.isArray(data) || data.length === 0) {
+        console.error("Invalid data provided");
+        return;
+    }
+
+    // Filter out null entries
+    data = data.filter(student => student !== null);
+    if (data.length === 0) {
+        console.error("No valid students in data");
+        return;
+    }
+
+    // Collect all assessment types from the first student
+    const assessmentTypes = Object.keys(data[0].assessment_results);
+
+    // Create table element
+    const table = document.createElement("table");
+    table.style.borderCollapse = "collapse";
+    table.style.width = "100%";
+    table.style.fontFamily = "Arial, sans-serif";
+    table.style.marginTop = "20px";
+
+    // Table header
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+    const headers = ["No.", "Name", "YKPT", ...assessmentTypes, "Total Percent", "Signature"];
+    headers.forEach(text => {
+        const th = document.createElement("th");
+        th.textContent = text;
+        th.style.border = "1px solid #000";
+        th.style.padding = "6px";
+        th.style.textAlign = "center";
+        th.style.backgroundColor = "#f0f0f0";
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Table body
+    const tbody = document.createElement("tbody");
+    data.forEach((student, index) => {
+        const tr = document.createElement("tr");
+
+        // No.
+        let td = document.createElement("td");
+        td.textContent = index + 1;
+        td.style.border = "1px solid #000";
+        td.style.padding = "6px";
+        td.style.textAlign = "center";
+        tr.appendChild(td);
+
+        // Name
+        td = document.createElement("td");
+        td.textContent = student.student_name;
+        td.style.border = "1px solid #000";
+        td.style.padding = "6px";
+        tr.appendChild(td);
+
+        // YKPT / Roll No
+        td = document.createElement("td");
+        td.textContent = student.roll_no;
+        td.style.border = "1px solid #000";
+        td.style.padding = "6px";
+        tr.appendChild(td);
+
+        // Assessments
+        let totalPercent = 0;
+        assessmentTypes.forEach(type => {
+            const result = student.assessment_results[type];
+            td = document.createElement("td");
+            td.textContent = `${result.got_percent}/${result.given_percent}`;
+            td.style.border = "1px solid #000";
+            td.style.padding = "6px";
+            td.style.textAlign = "center";
+            tr.appendChild(td);
+
+            totalPercent += result.got_percent;
+        });
+
+        // Total Percent
+        td = document.createElement("td");
+        td.textContent = totalPercent.toFixed(2);
+        td.style.border = "1px solid #000";
+        td.style.padding = "6px";
+        td.style.textAlign = "center";
+        tr.appendChild(td);
+
+        // Signature (empty)
+        td = document.createElement("td");
+        td.textContent = "";
+        td.style.border = "1px solid #000";
+        td.style.padding = "6px";
+        tr.appendChild(td);
+
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    // Create print window
+    const printWindow = window.open('', '', 'width=900,height=600');
+    printWindow.document.write('<html><head><title>Assessment Sheet</title></head><body style="font-family: Arial, sans-serif;">');
+
+    // Inject your existing header HTML
+    printWindow.document.write(`
+        <header style="margin-top: 80px;">
+          <h1><i class="fa-solid fa-clipboard-list"></i> Assessment Results for ${courseTitle}</h1>
+          <div class="course-info">
+            <i class="fa-solid fa-calendar"></i> Term: ${term} &nbsp; | &nbsp; 
+            <i class="fa-solid fa-graduation-cap"></i> Batch: ${batch}
+          </div>
+        </header>
+    `);
+
+    // Add table
+    printWindow.document.body.appendChild(table);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+}
+
+</script>
+
 <header style="margin-top: 80px;">
   <h1><i class="fa-solid fa-clipboard-list"></i> Assessment Results for {{ course_title }}</h1>
   <div class="course-info">
@@ -139,7 +263,36 @@
 </header>
 
 <div class="search-box">
-  <input type="text" id="search" placeholder="🔍 Search students by name, roll no, phone, or email...">
+  <input type="text" id="search" placeholder="Search students by name, roll no, phone, or email...">
+  <button class="btn btn-primary" id="printMarks">Print Assessment Marks</button>
+  <script>
+    document.getElementById("printMarks").addEventListener("click", async () => {
+        const batchInstructorId = "{{ batch_instructor_id }}";  // comes from Django template context
+        const url = `/faculty/print_assessment_results/${batchInstructorId}`;
+
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+
+            const data = await response.json(); // or response.text() depending on what server returns
+            console.log("Response:", data);
+            printAssessmentSheet(data.results, '{{course_title}}', '{{term}}', '{{batch}}');
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            alert("Failed to fetch assessment marks.");
+        }
+    });
+</script>
+</div>
+  
 </div>
 
 <table id="resultsTable">

@@ -37,7 +37,7 @@
     <hr style="border: 1px solid black;">
 
     <form class="search-bar" id="course-search-form" onsubmit="return false;">
-      <input type="search" name="" id="course-search-input" placeholder="Search here....." autocomplete="off">
+      <input type="search" name="" id="course-search-input" placeholder="Search by terms....." autocomplete="off">
       <i class="fa fa-search search-icon"></i>
     </form>
 
@@ -56,7 +56,12 @@
               src="https://i0.wp.com/pearlyarts.com/wp-content/uploads/2023/05/FREE-Graduation-Cap-Clipart-FB.png"
               class="card-img-top course-photo img-fluid" alt="Course Image">
             <div class="card-body text-center">
-              <h6 class="card-title mb-1">{{ bi.course.course_code }}</h6>
+              <h6 class="card-title mb-1">
+                {{ bi.course.course_code }}
+                <span style="font-size: 15px !important; text-decoration: none;">
+                <br> {{bi.batch.semester.semester_name}} ({{bi.batch.semester.degree.code}})
+                </span>
+              </h6>
               <small class="text-muted">{{ bi.course.course_credits }} Credits</small>
             </div>
           </div>

@@ -37,4 +37,6 @@ urlpatterns = [
     path('all_results/<int:batch_instructor_id>/', course_management.show_all_results, name='all_results'),
 
     path('profile/', show_profile, name='profile'),
+
+    path('print_assessment_results/<int:batch_instructor_id>/', course_management.get_all_assessment_marks, name='get_all_marks'),
 ]

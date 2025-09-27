@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from authorization.models import User, Student, Enrollment, BatchInstructor, Assessment, Course, AssessmentScheme, AssessmentType, EnrollmentStatus, EnrollmentCourse, Instructor, Document
+from authorization.models import User, Student, Enrollment, BatchInstructor, Assessment, Course, AssessmentScheme, AssessmentType, EnrollmentStatus, EnrollmentCourse, Instructor, Document, VideoConference
 from django.utils import timezone
 from django.http import JsonResponse
 from dateutil.relativedelta import relativedelta
@@ -172,6 +172,14 @@ def show_course_page(request, batch_instructor_id):
     print(enrollment_course)
     has_review = bool(enrollment_course and enrollment_course.review)
     has_rating = bool(enrollment_course and enrollment_course.rating)
+
+    vcs = VideoConference.objects.filter(
+        batch_instructor_id=batch_instructor_id
+    ).order_by('-created_at')
+
+    now = timezone.now()
+    for vc in vcs:
+        vc.can_join = vc.start_time <= now <= vc.end_time
             
     data = {
         'batch_instructor': batch_instructor,
@@ -179,6 +187,7 @@ def show_course_page(request, batch_instructor_id):
         'instructor': instructor,
         'has_review': has_review,
         'has_rating': has_rating,
+        'vcs': vcs,
     }
     print(data)
     return render(request, 'students/academic/course_management.html', context=data)

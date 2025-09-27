@@ -35,6 +35,8 @@ document.getElementById('submitReviewBtn').onclick = async function () {
         await alert('Please enter your review.');
         return;
     }
+    document.getElementById('reviewPopup').style.display = 'none';
+    document.getElementById('ratingPopup').style.display = 'none';
     let check = await confirm('Are you sure you want to submit this review?');
     if (!check) {
         return;
@@ -86,6 +88,8 @@ document.getElementById('submitRatingBtn').onclick = async function () {
         await alert('Please select a rating by clicking the stars.');
         return;
     }
+    document.getElementById('reviewPopup').style.display = 'none';
+    document.getElementById('ratingPopup').style.display = 'none';
     let check = await confirm('Are you sure you want to submit this rating?');
     if (!check) {
         return;

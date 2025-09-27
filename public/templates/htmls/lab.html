@@ -116,15 +116,6 @@
 
     <script>window.editor = true;</script>
     
-    <!-- Debug output -->
-    <div style="display:none;">
-        <p>DEBUG: all_project_leaders count: {{ all_project_leaders|length }}</p>
-        <p>DEBUG: all_project_members count: {{ all_project_members|length }}</p>
-        <p>DEBUG: all_lab_heads count: {{ all_lab_heads|length }}</p>
-        <p>DEBUG: departments count: {{ departments|length }}</p>
-        <p>DEBUG: current_lab_dept: {{ current_lab_dept }}</p>
-    </div>
-    
     {{ all_project_leaders|json_script:"allProjectLeaders" }}
     {{ all_project_members|json_script:"allProjectMembers" }}
     {{ all_lab_heads|json_script:"allLabHeads" }}
@@ -189,9 +180,10 @@
                     </div>
                     <div class="lab-photos">
                         {% if lab_data.images %}
+                            <!-- {{lab_data.images}} -->
                             {% for img in lab_data.images%}
                             <div class="editable-group">
-                                <img src="/media/{{img}}" alt="Lab Photo 1" class="lab-photo" loading="lazy">
+                                <img src="/media/{{img}}" alt="Lab Photo 1" class="lab-photo">
                             </div>
                             {% endfor %}
                         {% else %}

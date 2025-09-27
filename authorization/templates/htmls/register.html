@@ -35,7 +35,7 @@
             {% csrf_token %}
 
             <div class="form-group">
-                <label for="email">Gmail</label>
+                <label for="email">Gmail *</label>
                 <div class="input-group">
                     <input type="email" class="form-control" id="email" name="email" required
                         oninput="validateEmail(this)">
@@ -57,27 +57,27 @@
             </div>
 
             <div class="form-group">
-                <label for="full_name">Full Name</label>
+                <label for="full_name">Full Name *</label>
                 <input type="text" class="form-control" id="full_name" name="full_name" maxlength="100" required>
             </div>
 
             <div class="form-group">
-                <label for="phone">Phone</label>
+                <label for="phone">Phone *</label>
                 <input type="tel" class="form-control" id="phone" name="phone" required oninput="validatePhone(this)"
                     disabled>
                 <div class="error-message" id="phoneError">Please enter a valid phone number</div>
             </div>
 
             <div class="form-group">
-                <label for="city">City</label>
+                <label for="city">City *</label>
                 <input type="text" class="form-control" id="city" name="city" maxlength="100" required disabled>
             </div>
 
             <div class="form-group">
-                <label>Gender</label>
+                <label>Gender *</label>
                 <div class="gender-options">
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="gender" id="genderMale" value="M" required
+                        <input class="form-check-input" type="radio" name="gender" id="genderMale" value="M"
                             disabled>
                         <label class="form-check-label" for="genderMale">Male</label>
                     </div>
@@ -85,7 +85,7 @@
                         <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="F" disabled>
                         <label class="form-check-label" for="genderFemale">Female</label>
                     </div>
-                    <div class="form-check form-check-inline">
+                    <div class="form-check form-check-inline" style="display:none;">
                         <input class="form-check-input" type="radio" name="gender" id="genderOther" value="O" disabled>
                         <label class="form-check-label" for="genderOther">Other</label>
                     </div>
@@ -93,41 +93,41 @@
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password">Password *</label>
                 <input type="password" class="form-control" id="password" name="password" required
                     oninput="validatePassword(this)" disabled>
                 <div class="error-message" id="passwordError">Password must be at least 8 characters long</div>
                 <div class="password-strength" id="passwordStrength"></div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="date_of_birth_group">
                 <label for="date_of_birth">Date of Birth</label>
                 <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required disabled>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="telegram_username_group">
                 <label for="telegram_username">Telegram Username</label>
                 <input type="text" class="form-control" id="telegram_username" name="telegram_username" maxlength="50"
-                    required oninput="validateTelegramUsername(this)" disabled>
+                 oninput="validateTelegramUsername(this)" disabled>
                 <div class="error-message" id="telegramError">Telegram username must start with @ and contain only
                     letters, numbers, and underscores</div>
             </div>
 
-            <div class="form-group">
-                <label for="outlook_email">Outlook Email (Optional)</label>
+            <div class="form-group" id="outlook_email_group">
+                <label for="outlook_email">Outlook Email</label>
                 <input type="email" class="form-control" id="outlook_email" name="outlook_email"
-                    oninput="validateOutlookEmail(this)" disabled>
+                    oninput="validateOutlookEmail(this)" required disabled>
                 <div class="error-message" id="outlookError">Please enter a valid Outlook email address</div>
             </div>
 
             <div class="form-group">
-                <label for="profile_picture">Profile Picture</label>
+                <label for="profile_picture">Profile Picture *</label>
                 <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*"
-                    required onchange="previewImage(this)" disabled>
+                    required onchange="previewImage(this)" required disabled>
                 <img id="preview" class="profile-picture-preview" style="display: none;">
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="display: none;">
                 <label for="role">Role</label>
                 <select class="form-control" id="role" name="role" required>
                     <option id="student-role" value="student">Student</option>
@@ -147,7 +147,7 @@
                     disabled placeholder="e.g. Natural Language Processing, LLM, AR/VR, ....">
             </div>
 
-            <div class="emergency-contact">
+            <div class="emergency-contact" id="emergency_contact_group">
                 <h5>Emergency Contact Information</h5>
                 <div class="form-group">
                     <label for="emergency_name">Contact Name</label>
@@ -191,11 +191,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h4>MM Logic Gallery Terms and Conditions</h4>
+                    <h4>University Terms and Conditions</h4>
                     <p>Last updated: [Current Date]</p>
 
                     <h5>1. Acceptance of Terms</h5>
-                    <p>By accessing and using MM Logic Gallery's services, you agree to be bound by these Terms and
+                    <p>By accessing and using university's services, you agree to be bound by these Terms and
                         Conditions.</p>
 
                     <h5>2. User Responsibilities</h5>
@@ -207,18 +207,18 @@
                         to understand our practices.</p>
 
                     <h5>4. Intellectual Property</h5>
-                    <p>All content and materials available on MM Logic Gallery are protected by intellectual property
+                    <p>All content and materials available on University Management System are protected by intellectual property
                         rights.</p>
 
                     <h5>5. Code of Conduct</h5>
                     <p>Users must adhere to our community guidelines and maintain respectful behavior at all times.</p>
 
                     <h5>6. Service Modifications</h5>
-                    <p>MM Logic Gallery reserves the right to modify or discontinue any service at any time without
+                    <p>University Management System reserves the right to modify or discontinue any service at any time without
                         notice.</p>
 
                     <h5>7. Limitation of Liability</h5>
-                    <p>MM Logic Gallery shall not be liable for any indirect, incidental, special, consequential, or
+                    <p>University Management System shall not be liable for any indirect, incidental, special, consequential, or
                         punitive damages.</p>
 
                     <div class="timer-container">

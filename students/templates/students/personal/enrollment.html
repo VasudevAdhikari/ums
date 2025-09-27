@@ -23,10 +23,8 @@
                 <div class="mb-3 ">
                     <label for="term-select" class="form-label fw-semibold">Term</label>
                     <select id="term-select" class="form-select">
-                        <option value="">Select Term</option>
-                        {% for term in terms %}
-                        <option value="{{ term.id }}">{{ term.term_name }}</option>
-                        {% endfor %}
+                        <option value="" disabled>Select Term</option>
+                        <option value="{{ term.id }}" selected="true">{{ term.term_name }}</option>
                     </select>
                 </div>
                 <div class="mb-3">
@@ -48,7 +46,7 @@
 <footer class="mobile-footer">
     <a href="#" class="back-button">
         <span class="back-arrow">‹ </span>
-        <span class="back-text">Back to previous page</span>
+        <span class="back-text" onclick="window.history.back();">Back to previous page</span>
     </a>
 </footer>
 

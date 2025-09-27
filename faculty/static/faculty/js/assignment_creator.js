@@ -1,26 +1,17 @@
 const students = window.ALL_STUDENTS;
 let selectedStudents = [];
 
-document.addEventListener('DOMContentLoaded', function() {
-    initializeStudentModal();
-    setupEventListeners();
-    // updateClockDisplay();
-
-    if (window.assignment_data) {
-        fillAssignmentForm(window.assignment_data);
-    }
-});
-
-function initializeStudentModal() {
+// --- GLOBAL FUNCTIONS ---
+window.initializeStudentModal = function initializeStudentModal() {
     const studentsGrid = document.getElementById('studentsGrid');
     studentsGrid.innerHTML = '';
     students.forEach(student => {
-        const studentCard = createStudentCard(student);
+        const studentCard = window.createStudentCard(student);
         studentsGrid.appendChild(studentCard);
     });
-}
+};
 
-function createStudentCard(student) {
+window.createStudentCard = function createStudentCard(student) {
     const card = document.createElement('div');
     card.className = 'student-card';
     card.dataset.studentId = student.id;
@@ -44,27 +35,27 @@ function createStudentCard(student) {
         if (e.target.type !== 'checkbox' && !e.target.closest('.checkbox-container')) {
             const checkbox = card.querySelector('input[type="checkbox"]');
             checkbox.checked = !checkbox.checked;
-            toggleStudentSelection(student.id);
+            window.toggleStudentSelection(student.id);
         }
     });
     return card;
-}
+};
 
-function openStudentModal() {
+window.openStudentModal = function openStudentModal() {
     const modal = document.getElementById('studentModal');
     modal.classList.add('show');
     modal.style.display = 'flex';
-}
+};
 
-function closeStudentModal() {
+window.closeStudentModal = function closeStudentModal() {
     const modal = document.getElementById('studentModal');
     modal.classList.remove('show');
     setTimeout(() => {
         modal.style.display = 'none';
     }, 300);
-}
+};
 
-function toggleStudentSelection(studentId) {
+window.toggleStudentSelection = function toggleStudentSelection(studentId) {
     const card = document.querySelector(`[data-student-id="${studentId}"]`);
     const checkbox = card.querySelector('input[type="checkbox"]');
     if (checkbox.checked) {
@@ -76,10 +67,10 @@ function toggleStudentSelection(studentId) {
         selectedStudents = selectedStudents.filter(id => id !== studentId);
         card.classList.remove('selected');
     }
-    updateSelectAllCheckbox();
-}
+    window.updateSelectAllCheckbox();
+};
 
-function toggleSelectAll() {
+window.toggleSelectAll = function toggleSelectAll() {
     const selectAllCheckbox = document.getElementById('selectAllStudents');
     const studentCheckboxes = document.querySelectorAll('.student-card input[type="checkbox"]');
     if (selectAllCheckbox.checked) {
@@ -95,24 +86,24 @@ function toggleSelectAll() {
             checkbox.closest('.student-card').classList.remove('selected');
         });
     }
-}
+};
 
-function updateSelectAllCheckbox() {
+window.updateSelectAllCheckbox = function updateSelectAllCheckbox() {
     const selectAllCheckbox = document.getElementById('selectAllStudents');
     selectAllCheckbox.checked = selectedStudents.length === students.length;
-}
+};
 
-function confirmStudentSelection() {
-    updateSelectedStudentsDisplay();
-    closeStudentModal();
-}
+window.confirmStudentSelection = function confirmStudentSelection() {
+    window.updateSelectedStudentsDisplay();
+    window.closeStudentModal();
+};
 
-function updateSelectedStudentsDisplay() {
+window.updateSelectedStudentsDisplay = function updateSelectedStudentsDisplay() {
     const selectedCount = document.getElementById('selectedCount');
     selectedCount.textContent = `${selectedStudents.length} students selected`;
-}
+};
 
-function setupStudentSearch() {
+window.setupStudentSearch = function setupStudentSearch() {
     const searchInput = document.getElementById('studentSearch');
     searchInput.addEventListener('input', function() {
         const searchTerm = this.value.toLowerCase();
@@ -127,11 +118,9 @@ function setupStudentSearch() {
             }
         });
     });
-}
+};
 
-
-// File/Image Preview
-function previewFiles(input, containerId, isImage) {
+window.previewFiles = function previewFiles(input, containerId, isImage) {
     const container = document.getElementById(containerId);
     container.innerHTML = '';
     Array.from(input.files).forEach((file, idx) => {
@@ -152,10 +141,9 @@ function previewFiles(input, containerId, isImage) {
         }
         container.appendChild(fileDiv);
     });
-}
+};
 
-// Download and set file/image input for existing files/images
-async function setFileInputFromUrl(input, url, filename) {
+window.setFileInputFromUrl = async function setFileInputFromUrl(input, url, filename) {
     try {
         const response = await fetch(url);
         if (!response.ok) return;
@@ -174,9 +162,9 @@ async function setFileInputFromUrl(input, url, filename) {
         input.setAttribute('data-original', filename);
         input.dispatchEvent(new Event('change', { bubbles: true }));
     } catch (e) {}
-}
+};
 
-async function fillAssignmentForm(assignment) {
+window.fillAssignmentForm = async function fillAssignmentForm(assignment) {
     if (document.getElementById('assignmentTitle')) {
         document.getElementById('assignmentTitle').value = assignment.title || '';
     }
@@ -194,8 +182,8 @@ async function fillAssignmentForm(assignment) {
             checkbox.closest('.student-card').classList.remove('selected');
         }
     });
-    updateSelectedStudentsDisplay();
-    updateSelectAllCheckbox();
+    window.updateSelectedStudentsDisplay();
+    window.updateSelectAllCheckbox();
     document.getElementById('assignmentQuestion').value = assignment.question || '';
 
     // Existing files
@@ -218,7 +206,7 @@ async function fillAssignmentForm(assignment) {
             fileDiv.appendChild(a);
             filesPreview.appendChild(fileDiv);
             // Optionally, set file input (for backend consistency)
-            await setFileInputFromUrl(fileInput, url, fname);
+            await window.setFileInputFromUrl(fileInput, url, fname);
         }
     }
     // Existing images
@@ -245,29 +233,29 @@ async function fillAssignmentForm(assignment) {
             imgDiv.appendChild(a);
             imagesPreview.appendChild(imgDiv);
             // Optionally, set file input (for backend consistency)
-            await setFileInputFromUrl(imageInput, url, iname);
+            await window.setFileInputFromUrl(imageInput, url, iname);
         }
     }
-}
+};
 
-function setupEventListeners() {
-    document.getElementById('openStudentModal').addEventListener('click', openStudentModal);
-    document.getElementById('assignmentForm').addEventListener('submit', handleFormSubmission);
-    setupStudentSearch();
+window.setupEventListeners = function setupEventListeners() {
+    document.getElementById('openStudentModal').addEventListener('click', window.openStudentModal);
+    document.getElementById('assignmentForm').addEventListener('submit', window.handleFormSubmission);
+    window.setupStudentSearch();
     document.getElementById('assignmentFiles').addEventListener('change', function() {
-        previewFiles(this, 'filesPreview', false);
+        window.previewFiles(this, 'filesPreview', false);
     });
     document.getElementById('assignmentImages').addEventListener('change', function() {
-        previewFiles(this, 'imagesPreview', true);
+        window.previewFiles(this, 'imagesPreview', true);
     });
     document.getElementById('studentModal').addEventListener('click', function(e) {
         if (e.target === this) {
-            closeStudentModal();
+            window.closeStudentModal();
         }
     });
-}
+};
 
-async function handleFormSubmission(event) {
+window.handleFormSubmission = async function handleFormSubmission(event) {
     event.preventDefault();
     if (selectedStudents.length === 0) {
         await alert('Please select at least one student for the assignment.');
@@ -332,4 +320,15 @@ async function handleFormSubmission(event) {
         console.error('Error:', error);
         await alert('An error occurred while creating the assignment.');
     });
-}
+};
+
+// --- DOMContentLoaded ---
+document.addEventListener('DOMContentLoaded', function() {
+    window.initializeStudentModal();
+    window.setupEventListeners();
+    // updateClockDisplay();
+
+    if (window.assignment_data) {
+        window.fillAssignmentForm(window.assignment_data);
+    }
+});

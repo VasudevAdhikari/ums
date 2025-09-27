@@ -311,6 +311,8 @@ function renderDocumentsWithData(docsData, referredDocs) {
   const yourId = docsData.you;
   const instructors = docsData.instructors;
   const byInstructor = docsData.by_instructor;
+  console.log('byInstructor');
+  console.log(byInstructor);
 
   // Documents By You
   const yourDocsGrid = document.getElementById("yourDocsGrid");
@@ -523,7 +525,7 @@ function openEditDocPopup(docIdx) {
   document.getElementById("editDocForm").dataset.docIdx = docIdx;
   document.getElementById("editDocForm").reset();
 }
-function closeEditDocPopup() {
+window.closeEditDocPopup = function closeEditDocPopup() {
   document.getElementById("editDocPopup").style.display = "none";
   isNewDoc = false;
   editingDocIdx = null;
@@ -543,6 +545,7 @@ function setupEditDocButtons() {
 const docAddForm = document.getElementById("editDocForm");
 docAddForm.onsubmit = async function (e) {
   e.preventDefault();
+  document.getElementById('editDocPopup').style.display='none';
   if (!await confirm("Are you sure to add this document")) return;
   docAddForm.submit();
 };
@@ -747,8 +750,10 @@ async function fetchDocuments() {
     if (!response.ok) throw new Error("Failed to fetch documents");
     const data = await response.json(); // { by_instructor: {user_id: [doc, ...]}, instructors: {user_id: name}, you: user_id }
     // Ensure 'you' is set to window.instructor.id if available
+    console.log(data);
     if (instructorId) {
       data.you = instructorId.toString();
+      console.log(data);
     }
     return data;
   } catch (err) {
@@ -903,51 +908,107 @@ async function renderDocuments() {
 }
 
 function showAddDocumentPopup() {
-  // Create a popup div
+  // Create overlay
   const popup = document.createElement("div");
   popup.style.position = "fixed";
   popup.style.top = "0";
   popup.style.left = "0";
   popup.style.width = "100vw";
   popup.style.height = "100vh";
-  popup.style.background = "rgba(0,0,0,0.3)";
+  popup.style.background = "rgba(0,0,0,0.4)";
   popup.style.display = "flex";
   popup.style.alignItems = "center";
   popup.style.justifyContent = "center";
   popup.style.zIndex = "9999";
 
   popup.innerHTML = `
-    <div style="background:#fff;padding:2rem;border-radius:1rem;min-width:320px;max-width:90vw;box-shadow:0 2px 16px #0002;">
-      <h3>Add Document</h3>
+    <div id="uploadDocPopup" style="
+      background: var(--bg-light);
+      padding: 2rem;
+      border-radius: 1rem;
+      min-width: 350px;
+      max-width: 90vw;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      border: 1px solid var(--primary-light);
+      font-family: Arial, sans-serif;
+      color: var(--text-dark);
+      animation: fadeIn 0.3s ease;
+    ">
+      <h3 style="margin-top:0;margin-bottom:1rem;font-size:1.25rem;
+        font-weight:600;color:var(--primary);text-align:center;">
+        Add Document
+      </h3>
       <form id="addDocForm">
-        <label style="display:block;margin-bottom:12px;">
-          Document Name:<br>
-          <input type="text" id="addDocName" required style="width:100%;margin-top:4px;">
+        <label style="display:block;margin-bottom:12px;font-weight:500;">
+          Document Name:
+          <input type="text" id="addDocName" required style="
+            width:100%;
+            margin-top:6px;
+            padding:8px 10px;
+            border:1px solid var(--primary-light);
+            border-radius:8px;
+            outline:none;
+          ">
         </label>
-        <label style="display:block;margin-bottom:12px;">
-          Document File:<br>
-          <input type="file" id="addDocFile" required style="width:100%;margin-top:4px;">
+        <label style="display:block;margin-bottom:12px;font-weight:500;">
+          Document File:
+          <input type="file" id="addDocFile" required style="
+            width:100%;
+            margin-top:6px;
+            padding:6px;
+            border:1px solid var(--primary-light);
+            border-radius:8px;
+            background: var(--bg-gray);
+          ">
         </label>
-        <label style="display:block;margin-bottom:12px;">
-          Access Status:<br>
-          <select id="addDocAccess" style="width:100%;margin-top:4px;">
+        <label style="display:block;margin-bottom:12px;font-weight:500;">
+          Access Status:
+          <select id="addDocAccess" style="
+            width:100%;
+            margin-top:6px;
+            padding:8px 10px;
+            border:1px solid var(--primary-light);
+            border-radius:8px;
+            background: var(--bg-light);
+          ">
             <option value="A">Public</option>
             <option value="B">Private</option>
           </select>
         </label>
-        <div style="margin-top:18px;">
-          <button type="submit" class="save-btn">Save</button>
-          <button type="button" class="cancel-btn" id="cancelAddDocBtn">Cancel</button>
+        <div style="margin-top:20px;display:flex;gap:12px;justify-content:flex-end;">
+          <button type="submit" id="saveAddDocBtn" style="
+            padding:8px 16px;
+            background:var(--primary);
+            color:var(--text-light);
+            border:none;
+            border-radius:8px;
+            font-weight:600;
+            cursor:pointer;
+            transition:background 0.2s ease;
+          ">Save</button>
+          <button type="button" id="cancelAddDocBtn" style="
+            padding:8px 16px;
+            background:var(--error);
+            color:var(--text-light);
+            border:none;
+            border-radius:8px;
+            font-weight:600;
+            cursor:pointer;
+            transition:background 0.2s ease;
+          ">Cancel</button>
         </div>
       </form>
     </div>
   `;
+
   document.body.appendChild(popup);
 
+  // Cancel button
   document.getElementById("cancelAddDocBtn").onclick = function () {
     popup.remove();
   };
 
+  // Form submit
   document.getElementById("addDocForm").onsubmit = async function (e) {
     e.preventDefault();
     const name = document.getElementById("addDocName").value.trim();
@@ -955,15 +1016,17 @@ function showAddDocumentPopup() {
     const access = document.getElementById("addDocAccess").value;
     const file = fileInput.files[0];
     if (!name || !file) {
-      await alert("Please provide both document name and file.");
+      alert("Please provide both document name and file.");
       return;
     }
-    if (!await confirm("Are you sure you want to add this document?")) return;
+    if (!confirm("Are you sure you want to add this document?")) return;
+
     const formData = new FormData();
     formData.append("name", name);
     formData.append("access_status", access);
     formData.append("file", file);
     formData.append("course_id", window.batch_instructor.course__id);
+
     const ok = await addDocument(formData);
     if (ok) {
       popup.remove();

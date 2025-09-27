@@ -1,4 +1,3 @@
-
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container-fluid">
       <img src="{{request.uni_logo}}" class="uni-logo ms-4" alt="University Logo">
@@ -12,51 +11,87 @@
 
           <li class="nav-item">
             <a class="nav-link" href="/public/" role="button" aria-expanded="false">
-              Home
+              <i class="fas fa-home me-1"></i> Home
             </a>
           </li>
 
           <li class="nav-item">
             <a class="nav-link" href="/faculty/" role="button" aria-expanded="false">
-              Dashboard
+              <i class="fas fa-tachometer-alt me-1"></i> Dashboard
             </a>
           </li>
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Academics
+              <i class="fas fa-book-open me-1"></i> Academics
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/public/terms/">Terms</a></li>
-              <li><a class="dropdown-item" href="/public/degrees/">Degrees</a></li>
-              <li><a class="dropdown-item" href="/public/courses/">Courses</a></li>
+              <li><a class="dropdown-item" href="/public/terms/"><i class="fas fa-calendar-alt me-1"></i> Terms</a></li>
+              <li><a class="dropdown-item" href="/public/degrees/"><i class="fas fa-graduation-cap me-1"></i> Degrees</a></li>
+              <li><a class="dropdown-item" href="/public/courses/"><i class="fas fa-book me-1"></i> Courses</a></li>
             </ul>
           </li>
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Profile
+              <i class="fas fa-user me-1"></i> Profile
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/faculty/profile/"><i class="fas fa-handshake me-2"></i> View Profile
+              <li><a class="dropdown-item" href="/faculty/profile/"><i class="fas fa-id-badge me-2"></i> View Profile
                   </a></li>
-              <li><a class="dropdown-item" href="#" id="btnLogoutLagjagale"><i class="fas fa-flask me-2"></i> Logout</a></li>
+              <li><a class="dropdown-item" href="#" id="btnLogoutLagjagale"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
             </ul>
-            
           </li>
 
           <li class="nav-item">
             <a class="nav-link" href="/noticeboard/" role="button" aria-expanded="false">
-              Noticeboard
+              <i class="fas fa-bullhorn me-1"></i> Noticeboard
             </a>
           </li>
 
-          <li class="nav-item">
+          <li class="nav-item position-relative">
             <a class="nav-link" href="/public/notifications/" role="button" aria-expanded="false">
-              Notifications
+              <i class="fas fa-bell me-1"></i> Notifications
+              {% if request.noti_count > 0 %}
+                  <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle p-1">
+                      {{ request.noti_count }}
+                      <span class="visually-hidden">unread notifications</span>
+                  </span>
+              {% endif %}
             </a>
           </li>
         </ul>
       </div>
     </div>
-  </nav>
+</nav>
+<script>
+  function normalizePath(path) {
+      // Ensure path always ends with a slash
+      return path.endsWith('/') ? path : path + '/';
+  }
+
+  const navbar = document.querySelector('.navbar');
+  const links = navbar.querySelectorAll('a');
+  const currentPath = normalizePath(window.location.pathname);
+
+  links.forEach(link => {
+      const linkPath = normalizePath(link.getAttribute('href'));
+      if (linkPath === currentPath) {
+          link.style.fontWeight = 'bolder';
+          link.style.textDecoration = 'underline';
+          link.style.textUnderlineOffset = '6px';
+          link.style.textDecorationThickness = '2px';
+
+          const dropdownParent = link.closest('.dropdown-menu');
+          if (dropdownParent) {
+              const toggle = dropdownParent.closest('.nav-item').querySelector('.nav-link.dropdown-toggle');
+              if (toggle) {
+                  toggle.style.fontWeight = 'bolder';
+                  toggle.style.textDecoration = 'underline';
+                  toggle.style.textUnderlineOffset = '6px';
+                  toggle.style.textDecorationThickness = '2px';
+              }
+          }
+      }
+  });
+</script>

@@ -484,7 +484,7 @@
                                 class="form-control"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Marking Scheme</label>
+                            <label class="form-label">Assessment Scheme</label>
                             <div id="editMarkingSchemeContainer" class="mb-2"></div>
                             <button type="button" id="editAddAssessmentBtn" class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-plus"></i> Add Assessment
@@ -555,7 +555,7 @@
                                 class="form-control"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Marking Scheme</label>
+                            <label class="form-label">Assessment Scheme</label>
                             <div id="markingSchemeContainer" class="mb-2"></div>
                             <button type="button" id="addAssessmentBtn" class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-plus"></i> Add Assessment
@@ -700,6 +700,7 @@
             if (total > 100) {
                 await alert("Total percentage cannot exceed 100%");
             }
+            window.total=total;
         }
 
         // Bind Add buttons safely
@@ -880,6 +881,10 @@
             // Form submission handlers
             courseForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
+                if (total!=100) {
+                    await alert('Total percentage of assessment scheme must be 100%');
+                    return;
+                }
                 if (!await confirm("Are you sure to edit this course?")) return;
                 courseForm.action = `/executives/course/edit/${sessionStorage.getItem('courseId')}`;
                 courseForm.submit();
@@ -887,6 +892,10 @@
 
             addCourseForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
+                if (total!=100) {
+                    await alert('Total percentage of assessment scheme must be 100%');
+                    return;
+                }
                 if (await confirm('Are you sure to add this course?')) {
                     addCourseForm.submit();
                 }

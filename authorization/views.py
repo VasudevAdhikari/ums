@@ -223,10 +223,6 @@ def save_student(request):
     try:
         # Get emergency contact ID
         emergency_contact_id = request.POST.get('emergency_contact_id')
-        if not emergency_contact_id:
-            print("there is no emergency contact id")
-            return JsonResponse({'success': False, 'error': 'Emergency contact ID is required'})
-        
         # Get emergency contact
         try:
             print("gonna get emergency contact")
@@ -234,7 +230,7 @@ def save_student(request):
             print("got emergency contact")
         except EmergencyContact.DoesNotExist:
             print("emergency contact not found")
-            return JsonResponse({'success': False, 'error': 'Emergency contact not found'})
+            emergency_contact = None
         
         # Handle profile picture
         profile_picture = request.FILES.get('profile_picture')
@@ -252,11 +248,11 @@ def save_student(request):
         phone = request.POST.get('phone', '')
         city = request.POST.get('city', '')
         gender = request.POST.get('gender', '')
-        date_of_birth = request.POST.get('date_of_birth', '')
         telegram_username = request.POST.get('telegram_username', '')
         outlook_email = request.POST.get('outlook_email', '')
         password = request.POST.get('password', '')
         role = request.POST.get('role', 'student')  # Default to student if not specified
+        date_of_birth = request.POST.get('date_of_birth', '') if role=='instructor' else None
 
         # Create User first
         user = User.objects.create_user(

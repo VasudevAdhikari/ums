@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404
-from authorization.models import Faculty, UniversityDetails, Instructor, User
+from authorization.models import AcademicStatus, Faculty, UniversityDetails, Instructor, User
 import json
 from django.shortcuts import render
 
@@ -18,12 +18,13 @@ def faculty_to_dict(faculty):
         "description": faculty.description,
         "head": faculty.head_of_faculty.full_name if faculty.head_of_faculty else None,
         "photo": faculty.faculty_photo.url if faculty.faculty_photo else "",
+        "status": faculty.status.strip().capitalize()
     }
 
 def show_faculty_management(request):
     uni_info = UniversityDetails.objects.filter(name='university_info').first().details if UniversityDetails.objects.filter(name='university_info').exists() else {}
     photos = UniversityDetails.objects.filter(name='photos').first().details.keys() if UniversityDetails.objects.filter(name='photos').exists() else []
-    fac = Faculty.objects.all().order_by('id')
+    fac = Faculty.objects.all().order_by('status', 'id')
     faculties = [faculty_to_dict(f) for f in fac]
 
     # to fix. List all the user details of instructors
@@ -33,10 +34,12 @@ def show_faculty_management(request):
     #     # instructors.append(instructor.u)
     #     instructors.append({'name': instructor.user.full_name, 'img': instructor.user.profile_picture})
 
-    users = User.objects.all()
+    users = Instructor.objects.select_related(
+        'user', 'department__faculty'
+    ).all()
     instructors = []
     for instructor in users:
-        instructors.append({'name': instructor.full_name, 'img': instructor.profile_picture.url, 'id': instructor.pk})
+        instructors.append({'name': instructor.user.full_name, 'img': instructor.user.profile_picture.url, 'id': instructor.user.pk, 'faculty_id': instructor.department.faculty.id})
     # print(instructors)
     data = {
         'photos': photos,
@@ -108,7 +111,11 @@ def faculty_edit(request, faculty_id):
 def faculty_delete(request, faculty_id):
     try:
         faculty = get_object_or_404(Faculty, pk=int(faculty_id))
-        faculty.delete()
+        if faculty.status == AcademicStatus.ACTIVE:
+            faculty.status = AcademicStatus.INACTIVE
+        else:
+            faculty.status = AcademicStatus.ACTIVE
+        faculty.save()
         return JsonResponse({"success": True})
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})

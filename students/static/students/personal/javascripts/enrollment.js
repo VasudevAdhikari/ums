@@ -23,7 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
         presentTypes = [];
     }
 
-    $term.addEventListener('change', function() {
+    window.updateTerm = function() {
+        console.log('update_term_called');
         const termId = $term.value;
         resetBatch();
         if (!termId) return;
@@ -40,7 +41,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
             });
-    });
+    }
+
+    $term.addEventListener('change', updateTerm);
 
     $batch.addEventListener('change', function() {
         const batchId = $batch.value;
@@ -55,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
     });
+    updateTerm();
 
     function renderCourses(grouped) {
         let html = '';
@@ -64,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
             presentTypes.push(type);
             html += `<div class="course-group mb-4"><div class="group-title text-uppercase mb-2">${type}</div>`;
             grouped[type].forEach(course => {
-                const readonly = type === 'Core' ? 'readonly checked disabled' : '';
+                const readonly = type === 'Core' || type.toLocaleLowerCase === 'retake' ? 'readonly checked disabled' : '';
                 const checked = readonly ? 'checked' : '';
                 const inputType = 'checkbox';
                 html += `<div class="course-cart${readonly ? ' readonly' : ''}">
@@ -122,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $coursesSection.querySelectorAll('.course-select:checked').forEach(input => {
             selectedCourses.push(input.value);
         });
-        data = JSON.stringify({
+        let data = JSON.stringify({
             term_id: termId, batch_id: batchId, course_ids: selectedCourses
         })
         console.log({ term_id: termId, batch_id: batchId, course_ids: selectedCourses });
@@ -143,6 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(async result => {
             await alert('Enrollment Successful');
+            window.history.back();
         })
         .catch(error => {
             console.error('Error:', error);

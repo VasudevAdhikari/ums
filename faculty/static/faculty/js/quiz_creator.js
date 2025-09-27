@@ -25,6 +25,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+function closeStudentModal() {
+    const modal = document.getElementById('studentModal');
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+
+function openStudentModal() {
+    const modal = document.getElementById('studentModal');
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+}
+
+
 // Student Modal Functions
 function initializeStudentModal() {
     const studentsGrid = document.getElementById('studentsGrid');
@@ -67,20 +82,6 @@ function createStudentCard(student) {
     });
     
     return card;
-}
-
-function openStudentModal() {
-    const modal = document.getElementById('studentModal');
-    modal.classList.add('show');
-    modal.style.display = 'flex';
-}
-
-function closeStudentModal() {
-    const modal = document.getElementById('studentModal');
-    modal.classList.remove('show');
-    setTimeout(() => {
-        modal.style.display = 'none';
-    }, 300);
 }
 
 function toggleStudentSelection(studentId) {
@@ -160,17 +161,7 @@ function initializeTimerControls() {
     durationInput.addEventListener('input', updateClockDisplay);
 }
 
-function adjustTime(minutes) {
-    const durationInput = document.getElementById('quizDuration');
-    let currentValue = parseInt(durationInput.value) || 30;
-    let newValue = currentValue + minutes;
-    
-    if (newValue < 1) newValue = 1;
-    if (newValue > 300) newValue = 300;
-    
-    durationInput.value = newValue;
-    updateClockDisplay();
-}
+
 
 function updateClockDisplay() {
     const duration = parseInt(document.getElementById('quizDuration').value) || 30;
@@ -211,16 +202,16 @@ function previewQuestionImage(input) {
     }
 }
 
-function removeQuestionImage(questionNumber) {
-    const fileInput = document.getElementById(`questionImg${questionNumber}`);
-    const previewContainer = document.getElementById(`imagePreview${questionNumber}`);
+// function removeQuestionImage(questionNumber) {
+//     const fileInput = document.getElementById(`questionImg${questionNumber}`);
+//     const previewContainer = document.getElementById(`imagePreview${questionNumber}`);
 
-    fileInput.value = '';
-    previewContainer.style.display = 'none';
-}
+//     fileInput.value = '';
+//     previewContainer.style.display = 'none';
+// }
 
 // Question Management
-function addQuestion() {
+window.addQuestion = function addQuestion() {
     const questionsContainer = document.getElementById('questionsContainer');
     const questionCount = questionsContainer.children.length + 1;
     
@@ -336,7 +327,7 @@ function addQuestion() {
     updateMaxQuestions();
 }
 
-function updateMaxQuestions() {
+window.updateMaxQuestions = function updateMaxQuestions() {
     const questionCount = document.getElementById('questionsContainer').children.length;
     const maxQuestionsSpan = document.getElementById('maxQuestions');
     const questionsPerStudentInput = document.getElementById('questionsPerStudent');
@@ -352,7 +343,7 @@ function updateMaxQuestions() {
     }
 }
 
-function removeQuestion(button) {
+window.removeQuestion = function removeQuestion(button) {
     const question = button.closest('.question');
     question.remove();
     updateMaxQuestions();
@@ -396,34 +387,34 @@ function previewOptionImage(input) {
     }
 }
 
-function removeOptionImage(optionNumber) {
-    const optionContent = document.querySelector(`#optionImagePreview${optionNumber}`).closest('.option-content');
-    const previewContainer = optionContent.querySelector('.option-image-preview');
-    const previewImg = previewContainer.querySelector('.preview-img');
-    const fileInput = optionContent.querySelector('input[type="file"]');
-    const questionNumber = optionContent.closest('.question').dataset.question;
-    const optionIndex = Array.from(optionContent.parentElement.children).indexOf(optionContent) + 1;
+// function removeOptionImage(optionNumber) {
+//     const optionContent = document.querySelector(`#optionImagePreview${optionNumber}`).closest('.option-content');
+//     const previewContainer = optionContent.querySelector('.option-image-preview');
+//     const previewImg = previewContainer.querySelector('.preview-img');
+//     const fileInput = optionContent.querySelector('input[type="file"]');
+//     const questionNumber = optionContent.closest('.question').dataset.question;
+//     const optionIndex = Array.from(optionContent.parentElement.children).indexOf(optionContent) + 1;
 
-    // Clear the file input
-    fileInput.value = '';
-    // Hide the preview
-    previewContainer.style.display = 'none';
-    previewImg.src = '';
+//     // Clear the file input
+//     fileInput.value = '';
+//     // Hide the preview
+//     previewContainer.style.display = 'none';
+//     previewImg.src = '';
 
-    // Mark as deleted for backend
-    fileInput.dataset.deleted = "1";
+//     // Mark as deleted for backend
+//     fileInput.dataset.deleted = "1";
 
-    // Update the correct answer preview
-    const correctPreview = document.getElementById(`correctPreview${questionNumber}`);
-    const previewOption = correctPreview.querySelector(`[data-value="${optionIndex}"]`);
-    if (previewOption) {
-        const optionImage = previewOption.querySelector('.option-image');
-        if (optionImage) {
-            optionImage.src = '';
-        }
-        previewOption.classList.remove('has-image');
-    }
-}
+//     // Update the correct answer preview
+//     const correctPreview = document.getElementById(`correctPreview${questionNumber}`);
+//     const previewOption = correctPreview.querySelector(`[data-value="${optionIndex}"]`);
+//     if (previewOption) {
+//         const optionImage = previewOption.querySelector('.option-image');
+//         if (optionImage) {
+//             optionImage.src = '';
+//         }
+//         previewOption.classList.remove('has-image');
+//     }
+// }
 
 function addOption(button) {
     const optionsContainer = button.closest('.options-section').querySelector('.options-container');
@@ -600,140 +591,6 @@ function setupEventListeners() {
     });
 }
 
-async function handleFormSubmission(event) {
-    event.preventDefault();
-
-    // Validate that students are selected
-    if (selectedStudents.length === 0) {
-        await alert('Please select at least one student for the quiz.');
-        return;
-    }
-
-    // Validate that all questions have correct answers selected
-    const questions = document.querySelectorAll('.question');
-    let allValid = true;
-
-    questions.forEach(async (question, index) => {
-        const correctAnswer = question.querySelector('.correct-answer').value;
-        if (!correctAnswer) {
-            await alert(`Please select a correct answer for Question ${index + 1}.`);
-            allValid = false;
-            return;
-        }
-    });
-
-    if (!allValid) return;
-
-    // Build quiz JSON
-    const quizTitle = document.getElementById('quizTitle') ? document.getElementById('quizTitle').value : '';
-    const timeLimit = parseInt(document.getElementById('quizDuration').value) || 30;
-    const questionsPerStudent = parseInt(document.getElementById('questionsPerStudent').value) || questions.length;
-
-    const quizQuestions = [];
-    const files = [];
-
-    Array.from(questions).forEach((question, qIdx) => {
-        const questionText = question.querySelector('textarea').value;
-        const points = parseInt(question.querySelector('.points-field').value) || 1;
-        // Question image
-        let questionImage = '';
-        const questionImgInput = question.querySelector('input[type="file"][id^="questionImg"]');
-        if (questionImgInput) {
-            if (questionImgInput.files && questionImgInput.files[0]) {
-                questionImage = `question_${qIdx}_img_${questionImgInput.files[0].name}`;
-                files.push({name: questionImage, file: questionImgInput.files[0]});
-            } else if (questionImgInput.dataset.deleted === "1") {
-                questionImage = null;
-            } else if (questionImgInput.getAttribute('data-original')) {
-                questionImage = questionImgInput.getAttribute('data-original');
-            } else {
-                questionImage = null;
-            }
-        }
-        // Options
-        const optionContents = question.querySelectorAll('.option-content');
-        const correctAnswerValue = question.querySelector('.correct-answer').value;
-        const options = Array.from(optionContents).map((optionContent, idx) => {
-            const optionText = optionContent.querySelector('input[type="text"]').value;
-            let optionImage = '';
-            const optionImgInput = optionContent.querySelector('input[type="file"]');
-            if (optionImgInput) {
-                if (optionImgInput.files && optionImgInput.files[0]) {
-                    optionImage = `question_${qIdx}_option_${idx}_img_${optionImgInput.files[0].name}`;
-                    files.push({name: optionImage, file: optionImgInput.files[0]});
-                } else if (optionImgInput.dataset.deleted === "1") {
-                    optionImage = null;
-                } else if (optionImgInput.getAttribute('data-original')) {
-                    optionImage = optionImgInput.getAttribute('data-original');
-                } else {
-                    optionImage = null;
-                }
-            }
-            return {
-                option: optionText,
-                option_image: optionImage,
-                correct: (correctAnswerValue == (idx + 1).toString())
-            };
-        });
-        quizQuestions.push({
-            question: questionText,
-            question_image: questionImage,
-            points: points,
-            options: options
-        });
-    });
-
-    const quiz = {
-        title: quizTitle,
-        students: selectedStudents,
-        time_limit: timeLimit,
-        total_mark: parseInt(document.getElementById('totalMarks').value),
-        questions_per_student: questionsPerStudent,
-        questions: quizQuestions
-    };
-
-    // Build FormData for files + data
-    const formData = new FormData();
-    formData.append('quiz', JSON.stringify(quiz));
-    formData.append('start_time', document.getElementById('quizStart').value);
-    formData.append('end_time', document.getElementById('quizEnd').value);
-    formData.append('assessment_id', window.ASSESSMENT_ID);
-
-    // Append each image file
-    files.forEach(({name, file}) => {
-        formData.append('images', file, name);
-    });
-
-    // Confirm before sending
-    console.log('Quiz JSON:', quiz);
-    if (!await confirm("Are you sure to save quiz data?")) return;
-
-    // Send using fetch
-    fetch('/faculty/create_quiz/', {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': window.CSRF_TOKEN // CSRF token included
-            // Do NOT set Content-Type manually; let browser handle it for FormData
-        },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(async data => {
-        if (data.success) {
-            await alert('Quiz created successfully');
-            // Optionally redirect:
-            window.location.href = `/faculty/course_management/${window.BATCH_INSTRUCTOR_ID}`;
-        } else {
-            console.error('Server error:', data);
-            await alert('Failed to create quiz: ' + (data.message || data.error || 'Unknown error'));
-        }
-    })
-    .catch(async (error) => {
-        console.error('Error:', error);
-        await alert('An error occurred while creating the quiz.');
-    });
-}
-
 // Utility: fetch image as Blob and set as File in input
 async function setFileInputFromUrl(input, url, filename) {
     try {
@@ -758,141 +615,6 @@ async function setFileInputFromUrl(input, url, filename) {
         input.dispatchEvent(new Event('change', { bubbles: true }));
     } catch (e) {
         // Ignore if image not found
-    }
-}
-
-async function fillQuizForm(quiz) {
-    // Title
-    console.log(quiz);
-    if (document.getElementById('quizTitle')) {
-        document.getElementById('quizTitle').value = quiz.title || '';
-    }
-    // Time limit
-    document.getElementById('quizDuration').value = quiz.time_limit || 30;
-    updateClockDisplay();
-    // Questions per student
-    document.getElementById('questionsPerStudent').value = quiz.questions_per_student || (quiz.questions ? quiz.questions.length : 1);
-    // Start/end time
-    if (quiz.start_time) document.getElementById('quizStart').value = quiz.start_time;
-    if (quiz.end_time) document.getElementById('quizEnd').value = quiz.end_time;
-
-    // Students
-    selectedStudents = quiz.students || [];
-    document.querySelectorAll('.student-card input[type="checkbox"]').forEach(checkbox => {
-        const studentId = parseInt(checkbox.closest('.student-card').dataset.studentId);
-        checkbox.checked = selectedStudents.includes(studentId);
-        if (checkbox.checked) {
-            checkbox.closest('.student-card').classList.add('selected');
-        } else {
-            checkbox.closest('.student-card').classList.remove('selected');
-        }
-    });
-    updateSelectedStudentsDisplay();
-    updateSelectAllCheckbox();
-
-    // Questions
-    const questionsContainer = document.getElementById('questionsContainer');
-    questionsContainer.innerHTML = '';
-    // For async image loading
-    const imagePromises = [];
-
-    (quiz.questions || []).forEach((q, qIdx) => {
-        addQuestion();
-        const questionDiv = questionsContainer.children[qIdx];
-        // Question text
-        questionDiv.querySelector('textarea').value = q.question || '';
-        // Points
-        questionDiv.querySelector('.points-field').value = q.points || 1;
-
-        // Question image: set preview and input file if image exists
-        if (q.question_image) {
-            const imgUrl = `/media/quiz/${q.question_image}`;
-            const previewContainer = questionDiv.querySelector('.image-preview');
-            previewContainer.style.display = 'block';
-            const previewImg = previewContainer.querySelector('.preview-img');
-            previewImg.alt = q.question_image;
-            previewImg.src = imgUrl;
-
-            // Set file input from URL
-            const questionImgInput = questionDiv.querySelector('input[type="file"][id^="questionImg"]');
-            if (questionImgInput) {
-                questionImgInput.setAttribute('data-original', q.question_image);
-                imagePromises.push(setFileInputFromUrl(questionImgInput, imgUrl, q.question_image));
-            }
-        }
-
-        // Remove default options, then add from data
-        const optionsContainer = questionDiv.querySelector('.options-container');
-        optionsContainer.innerHTML = '';
-        const correctPreview = questionDiv.querySelector('.correct-options-preview');
-        correctPreview.innerHTML = '';
-        (q.options || []).forEach((opt, optIdx) => {
-            // Add option
-            const optionContent = document.createElement('div');
-            optionContent.className = 'option-content';
-            optionContent.innerHTML = `
-                <input type="text" placeholder="Option ${optIdx + 1}" required onchange="updateCorrectPreview(this)">
-                <div class="option-actions">
-                    <label for="optionImg${qIdx + 1}_${optIdx + 1}" class="file-upload-label">
-                        <i class="fas fa-image"></i>
-                    </label>
-                    <input type="file" accept="image/*" id="optionImg${qIdx + 1}_${optIdx + 1}" onchange="previewOptionImage(this)" style="display: none;">
-                    <button type="button" class="btn-danger remove-option" onclick="removeOption(this)">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="option-image-preview" id="optionImagePreview${qIdx + 1}_${optIdx + 1}" style="display: none;">
-                    <img src="" alt="Option Image Preview" class="preview-img">
-                    <button type="button" class="btn-danger remove-image" onclick="removeOptionImage('${qIdx + 1}_${optIdx + 1}')">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-            optionsContainer.appendChild(optionContent);
-            // Fill option text
-            optionContent.querySelector('input[type="text"]').value = opt.option || '';
-            // Option image preview and input
-            if (opt.option_image) {
-                const imgUrl = `/media/quiz/${opt.option_image}`;
-                const previewContainer = optionContent.querySelector('.option-image-preview');
-                previewContainer.style.display = 'flex';
-                const previewImg = previewContainer.querySelector('.preview-img');
-                previewImg.alt = opt.option_image;
-                previewImg.src = imgUrl;
-
-                // Set file input from URL
-                const optionImgInput = optionContent.querySelector('input[type="file"]');
-                if (optionImgInput) {
-                    optionImgInput.setAttribute('data-original', opt.option_image);
-                    imagePromises.push(setFileInputFromUrl(optionImgInput, imgUrl, opt.option_image));
-                }
-            }
-            // Add correct preview
-            const optionLetter = String.fromCharCode(65 + optIdx);
-            const previewOption = document.createElement('div');
-            previewOption.className = 'preview-option';
-            previewOption.dataset.value = (optIdx + 1);
-            previewOption.setAttribute('onclick', `selectCorrectOption(this, ${qIdx + 1})`);
-            previewOption.innerHTML = `
-                <span class="option-label">${optionLetter}</span>
-                <span class="option-text">${opt.option || ''}</span>
-            `;
-            correctPreview.appendChild(previewOption);
-        });
-        // Set correct answer
-        const correctIdx = (q.options || []).findIndex(opt => opt.correct);
-        if (correctIdx >= 0) {
-            correctPreview.children[correctIdx].classList.add('selected');
-            questionDiv.querySelector('.correct-answer').value = (correctIdx + 1).toString();
-        }
-    });
-    updateMaxQuestions();
-
-    // Wait for all images to be set before allowing form submission
-    if (imagePromises.length > 0) {
-        Promise.all(imagePromises).then(() => {
-            // Optionally, you can enable the submit button here if you disabled it during loading
-        });
     }
 }
 
@@ -1198,3 +920,27 @@ async function fillQuizForm(quiz) {
         await Promise.all(imagePromises);
     }
 }
+
+// --- Expose functions to global scope for inline HTML event handlers ---
+window.toggleStudentSelection = toggleStudentSelection;
+window.toggleSelectAll = toggleSelectAll;
+window.closeStudentModal = closeStudentModal;
+window.confirmStudentSelection = confirmStudentSelection;
+window.adjustTime = function adjustTime(minutes) {
+    const durationInput = document.getElementById('quizDuration');
+    let currentValue = parseInt(durationInput.value) || 30;
+    let newValue = currentValue + minutes;
+    
+    if (newValue < 1) newValue = 1;
+    if (newValue > 300) newValue = 300;
+    
+    durationInput.value = newValue;
+    updateClockDisplay();
+}
+window.updateCorrectPreview=updateCorrectPreview
+window.updateClockDisplay=updateClockDisplay
+window.addOption=addOption
+window.addQuestion=addQuestion
+window.selectCorrectOption=selectCorrectOption
+window.previewOptionImage=previewOptionImage
+window.previewQuestionImage=previewQuestionImage

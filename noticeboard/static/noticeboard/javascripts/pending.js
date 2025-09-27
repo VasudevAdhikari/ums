@@ -472,8 +472,9 @@ function renderPendingPosts() {
     });
 }
 
-function approvePost(index) {
+async function approvePost(index) {
     // Move post from pending to approved
+    if (!await confirm('Are you sure to approve this post?')) return;
     const approvedPost = pendingPosts.splice(index, 1)[0];
     posts.push(approvedPost);
     

@@ -22,23 +22,32 @@ def get_result_for_a_course(enrollment_course: EnrollmentCourse):
             "given_total": 0,
             "got_marks": 0,
             "got_percent": 0,
+            "count": 0
         }
 
     for assessment_result in assessment_results:
         assessment = assessment_result.assessment
         assessment_type = assessment.get_assessment_type_display()
         if assessment_type in scheme:
-            types[assessment_type]["given_total"] += int(assessment.assessment.get('total_mark', 1))
+            types[assessment_type]["given_total"] += int(assessment.assessment.get('total_mark', 0))
             types[assessment_type]["got_marks"] += assessment_result.mark
+            print(assessment_result.mark)
+            types[assessment_type]["count"] += 1
 
     total = 0
     print(types)
     for type,details in types.items():
-        details['got_percent'] = details['got_marks']*details['given_percent']/details['given_total'] if details['given_total']>0 else 0
+        if details.get('given_total')>0:
+            details['got_percent'] = details['got_marks']*details['given_percent']/details['given_total'] if details['given_total']>0 else 0
+        elif details.get('count')>0:
+            details['got_percent'] = details.get('got_marks')/details.get('count')
+        else:
+            details['got_percent'] = details['got_marks']
         total += details['got_percent']
-    
-    return total
 
+    print(types)
+    return total
+ 
 def get_credits_and_score(total_marks):
     letter_grade = 'F'
     grade_score = 0.00

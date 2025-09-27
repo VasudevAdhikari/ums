@@ -10,6 +10,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     {% load static %}
     <link rel="stylesheet" href="{% static 'public/stylesheets/home.css' %}">
+    <style>
+        .nav-link.active , .dropdown-item.active{
+            text-decoration: underline;
+            text-underline-offset: 6px;
+            text-decoration-thickness: 2px;
+            font-weight: bolder;
+        }
+    </style>
 </head>
 <body data-bs-spy="scroll" data-bs-target=".navbar" data-bs-offset="180" tabindex="0">
 

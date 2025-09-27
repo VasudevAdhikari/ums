@@ -95,7 +95,7 @@ function displayUploadedFile(fileData) {
     container.appendChild(fileElement);
 }
 
-function deleteUploadedItem(type, id) {
+window.deleteUploadedItem = function deleteUploadedItem(type, id) {
     if (type === 'image') {
         uploadedImages = uploadedImages.filter(item => item.id !== id);
         const container = document.getElementById('uploaded-images');
@@ -194,7 +194,7 @@ function handleDrop(e) {
 }
 
 // Lightbox functionality
-function openLightbox(imageSrc, type) {
+window.openLightbox = function openLightbox(imageSrc, type) {
     const lightbox = document.getElementById('lightbox');
     const lightboxImage = document.getElementById('lightbox-image');
     
@@ -208,7 +208,7 @@ function openLightbox(imageSrc, type) {
     document.body.style.overflow = 'hidden';
 }
 
-function closeLightbox() {
+window.closeLightbox = function closeLightbox() {
     const lightbox = document.getElementById('lightbox');
     lightbox.style.display = 'none';
     document.body.style.overflow = 'auto';
@@ -222,28 +222,28 @@ document.addEventListener('keydown', function(e) {
 });
 
 // Submission functionality
-function submitAssessment() {
+window.submitAssessment = function submitAssessment() {
     if (isSubmitting) return;
     
     showConfirmModal();
 }
 
-function showConfirmModal() {
+window.showConfirmModal = function showConfirmModal() {
     const modal = document.getElementById('confirm-modal');
     modal.style.display = 'block';
 }
 
-function closeConfirmModal() {
+window.closeConfirmModal = function closeConfirmModal() {
     const modal = document.getElementById('confirm-modal');
     modal.style.display = 'none';
 }
 
-function confirmSubmit() {
+window.confirmSubmit = function confirmSubmit() {
     closeConfirmModal();
     performSubmission();
 }
 
-function performSubmission() {
+window.performSubmission = function performSubmission() {
     isSubmitting = true;
     showLoadingModal();
     
@@ -276,7 +276,7 @@ function performSubmission() {
     .then(async data => {
         hideLoadingModal();
         if (data.success) {
-            window.location.href = '/students/mailbox/';
+            history.go(-1);
         } else {
             await alert('Submission failed: ' + (data.message || 'Unknown error'));
             isSubmitting = false;
@@ -290,25 +290,25 @@ function performSubmission() {
     });
 }
 
-async function autoSubmit() {
+window.autoSubmit = async function autoSubmit() {
     if (isSubmitting) return;
     
     await alert('Time has expired. Your assessment will be submitted automatically.');
     performSubmission();
 }
 
-function showLoadingModal() {
+window.showLoadingModal = function showLoadingModal() {
     const modal = document.getElementById('loading-modal');
     modal.style.display = 'block';
 }
 
-function hideLoadingModal() {
+window.hideLoadingModal = function hideLoadingModal() {
     const modal = document.getElementById('loading-modal');
     modal.style.display = 'none';
 }
 
 // Utility functions
-function getCookie(name) {
+window.getCookie = function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -374,9 +374,4 @@ if (diff > 0) {
     // Already past due
     console.log("Deadline already passed. Submitting now...");
     performSubmission();
-}
-
-function performSubmission() {
-    const form = document.getElementById('quizForm');
-    if (form) form.submit();
 }

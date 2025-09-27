@@ -2,7 +2,7 @@ from django.shortcuts import redirect
 from django.core.cache import cache
 from django.template.response import TemplateResponse
 from django.shortcuts import HttpResponse
-from authorization.models import UniversityDetails
+from authorization.models import Notification, UniversityDetails
 from django.http import JsonResponse, HttpResponseForbidden
 import time
 from django.utils.deprecation import MiddlewareMixin
@@ -45,6 +45,8 @@ class UserRoleMiddleware:
 
     def __call__(self, request):
         path = request.path
+        if path[-1] != '/':
+            path = f"{path}/"
 
         # Step 2: Check cache for user role
         user_email = request.COOKIES.get('my_user')
@@ -66,6 +68,9 @@ class UserRoleMiddleware:
         request.user_role = role
         request.uni_logo = cache.get(cache_key)
 
+        if '/media/' in path:
+            return self.get_response(request)
+
         # Step 1: Skip middleware for public paths
         for p in self.PUBLIC_PATHS:
             if path.startswith(p):
@@ -74,6 +79,11 @@ class UserRoleMiddleware:
         # Step 3: Redirect to login if role not found
         if not role:
             return redirect('/auth/login/')
+        
+        request.noti_count = Notification.objects.filter(
+            user__email = request.COOKIES.get('my_user'),
+            seen=False,
+        ).count()
         
         if request.path.startswith('/executives/') and role!='executive':
             return redirect('/public/access_denied/')
@@ -194,7 +204,7 @@ class ImgFallbackMiddleware:
 
 
 class RateLimitMiddleware(MiddlewareMixin):
-    RATE_LIMIT = 40         # max requests allowed
+    RATE_LIMIT = 400         # max requests allowed
     WINDOW = 60             # in seconds (1 minute)
     BLOCK_TIME = 300        # in seconds (5 minutes)
 

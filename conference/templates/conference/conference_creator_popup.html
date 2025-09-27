@@ -1,0 +1,20 @@
+<div id="meetingModal" class="modal">
+  <div class="modal-content">
+    <h2>Schedule Meeting</h2>
+    <form id="meetingForm">
+      <label for="meetingName">Meeting Name</label>
+      <input type="text" id="meetingName" name="meetingName" required>
+
+      <label for="startTime">Start Time</label>
+      <input type="datetime-local" id="startTime" name="startTime" required>
+
+      <label for="endTime">End Time</label>
+      <input type="datetime-local" id="endTime" name="endTime" required>
+
+      <div class="actions">
+        <button type="button" id="cancelMeeting">Cancel</button>
+        <button type="submit">Schedule</button>
+      </div>
+    </form>
+  </div>
+</div>
